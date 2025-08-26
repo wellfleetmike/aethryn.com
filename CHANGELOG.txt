@@ -1,0 +1,17 @@
+# Aethryn Project Changelog
+
+---
+
+## v0.1 (2025-08-26)
+- Initial release of Aethryn.com
+- Netscape-style retro landing page deployed
+- Aethryn Creed published
+- Milestones section added
+- Custom DNS + HTTPS setup complete
+
+---
+
+## Planned
+- v0.2 – Windows XP / Mac OS Aqua / Win95 alternate skins
+- v0.3 – DAO preview, AETHR token utility + governance draft
+- v0.4 – Community contribution guidelines + builder tools
