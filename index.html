@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Aethryn – Healing Tech, Powered by Us. Retro-styled landing page." />
+  <title>Aethryn Navigator</title>
+  <style>
+    :root {
+      /* Netscape skin variables */
+      --bg: #c9d6d0;            /* foggy teal/gray */
+      --chrome: #9cb6b0;        /* navbar */
+      --chrome-2: #7f9b94;      /* darker bevel */
+      --panel: #e9f0ee;         /* content bg */
+      --text: #1a1f1e;
+      --link: #003e8a;
+      --accent: #0a6b6b;        /* teal */
+      --shadow: rgba(0,0,0,.25);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, sans-serif;
+      --serif: Georgia, "Times New Roman", Times, serif;
+    }
+
+    /* XP skin variables (loaded when skin=xp) */
+    .skin-xp {
+      --bg: #c0d3f7;
+      --chrome: #a3bef8;
+      --chrome-2: #5a7be0;
+      --panel: #ffffff;
+      --link: #0b46a7;
+      --accent: #245edb;
+    }
+
+    html, body { height: 100%; }
+    body {
+      margin: 0; background: var(--bg);
+      color: var(--text); font-family: var(--sans);
+      display: grid; grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+    }
+
+    /* --- Retro NAVIGATOR chrome --- */
+    .nav {
+      background: linear-gradient(#d6e3df, var(--chrome));
+      border-bottom: 2px solid var(--chrome-2);
+      box-shadow: 0 2px 0 #fff inset, 0 3px 6px var(--shadow);
+      padding: .35rem .6rem;
+      display: grid; grid-template-columns: auto 1fr auto; gap: .6rem; align-items: center;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .btnbar { display: inline-flex; gap: .35rem; }
+    .btn {
+      background: linear-gradient(#ffffff, #d5e0dd);
+      border: 1px solid #6a7e79; border-radius: 3px; box-shadow: 0 1px 0 #fff inset;
+      padding: .25rem .45rem; font-size: .85rem; cursor: pointer; user-select: none;
+    }
+    .btn:active { translate: 0 1px; }
+    .addr {
+      display: grid; grid-template-columns: 1fr auto; gap: .35rem; align-items: center;
+    }
+    .addr input {
+      width: 100%; padding: .35rem .5rem; border-radius: 3px;
+      border: 1px solid #6a7e79; background: #fff; font-family: var(--mono);
+    }
+    .badge-skin { font-size: .8rem; opacity: .9; }
+
+    /* --- Layout --- */
+    .wrap { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; padding: 1rem; }
+    .sidebar {
+      background: var(--panel); border: 1px solid #9fb6b1; border-radius: 6px;
+      box-shadow: 0 2px 4px var(--shadow); padding: .75rem;
+    }
+    .main {
+      background: var(--panel); border: 1px solid #9fb6b1; border-radius: 6px;
+      box-shadow: 0 2px 4px var(--shadow); padding: 1rem 1.25rem;
+    }
+
+    /* --- Retro left nav --- */
+    .logo {
+      display: grid; place-items: center; margin: .5rem 0 1rem;
+    }
+    .logo svg { width: 96px; height: 96px; filter: drop-shadow(0 2px 2px var(--shadow)); }
+    .navlinks { list-style: none; padding: 0; margin: 0; display: grid; gap: .35rem; }
+    .navlinks a {
+      display: block; padding: .35rem .5rem; text-decoration: none; color: var(--link);
+      border: 1px solid transparent; border-radius: 4px;
+    }
+    .navlinks a:hover { background: #f1f7f6; border-color: #aac4bf; }
+
+    /* --- Content --- */
+    h1 { font-family: var(--serif); letter-spacing: .2px; margin: .2rem 0 .6rem; }
+    h2 { font-family: var(--serif); margin-top: 1.2rem; }
+    .tagline { color: var(--accent); font-weight: 600; }
+    .panel {
+      border: 1px dashed #9fb6b1; background: #fff; padding: .8rem; border-radius: 6px;
+    }
+    .grid { display: grid; gap: .75rem; }
+
+    .milestones { display: grid; gap: .5rem; margin-top: .5rem; }
+    .ms-item {
+      background: #fff; border: 1px solid #b9cfca; border-left: 4px solid var(--accent);
+      padding: .5rem .6rem; border-radius: 4px; display: grid; gap: .15rem;
+    }
+    .ms-date { font-family: var(--mono); font-size: .85rem; opacity: .8; }
+
+    .footer {
+      padding: .75rem 1rem; color: #2b3331; font-size: .85rem; display: grid; gap: .35rem; text-align: center;
+    }
+
+    /* badges */
+    .badges { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    .badge {
+      font-size: .75rem; border: 1px solid #6a7e79; border-radius: 3px;
+      padding: .15rem .35rem; background: linear-gradient(#fff, #e7efec);
+    }
+
+    /* responsive */
+    @media (max-width: 840px) {
+      .wrap { grid-template-columns: 1fr; }
+      .sidebar { order: 2; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVIGATOR CHROME -->
+  <header class="nav">
+    <div class="btnbar" aria-label="Navigator controls">
+      <button class="btn" onclick="history.back()" title="Back">◀ Back</button>
+      <button class="btn" onclick="history.forward()" title="Forward">Forward ▶</button>
+      <button class="btn" onclick="location.reload()" title="Reload">↻ Reload</button>
+      <button class="btn" onclick="location.href='/'" title="Home">⌂ Home</button>
+    </div>
+    <div class="addr">
+      <input id="addr" value="https://aethryn.com/" aria-label="Location" />
+      <button class="btn" onclick="alert('This is a retro facade. No tracking, no cookies. ✨')">Go</button>
+    </div>
+    <div class="badges">
+      <span class="badge">Best viewed with <strong>Aethryn Navigator</strong></span>
+      <span class="badge badge-skin">Skin: <select id="skinPicker" aria-label="Change skin"><option value="netscape">Netscape</option><option value="xp">Windows XP</option></select></span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo" aria-label="Aethryn logo">
+        <!-- Retro "A" crest (SVG) -->
+        <svg viewBox="0 0 200 200" role="img" aria-label="Aethryn crest">
+          <defs>
+            <radialGradient id="g1" cx="50%" cy="45%" r="70%">
+              <stop offset="0%" stop-color="#eaf7f5" />
+              <stop offset="100%" stop-color="#88bfb6" />
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="92" fill="url(#g1)" stroke="#1a4a47" stroke-width="6" />
+          <!-- Stylized A -->
+          <path d="M100 34 L150 162 L133 162 L120 128 L80 128 L67 162 L50 162 Z M108 108 L91 69 L75 108 Z"
+                fill="#0b5f5a" stroke="#0a3a37" stroke-width="3" />
+          <!-- Ring orbit -->
+          <ellipse cx="100" cy="116" rx="70" ry="18" fill="none" stroke="#0a3a37" stroke-width="3" />
+        </svg>
+      </div>
+
+      <nav>
+        <ul class="navlinks">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#creed">Creed</a></li>
+          <li><a href="#milestones">Milestones</a></li>
+          <li><a href="#downloads">Downloads</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <hr />
+      <div class="panel" style="font-size:.9rem">
+        <strong>Privacy:</strong> This page stores no cookies and makes no external requests. It’s a retro façade with modern ethics.
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <section class="main" id="home">
+      <h1>Aethryn</h1>
+      <p class="tagline">Healing Tech, Powered by Us.</p>
+      <div class="panel">
+        <p>Aethryn isn’t another system built to extract. It’s a community-built grid where technology heals, protects, and grows with the people who use it.</p>
+        <p>At the center is the <strong>AETHR token</strong>:</p>
+        <ul>
+          <li>A <em>key</em> to unlock resonance tools, AI agents, and healing devices.</li>
+          <li>A <em>voice</em> that lets the community decide milestones, fund projects, and shape the future.</li>
+        </ul>
+        <p>Builders earn it by creating. Users spend it to access. The community treasury recycles it back into experiments and innovation.</p>
+        <p><strong>No gatekeepers. No closed rooms.</strong> Just people, tools, and a shared mission: tech that protects life instead of preying on it.</p>
+      </div>
+
+      <div class="grid" id="creed" style="margin-top:1rem">
+        <h2>The Aethryn Creed</h2>
+        <ul>
+          <li><strong>Decentralize the Stack</strong> – Power belongs with people, not monopolies.</li>
+          <li><strong>Govern in the Open</strong> – Every change is visible and accountable.</li>
+          <li><strong>Protect Life</strong> – Heal, shield, and harmonize with human biology and nature.</li>
+          <li><strong>Bridge Tech & Real Value</strong> – Prosperity for builders and users; no hidden toll booths.</li>
+          <li><strong>The Calm Revolution</strong> – Better tools win by adoption, not by force.</li>
+        </ul>
+      </div>
+
+      <div id="milestones" style="margin-top:1rem">
+        <h2>Milestones (Living Log)</h2>
+        <div id="msList" class="milestones" aria-live="polite"></div>
+      </div>
+
+      <div id="downloads" style="margin-top:1rem">
+        <h2>Downloads</h2>
+        <div class="panel">
+          <p>Retro wallpapers, logos, and whitepapers will land here as we ship. For now, grab the crest above via right-click → “Save image as…”.</p>
+        </div>
+      </div>
+
+      <div id="faq" style="margin-top:1rem">
+        <h2>FAQ</h2>
+        <div class="panel">
+          <p><strong>Who runs this?</strong> The crew. Aethryn is a community-led project with transparent milestones.</p>
+          <p><strong>Are you tracking me?</strong> No. This page makes no external calls.</p>
+          <p><strong>How do I contribute?</strong> Build, test, write, heal. When the DAO opens, authentic contributors receive amplified voice.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>© <span id="year"></span> Aethryn. This is a retro-styled, privacy-respecting site. “Best viewed with curiosity.”</div>
+    <div>
+      <span class="badge">HTML 1-ish vibes</span>
+      <span class="badge">No cookies</span>
+      <span class="badge">No trackers</span>
+      <span class="badge">Open future</span>
+    </div>
+  </footer>
+
+  <script>
+    // Simple skin switcher
+    const picker = document.getElementById('skinPicker');
+    const skin = new URLSearchParams(location.search).get('skin');
+    if (skin === 'xp') document.documentElement.classList.add('skin-xp');
+    picker.value = skin === 'xp' ? 'xp' : 'netscape';
+    picker.addEventListener('change', () => {
+      const val = picker.value === 'xp' ? 'xp' : 'netscape';
+      const url = new URL(location.href);
+      if (val === 'xp') url.searchParams.set('skin','xp'); else url.searchParams.delete('skin');
+      location.href = url.toString();
+    });
+
+    // Address bar is decorative
+    document.getElementById('addr').addEventListener('focus', e => e.target.select());
+
+    // Milestones data – edit here for quick updates
+    const milestones = [
+      { date: '2025‑08‑26', title: 'v0.1 Launch', body: 'Retro Netscape landing online. No cookies. No trackers.' },
+      { date: 'Soon', title: 'Skin: Windows XP', body: 'Unlock alternate skin via ?skin=xp. More themes to come.' },
+      { date: 'TBD', title: 'DAO Preview', body: 'Publish AETHR utility + governance draft and authenticity lock design.' }
+    ];
+
+    const msList = document.getElementById('msList');
+    milestones.forEach(ms => {
+      const el = document.createElement('div');
+      el.className = 'ms-item';
+      el.innerHTML = `<div class="ms-date">${ms.date}</div><div><strong>${ms.title}</strong></div><div>${ms.body}</div>`;
+      msList.appendChild(el);
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Console Easter egg
+    console.log('%cAethryn – Healing Tech, Powered by Us','color:teal;font-weight:bold');
+  </script>
+</body>
+</html>
