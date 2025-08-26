@@ -1,9 +1,12 @@
-    _        _   _                      
-   / \   ___| |_| |__  _ __ _   _ _ __  
-  / _ \ / _ \ __| '_ \| '__| | | | '_ \ 
- / ___ \  __/ |_| | | | |  | |_| | | | |
+```ascii
+   _        _   _                      
+  / \   ___| |_| |__  _ __ _   _ _ __  
+ / _ \ / _ \ __| '_ \| '__| | | | '_ \ 
+/ ___ \  __/ |_| | | | |  | |_| | | | |
 /_/   \_\___|\__|_| |_|_|   \__, |_| |_|
-                            |___/       
+                           |___/        
+```
+
 # Aethryn.com  
 Healing Tech, Powered by Us.
 
@@ -63,4 +66,3 @@ Aethryn – Healing Tech, Powered by Us.
 ---
 
 Best viewed with Aethryn Navigator | No cookies | No trackers | Open future
-
