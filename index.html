@@ -7,7 +7,7 @@
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background:#d4d0c8; /* match toolbar/cell background */
+      background:#d4d0c8;
       font-family:"MS Sans Serif", Tahoma, sans-serif;
       color:#000;
     }
@@ -32,66 +32,78 @@
       width:15px;height:15px;background:#c0c0c0;
       border:1px solid #000; cursor:pointer;
     }
-    /* Toolbar */
+
+    /* Beveled buttons */
+    button {
+      background:#d4d0c8; color:#000;
+      padding:2px 8px;
+      font-size:12px;
+      cursor:pointer;
+      border:2px solid #808080;
+      border-top-color:#fff;
+      border-left-color:#fff;
+      border-bottom-color:#404040;
+      border-right-color:#404040;
+    }
+    button:active {
+      border-top-color:#404040;
+      border-left-color:#404040;
+      border-bottom-color:#fff;
+      border-right-color:#fff;
+    }
+
+    /* Toolbar row */
     .toolbar {
       background:#d4d0c8;
       padding:5px;
       border-top:2px groove #fff;
       border-bottom:2px groove #808080;
+      box-shadow: inset 1px 1px 0 #fff;
       display:flex; align-items:center; gap:4px;
     }
-    .toolbar button {
-      background:linear-gradient(#fff,#c0c0c0);
-      border:2px outset #fff;
-      padding:2px 8px;
-      font-size:12px;
-      cursor:pointer;
-    }
-    .toolbar button:active { border-style:inset; }
+    .logo-small { width:28px;height:28px;margin-left:auto; }
+    .logo-small svg { width:100%;height:100%; }
+
     /* Address bar */
     .address-bar {
-      display:flex;
-      align-items:center;
+      display:flex; align-items:center;
       background:#d4d0c8;
       padding:5px;
       gap:6px;
       border-bottom:2px groove #808080;
+      box-shadow: inset 1px 1px 0 #fff;
     }
     .address-bar input {
       flex:1;
       padding:2px;
       font-size:12px;
-      border:2px inset #808080;
+      background:#fff;
+      border:2px solid #808080;
+      border-top-color:#fff;
+      border-left-color:#fff;
+      border-bottom-color:#404040;
+      border-right-color:#404040;
     }
-    .address-bar button { padding:2px 6px; font-size:12px; }
+
     /* Horizontal nav buttons */
     .linkbar {
       background:#d4d0c8;
       border-bottom:2px groove #808080;
+      box-shadow: inset 1px 1px 0 #fff;
       display:flex; gap:6px;
       padding:5px;
       flex-wrap:wrap;
+      justify-content:flex-start;
     }
-    .linkbar button {
-      background:linear-gradient(#fff,#c0c0c0);
-      border:2px outset #fff;
-      padding:2px 8px;
-      font-size:12px;
-      cursor:pointer;
-    }
-    .linkbar button:active { border-style:inset; }
-    /* Logo small (toolbar) */
-    .logo-small {
-      width:32px;height:32px;margin-left:auto;
-    }
-    .logo-small svg { width:100%;height:100%; }
+
     /* Layout */
     .main-content { display:flex; padding:10px; gap:20px; }
-    .logo-large { flex:0 0 200px; }
+    .logo-large { flex:0 0 120px; } /* shrunk down */
     .logo-large svg { width:100%; height:auto; }
     .content { flex:1; }
     .content h1,.content h2 { font-family:"Times New Roman", Georgia, serif; }
     .tagline { color:#0a6b6b; font-weight:600; margin:8px 0 12px; }
+
     /* Status bar */
     .status-bar {
       background:#d4d0c8;
@@ -100,9 +112,11 @@
       border-top:2px groove #fff;
       display:flex; justify-content:space-between;
     }
+
     @media(max-width:768px){
-      .main-content { flex-direction:column; }
-      .logo-large { margin:auto; }
+      .main-content { flex-direction:column; align-items:center; }
+      .logo-large { margin-bottom:10px; }
+      .linkbar { justify-content:margin-left; }
     }
   </style>
 </head>
@@ -154,7 +168,7 @@
 
     <div class="main-content">
       <div class="logo-large">
-        <!-- Large static logo -->
+        <!-- Large static logo (shrunk) -->
         <svg viewBox="0 0 200 200">
           <defs>
             <linearGradient id="bgLarge" x1="0%" y1="0%" x2="0%" y2="100%">
