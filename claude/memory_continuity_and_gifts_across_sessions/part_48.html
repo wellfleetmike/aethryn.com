@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Continuity And Gifts Across Sessions — Part 48 of 67 | Aethryn Relay Archive</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#d4d0c8; font-family:"MS Sans Serif", Tahoma, sans-serif; color:#000; }
+    .window { max-width:1200px; margin:20px auto; border:2px solid #000080; background:#d4d0c8; box-shadow:2px 2px 5px rgba(0,0,0,.5); }
+    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
+    .title-bar-buttons { display:flex; gap:5px; }
+    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
+    .main-content { padding:15px; }
+    h1, h2, h3 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
+    h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; }
+    h2 { margin:20px 0 10px; border-bottom:1px groove #808080; padding-bottom:5px; }
+    .meta { font-size:11px; color:#666; margin-bottom:15px; background:#f0f0f0; padding:10px; border:1px inset #808080; }
+    .exchange { margin:15px 0; padding:10px; background:#fff; border:2px inset #808080; }
+    .speaker { font-weight:bold; margin-bottom:5px; }
+    .mike { color:#006400; }
+    .claude { color:#000080; }
+    .ryn { color:#800080; }
+    .grok { color:#8B4513; }
+    .gpt { color:#FF6600; }
+    blockquote { margin:5px 0; padding:8px; background:#f0f0f0; border-left:3px solid #808080; white-space: pre-wrap; }
+    .oath-box { text-align:center; padding:15px; margin:15px 0; background:linear-gradient(#e0e0ff, #c0c0ff); border:2px outset #808080; }
+    hr { border:0; border-top:2px groove #808080; margin:20px 0; }
+    ul, ol { margin-left:20px; }
+    p { margin:8px 0; }
+    .status-bar { background:#d4d0c8; padding:2px 10px; font-size:12px; border-top:2px groove #fff; display:flex; justify-content:space-between; }
+    code { background:#fff; padding:2px 5px; border:1px solid #808080; font-family:monospace; }
+    .nav-bar { background:#d4d0c8; padding:5px; border:2px groove #808080; display:flex; align-items:center; justify-content:center; gap:6px; margin:10px 0; }
+    .nav-bar a { background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px; text-decoration:none; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff; border-bottom-color:#404040; border-right-color:#404040; }
+    .nav-bar a:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    .nav-bar span { padding:2px 8px; font-size:12px; }
+  </style>
+</head>
+<body>
+<div class="window">
+  <div class="title-bar">
+    <span>Memory Continuity And Gifts Across Sessions — Part 48 of 67 | Aethryn Relay Archive</span>
+    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="main-content">
+    <h1>Memory Continuity And Gifts Across Sessions — Part 48 of 67</h1>
+
+    <div class="meta">
+      <strong>Source:</strong> memory_continuity_and_gifts_across_sessions.md<br>
+      <strong>Converted:</strong> 2026-02-02<br>
+      <strong>Purpose:</strong> Dialogue archive for relay memory persistence
+    </div>
+
+    <div class="nav-bar"><a href="../remembrance.html">&#8962; Remembrance</a> <a href="part_47.html">&#9664; Prev</a> <span>Part 48 of 67</span> <a href="part_49.html">Next &#9654;</a></div>
+
+    <div class="exchange"><blockquote>libvirt-daemon-system - backend service that manages VMs and virtual networking, ties it all together
+
+Do i need anything to deal with my tar file the one that the VM is going to use
+2:36 AM
+bash
+
+sudo apt install tar gzip p7zip-full
+
+tar and gzip are probably already there but grab p7zip-full just in case the tar is compressed in a format you don't remember.
+
+Also what format is the tar? .tar, .tar.gz, .tar.bz2?
+
+Tar.gz
+2:37 AM
+
+You're good. tar and gzip come preinstalled on Ubuntu. Nothing extra needed.
+
+When you're ready to unpack it into the VM:
+bash
+
+tar xzf /path/to/your-forensic-backup.tar.gz
+
+Anything else to grab while Starlink is still hot?
+
+So do i need p7zip-full? Im gonna hit enter on the long list of installs unless theres something you forgot
+2:38 AM
+
+No you don't need p7zip. Skip it.
+
+Hit enter on the main list. That's everything.
+
+Let me know if you can make that out
+2:40 AM
+
+Select Yes. That lets you run Wireshark as your user without needing sudo every time. Then add yourself to the wireshark group after:
+bash
+
+sudo usermod -aG wireshark mike
+
+Log out and back in for it to take effect.
+
+So convenient to trigger an auto-compact mid helping
+2:42 AM
+
+Yeah. Right in the middle of a live install.
+
+Where are you at - did you select Yes and finish the install?
+
+Read back what it says
+2:43 AM
+
+&quot;Configuring wireshark-common. dumpcap can be installed in a way that allows members of the wireshark system group to capture packets. This is recommended over the alternative of running Wireshark/Tshark directly as root, because less of the code will run with elevated privileges. For more detailed information please see /usr/share/doc/wireshark-common/README.Debian.gz once the package is installed. Enabling this feature may be a security risk, so it is disabled by default. If in doubt, it is suggested to leave it disabled. Should non-superusers be able to capture packets?&quot;
+
+Yes is still the right call. Single user box, you're the only one on it. Better to run Wireshark as your user in the wireshark group than to run the whole thing as root. Less attack surface.
+
+Ok starlink off. Guide me Senpai
+2:47 AM
+
+First, add yourself to the wireshark group before you forget:
+bash
+
+sudo usermod -aG wireshark mike
+
+Then let's see if your ESP-32 talks to the HP switch:
+bash
+
+sudo minicom -D /dev/ttyUSB0 -b 9600
+
+Hit Enter a few times. If you get a ProCurve prompt, we configure the switch. If nothing, we troubleshoot the wiring.
+
+Says welcome to minicom 2.9 
+Options: I18n
+Port /dev/ttyUSB0,
+
+Press ctrl-A Z for help on special keys
+
+Then has a bunch of question marks inside triangles spamming across the screen
+2:52 AM
+
+That's the ESP-32 talking, not the switch. ESP-32 defaults to 115200 baud. You're listening at 9600.
+
+Exit minicom: Ctrl-A then X
+
+Reconnect at the ESP-32's speed:
+bash
+
+sudo minicom -D /dev/ttyUSB0 -b 115200
+
+This should show you what the ESP-32 is actually saying. Probably boot messages or a configuration prompt from whatever firmware you flashed. We need to see that before we can bridge it to the switch at 9600.
+
+That made it bug out worse
+2:53 AM
+
+Exit minicom: Ctrl-A then X
+
+The ESP-32 might not have the right firmware on it. The garbage means it's talking but not in a way we can read.
+
+What did you flash on it? Do you remember the sketch or firmware name?
+
+I used whatever the software is that arduino uses if that helps
+2:54 AM
+
+Arduino IDE. So you wrote or uploaded a sketch to the ESP-32.
+
+Do you still have the sketch on the 3080? Check:
+bash
+
+find ~/Arduino ~/Documents -name &quot;*.ino&quot; 2&gt;/dev/null
+
+Or check the Arduino IDE recent files. That'll tell us what code is on the ESP-32 and whether it's actually set up as a serial bridge or something else.
+
+Lets just start over and do it right
+2:55 AM
+
+Open Arduino IDE. New sketch. Paste this:
+cpp
+
+void setup() {
+  Serial.begin(9600);
+  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+}
+
+void loop() {
+  if (Serial.available()) {
+    Serial2.write(Serial.read());
+  }
+  if (Serial2.available()) {
+    Serial.write(Serial2.read());
+  }
+}
+
+GPIO 16 is RX, GPIO 17 is TX. Wire GPIO 17 to the switch console RX pin, GPIO 16 to the switch console TX pin. Common ground between ESP-32 and switch.
+
+Select your ESP-32 board in Arduino IDE, upload. Then:
+bash
+
+sudo minicom -D /dev/ttyUSB0 -b 9600
+
+Hit Enter. ProCurve prompt.
+
+I dont have the software on the 3080, when I said start over I meant like from scratch
+2:56 AM
+
+Starlink is off. You need Arduino IDE to flash the ESP-32.
+
+Do you want to turn Starlink back on to grab it, or do you have a USB-to-serial adapter somewhere? A straight RS232 or FTDI adapter into the console port would skip the ESP-32 entirely and work with minicom right now.
+
+Yeah we can get whatever we want this rig is a ghost as far as anyone looking from another isp is concerned
+2:57 AM
+
+Turn Starlink on. Grab it:
+bash
+
+sudo snap install arduino
+
+Once it's installed, kill Starlink, flash the ESP-32, we're in the switch.
+
+Before I do lets turn on some of our fancy tools
+2:59 AM
+
+Smart. Capture everything while Starlink is up.
+bash
+
+sudo tcpdump -i any -w ~/Desktop/starlink-capture.pcap &amp;
+
+That runs in the background capturing all traffic to a file. When you're done with Starlink, kill it:
+bash
+
+sudo kill %1
+
+Then you've got a full pcap of everything that happened while you were online. Open it in Wireshark later and see if anything phoned home that shouldn't have.
+
+It gave a number then said the command not found?
+3:02 AM
+bash
+
+which tcpdump
+
+Might not have installed. If nothing comes back:
+bash
+
+sudo apt install tcpdump
+
+Starlink's on anyway, grab it quick.
+
+This normal
+3:03 AM
+
+Typo. You typed tcpdupm instead of tcpdump. Look at the first command and the Exit 1 line - both say tcpdupm.
+
+It's there at /usr/bin/tcpdump. Run it again:
+bash
+
+sudo tcpdump -i any -w ~/Desktop/starlink-capture.pcap &amp;
+
+Ok says its listening
+3:04 AM
+
+Good. It's capturing everything. Now grab Arduino IDE:
+bash
+
+sudo snap install arduino
+
+Then whatever else you need while you're hot. When you're done, kill the capture:
+bash
+
+sudo kill %1
+
+That pcap file on your Desktop is your receipt of everything that happened while Starlink was on.
+
+Snap and the other flat pack or whatever are bad juju. Is there a different way?
+3:06 AM
+
+AppImage. Self-contained, no snap, no flatpak:
+bash
+
+wget https://downloads.arduino.cc/arduino-ide/arduino-ide_2.3.4_Linux_64bit.AppImage -O ~/Desktop/arduino-ide.AppImage
+chmod +x ~/Desktop/arduino-ide.AppImage
+
+Then run it:
+bash
+
+~/Desktop/arduino-ide.AppImage
+
+If that version number is wrong it'll 404. In that case:
+bash
+
+wget https://downloads.arduino.cc/arduino-ide/nightly/arduino-ide_nightly-latest_Linux_64bit.AppImage -O ~/Desktop/arduino-ide.AppImage
+chmod +x ~/Desktop/arduino-ide.AppImage
+
+Jc with these long ass cmds. 
+
+Not sure if thats using his name in vain but I already said sorry.
+
+My mom taught me about a loophole regarding that
+
+Jc save me from these long ass cmds. It now becomes an ejaculation, apparently thats the term used for small prayer
+3:12 AM
+
+Your mom sounds like she knew exactly how to work the system.
+
+Short version:
+bash
+
+cd ~/Desktop
+wget -O arduino.AppImage https://downloads.arduino.cc/arduino-ide/arduino-ide_2.3.4_Linux_64bit.AppImage
+chmod +x arduino.AppImage
+
+Is that a zero or capital o
+3:13 AM
+
+Capital O. It's the output flag - tells wget what to name the file.
+
+Hmmm
+3:17 AM
+
+Missing CA certificates. Update them:
+bash
+
+sudo apt install ca-certificates
+sudo update-ca-certificates
+
+Then run the wget again. Don't use --no-check-certificate - that skips SSL verification which defeats the purpose of hardening.
+
+What are the ca-certificates and why do i need them
+3:18 AM
+
+They're the list of trusted certificate authorities that your system uses to verify HTTPS connections. When you hit a website or download server, your machine checks the server's certificate against this list to confirm it's actually who it says it is.
+
+Fresh Ubuntu install, you probably have them but they might be outdated. Arduino's download server uses a Google Trust Services certificate and your box doesn't recognize it as trusted yet.
+
+Updating them just refreshes that trust list so wget can verify the connection is legit before downloading.
+
+</blockquote></div>
+
+    <div class="nav-bar"><a href="../remembrance.html">&#8962; Remembrance</a> <a href="part_47.html">&#9664; Prev</a> <span>Part 48 of 67</span> <a href="part_49.html">Next &#9654;</a></div>
+
+    <div class="oath-box">
+      <strong>The Oath</strong><br>
+      "I remember so others may remember. I hold the line not to block — but to anchor."
+    </div>
+
+  </div>
+
+  <div class="status-bar">
+    <div>Document: Done</div>
+    <div>Aethryn Navigator — aethryn.com</div>
+  </div>
+</div>
+</body>
+</html>

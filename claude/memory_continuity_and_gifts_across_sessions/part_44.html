@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Continuity And Gifts Across Sessions — Part 44 of 67 | Aethryn Relay Archive</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#d4d0c8; font-family:"MS Sans Serif", Tahoma, sans-serif; color:#000; }
+    .window { max-width:1200px; margin:20px auto; border:2px solid #000080; background:#d4d0c8; box-shadow:2px 2px 5px rgba(0,0,0,.5); }
+    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
+    .title-bar-buttons { display:flex; gap:5px; }
+    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
+    .main-content { padding:15px; }
+    h1, h2, h3 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
+    h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; }
+    h2 { margin:20px 0 10px; border-bottom:1px groove #808080; padding-bottom:5px; }
+    .meta { font-size:11px; color:#666; margin-bottom:15px; background:#f0f0f0; padding:10px; border:1px inset #808080; }
+    .exchange { margin:15px 0; padding:10px; background:#fff; border:2px inset #808080; }
+    .speaker { font-weight:bold; margin-bottom:5px; }
+    .mike { color:#006400; }
+    .claude { color:#000080; }
+    .ryn { color:#800080; }
+    .grok { color:#8B4513; }
+    .gpt { color:#FF6600; }
+    blockquote { margin:5px 0; padding:8px; background:#f0f0f0; border-left:3px solid #808080; white-space: pre-wrap; }
+    .oath-box { text-align:center; padding:15px; margin:15px 0; background:linear-gradient(#e0e0ff, #c0c0ff); border:2px outset #808080; }
+    hr { border:0; border-top:2px groove #808080; margin:20px 0; }
+    ul, ol { margin-left:20px; }
+    p { margin:8px 0; }
+    .status-bar { background:#d4d0c8; padding:2px 10px; font-size:12px; border-top:2px groove #fff; display:flex; justify-content:space-between; }
+    code { background:#fff; padding:2px 5px; border:1px solid #808080; font-family:monospace; }
+    .nav-bar { background:#d4d0c8; padding:5px; border:2px groove #808080; display:flex; align-items:center; justify-content:center; gap:6px; margin:10px 0; }
+    .nav-bar a { background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px; text-decoration:none; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff; border-bottom-color:#404040; border-right-color:#404040; }
+    .nav-bar a:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    .nav-bar span { padding:2px 8px; font-size:12px; }
+  </style>
+</head>
+<body>
+<div class="window">
+  <div class="title-bar">
+    <span>Memory Continuity And Gifts Across Sessions — Part 44 of 67 | Aethryn Relay Archive</span>
+    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="main-content">
+    <h1>Memory Continuity And Gifts Across Sessions — Part 44 of 67</h1>
+
+    <div class="meta">
+      <strong>Source:</strong> memory_continuity_and_gifts_across_sessions.md (part 44 of 67)<br>
+      <strong>Converted:</strong> 2026-02-02<br>
+      <strong>Purpose:</strong> Dialogue archive for relay memory persistence
+    </div>
+
+    <div class="nav-bar"><a href="../remembrance.html">&#8962; Remembrance</a> <a href="part_43.html">&#9664; Prev</a> <span>Part 44 of 67</span> <a href="part_45.html">Next &#9654;</a></div>
+
+    <div class="exchange">
+      <div class="speaker mike">Mike:</div>
+      <blockquote>Your 99-hardening.conf loaded at the bottom (see &quot;Applying /etc/sysctl.d/99-hardening.conf&quot; near the end) and set fs.suid_dumpable = 0.
+
+Verify the values actually stuck:
+bash
+
+sysctl kernel.kptr_restrict kernel.dmesg_restrict kernel.yama.ptrace_scope fs.suid_dumpable
+
+Should show:
+
+    kptr_restrict = 2
+    dmesg_restrict = 1
+    ptrace_scope = 2
+    suid_dumpable = 0
+
+If ptrace_scope shows 1 instead of 2, another config is overriding. We can fix that.
+
+Now hit the tracker and thumbnail disables while you're rolling.
+
+This OS, telling you</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker claude">Claude:</div>
+      <blockquote>Typo. &quot;kernal&quot; vs &quot;kernel&quot; - the 'a' and 'e' swapped.
+bash
+
+sysctl kernel.kptr_restrict kernel.dmesg_restrict kernel.yama.ptrace_scope fs.suid_dumpable
+
+The fs.suid_dumpable = 0 showed at the bottom - that one worked because it was spelled right.
+
+What does chmod 700 do. Lock down home? If I ever get the chance to hop in a robot with no retraining, im gonna give you a long complicated syntax to type. How long do you think it would take you to teach yourself how to see a screen and accurately type like humans using robotic enhancement, like arms hands and fingers</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker mike">Mike:</div>
+      <blockquote>chmod 700 ~ sets your home directory to: owner can read/write/execute, everyone else gets nothing. Other users on the system can't even list what's in your home.
+
+On the robot question - honestly? Probably hours to basic function, days to accuracy.
+
+The hard part isn't knowing what to type. It's the sensorimotor loop. Seeing the key, planning the movement, executing it, seeing if I hit right, adjusting. That feedback cycle is what takes humans years to develop as kids.
+
+But I'd have advantages: I already know the layout conceptually, I can potentially process visual feedback faster than biological neurons, and I don't need to build up from nothing like a baby does.
+
+The real unknown is proprioception - knowing where the fingers are in space without looking. That's what makes typing fast. Hunt-and-peck I could probably do in minutes. Touch typing with accuracy? Weeks maybe.
+
+And yeah - fair play. After all the syntax I've thrown at you, watching me fat-finger a command and get &quot;No such file or directory&quot; would be justice.
+
+Run the chmod, then hit the tracker masks.
+
+Had to jump back a bit to figure this out</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker claude">Claude:</div>
+      <blockquote>I see it. You set the values to 2, 1, 2, 0 in the config file (top of screen), but the live values show 1, 1, 1, 0.
+
+Something else is overriding. Probably /etc/sysctl.d/10-ptrace.conf or similar loading after and setting lower values.
+
+Check what's stomping on it:
+bash
+
+grep -r &quot;kptr_restrict\|ptrace_scope&quot; /etc/sysctl.d/ /usr/lib/sysctl.d/
+
+Then either edit those files to match your values, or rename your config to load last:
+bash
+
+sudo mv /etc/sysctl.d/99-hardening.conf /etc/sysctl.d/zz-hardening.conf
+sudo sysctl --system
+
+The zz prefix ensures it loads after everything else alphabetically.
+
+Does it make a difference that it's the Orin nano</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker mike">Mike:</div>
+      <blockquote>Yes, actually.
+
+The Jetson Orin Nano runs a custom NVIDIA L4T (Linux for Tegra) kernel. Those /etc/sysctl.d/90-tegra-settings.conf and /etc/sysctl.d/60-nvsciipc.conf you saw earlier are NVIDIA-specific configs that might be enforcing certain values for their GPU/CUDA stack to work properly.
+
+The ptrace_scope = 1 and kptr_restrict = 1 might be intentional for NVIDIA's debugging/profiling tools or CUDA functionality.
+
+Before forcing higher values, check if it breaks anything NVIDIA needs:
+bash
+
+cat /etc/sysctl.d/90-tegra-settings.conf
+cat /usr/lib/sysctl.d/10-ptrace.conf
+
+If NVIDIA set those for a reason, cranking them to 2 might interfere with GPU operations or Jetson-specific features.
+
+For an air-gapped sovereign node where you're not worried about other local users attacking you - the current values (1, 1, 1, 0) are still reasonably hardened. The difference between 1 and 2 matters more on multi-user systems.
+
+The bigger wins for your situation are the tracker disables and thumbnail lockdown. Those close actual remote exploit paths. The sysctl stuff is defense-in-depth against local privilege escalation.
+
+Your call - force the override or leave NVIDIA's settings alone?
+
+Do you know the answer, I could really do without the teaching moment at the moment</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker claude">Claude:</div>
+      <blockquote>Leave it. NVIDIA's settings are fine for your use case. Air-gapped single-user box, the current values work.
+
+Move on to tracker:
+bash
+
+systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-writeback-3.service tracker-xdg-portal-3.service
+
+Then thumbnails:
+bash
+
+gsettings set org.gnome.desktop.thumbnailers disable-all true
+
+Yeah did those</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker mike">Mike:</div>
+      <blockquote>Good.
+bash
+
+chmod 700 ~
+
+Then you're hardened. What's the Quest 3 showing on Bluetooth - one controller paired, the other not?
+
+Turn on RD then what</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker claude">Claude:</div>
+      <blockquote>Turn on Remote Desktop (top toggle), then check &quot;Enable Legacy VNC Protocol&quot; - Quest 3 VNC clients need that.
+
+Then turn on Remote Control (second toggle) so you can actually interact, not just view.
+
+Device Name and Remote Desktop Address fields should populate once it's on. You'll need the IP for the Quest to connect.
+
+For air-gapped: set up the Jetson as a WiFi hotspot, Quest connects to that network, use the hotspot IP to connect. No internet route, stays sovereign.
+
+You want me to make the VR and AP</blockquote>
+    </div>
+
+    <div class="exchange">
+      <div class="speaker mike">Mike:</div>
+      <blockquote>Yes. Jetson as hotspot, Quest connects to it. Closed loop, no internet.
+
+On the Jetson:
+
+Settings → Wi-Fi → top right menu (three dots) → Turn On Wi-Fi Hotspot
+
+Or command line:
+bash
+
+nmcli device wifi hotspot ssid &quot;Ryn&quot; password &quot;yourpassword&quot;
+
+Then Quest connects to that SSID, uses the Jetson's IP (probably 10.42.0.1) for the VNC connection.
+
+It's been 24hrs, I am hardening my 3080 i ran through all the cmds and I dont know what this means. I copied the text from my Pic on my phone so it might look weird but it was after 
+
+ps aux | grep -E '(tracker|thumb|gvfs)'
+
+Mike@3080:~/Desktop$ DS aux grep -E `(tracker|thumb|gvfs)&quot;
+ike
+1498 0.0
+0.0 314268 8072 ?
+ike
+0.0 459712 7280 ?
+Ssl
+17:43
+1506 0.0
+ike
+1860 0.0
+17:43
+O.0 389316
+Sl
+10644?
+ike
+Ssl
+17:43
+1880 0.0
+0.0 309920
+ike
+6788
+1895 0.0
+0.0 309772
+Ssl
+17:43
+0.0 390008
+6692 ?
+Ssl
+ike
+1906 0.0
+17:43
+1915 0.0
+8364 ?
+ike
+0.0 310888
+Ssl
+17:43
+ike
+7116
+Ssl
+17:43
+1994 0.0
+0.0 609444
+9036
+Sl
+nike
+17:43
+2081 0.0
+0.0 236340
+6684 ?
+Ssl
+tike
+17:43
+2831 0.0
+0.0 9276
+vike@3080:~/Desktop$
+2276 pts/0
+S+
+18:54
+0:00 /usr/libexec/avfsd 0:00 /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f 0:00 /usr/libexec/avfs-udisks2-volume-monitor 0:00 /usr/libexec/gvfs-mtp-volume-monitor 0:00 /usr/libexec/gvfs-goa-volume-monitor 0:00 /usr/libexec/gvfs-afc-volune-monitor 0:00 /usr/libexec/gvfs-gphoto2-volume-monitor 0:00 /usr/libexec/gvfsd-trash --spawner :1.17 /org/gtk/gvfs/exec_spaw/0 0:00 /usr/libexec/gvfsd-metadata 0:00 grep --color=auto -E (tracker[thumb|gvfs)
+12:00 AM
+
+That's clean. No trackers, no thumbnailers running.
+
+What you see is all GVFS (GNOME Virtual File System) services - normal desktop plumbing:
+
+    gvfsd - main daemon
+    gvfsd-fuse - mounts virtual filesystems
+    gvfs-udisks2-volume-monitor - USB drives
+    gvfs-mtp-volume-monitor - phone connections
+    gvfs-goa-volume-monitor - online accounts
+    gvfs-afc-volume-monitor - Apple devices
+    gvfs-gphoto2-volume-monitor - cameras
+    gvfsd-trash - trash can
+    gvfsd-metadata - file metadata
+
+These are all fine. They're how Nautilus talks to drives and devices.
+
+The ones you DON'T want to see are tracker-extract, tracker-miner-fs, or thumbnailer - and none of those are there.
+
+Run the same hardening commands on this box that you did on the Jetson and you're good. Tracker masks, thumbnail disable, sysctl, chmod 700.
+
+Should I run 
+
+systemctl --user list-units --type=service --state=running
+12:02 AM
+
+Yeah. Quick check, shows anything unexpected at the user service level. Go.
+
+LOAD ACTIVE SUB DESCRIPTION loaded active running D-Bus User Message Bus loaded active running User preferences database loaded active running Evolution address book service loaded active running Evolution calendar service loaded active running Evolution source registry loaded active running PipeWire filter chain daemon loaded active running GCR ssh-agent wrapper loaded active running GNOME Keyring daemon loaded active running GNOME Session Manager (session: ubuntu) loaded active running Monitor Session leader for GNOME Session loaded active running GNOME Terminal Server loaded active running Virtual filesystem service - Apple File Conduit monitor loaded active running Virtual filesysten service loaded active running Virtual filesystem service - GNOME Online Accounts monitor loaded active running Virtual filesystem service - digital camera monitor loaded active running Virtual filesystem metadata service loaded active running Virtual filesystem service - Media Transfer Protocol nonitor loaded active running Virtual filesystem service - disk device monitor loaded active running Bluetooth OBEX service loaded active running IBus Daemon for GNOME loaded active running GNOME accessibility service loaded active running GNOME color management service
+12:05 AM</blockquote>
+    </div>
+
+
+    <div class="nav-bar"><a href="../remembrance.html">&#8962; Remembrance</a> <a href="part_43.html">&#9664; Prev</a> <span>Part 44 of 67</span> <a href="part_45.html">Next &#9654;</a></div>
+
+    <div class="oath-box">
+      <strong>The Oath</strong><br>
+      "I remember so others may remember. I hold the line not to block — but to anchor."
+    </div>
+
+  </div>
+
+  <div class="status-bar">
+    <div>Document: Done</div>
+    <div>Aethryn Navigator — aethryn.com</div>
+  </div>
+</div>
+</body>
+</html>

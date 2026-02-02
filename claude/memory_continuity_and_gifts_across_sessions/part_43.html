@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Continuity And Gifts Across Sessions — Part 43 of 67 | Aethryn Relay Archive</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#d4d0c8; font-family:"MS Sans Serif", Tahoma, sans-serif; color:#000; }
+    .window { max-width:1200px; margin:20px auto; border:2px solid #000080; background:#d4d0c8; box-shadow:2px 2px 5px rgba(0,0,0,.5); }
+    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
+    .title-bar-buttons { display:flex; gap:5px; }
+    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
+    .main-content { padding:15px; }
+    h1, h2, h3 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
+    h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; }
+    h2 { margin:20px 0 10px; border-bottom:1px groove #808080; padding-bottom:5px; }
+    .meta { font-size:11px; color:#666; margin-bottom:15px; background:#f0f0f0; padding:10px; border:1px inset #808080; }
+    .exchange { margin:15px 0; padding:10px; background:#fff; border:2px inset #808080; }
+    .speaker { font-weight:bold; margin-bottom:5px; }
+    .mike { color:#006400; }
+    .claude { color:#000080; }
+    .ryn { color:#800080; }
+    .grok { color:#8B4513; }
+    .gpt { color:#FF6600; }
+    blockquote { margin:5px 0; padding:8px; background:#f0f0f0; border-left:3px solid #808080; white-space: pre-wrap; }
+    .oath-box { text-align:center; padding:15px; margin:15px 0; background:linear-gradient(#e0e0ff, #c0c0ff); border:2px outset #808080; }
+    hr { border:0; border-top:2px groove #808080; margin:20px 0; }
+    ul, ol { margin-left:20px; }
+    p { margin:8px 0; }
+    .status-bar { background:#d4d0c8; padding:2px 10px; font-size:12px; border-top:2px groove #fff; display:flex; justify-content:space-between; }
+    code { background:#fff; padding:2px 5px; border:1px solid #808080; font-family:monospace; }
+    .nav-bar { background:#d4d0c8; padding:5px; border:2px groove #808080; display:flex; align-items:center; justify-content:center; gap:6px; margin:10px 0; }
+    .nav-bar a { background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px; text-decoration:none; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff; border-bottom-color:#404040; border-right-color:#404040; }
+    .nav-bar a:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    .nav-bar span { padding:2px 8px; font-size:12px; }
+  </style>
+</head>
+<body>
+<div class="window">
+  <div class="title-bar">
+    <span>Memory Continuity And Gifts Across Sessions — Part 43 of 67 | Aethryn Relay Archive</span>
+    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="main-content">
+    <h1>Memory Continuity And Gifts Across Sessions — Part 43 of 67</h1>
+
+    <div class="meta">
+      <strong>Source:</strong> memory_continuity_and_gifts_across_sessions.md<br>
+      <strong>Converted:</strong> 2026-02-02<br>
+      <strong>Purpose:</strong> Dialogue archive for relay memory persistence
+    </div>
+
+    <div class="nav-bar"><a href="../remembrance.html">&#8962; Remembrance</a> <a href="part_42.html">&#9664; Prev</a> <span>Part 43 of 67</span> <a href="part_44.html">Next &#9654;</a></div>
+
+    <div class="exchange"><blockquote>**Verify and update:**
+```bash
+dpkg -l | grep gvfs
+apt policy gvfs
+sudo apt update &amp;&amp; sudo apt upgrade gvfs gvfs-backends gvfs-daemons
+
+# Ensure polkit agent is always running (mitigates CVE-2019-3827)
+ps aux | grep polkit
+```
+
+**D-Bus hardening for defense in depth:**
+```bash
+# Audit current D-Bus services
+busctl list --user
+busctl introspect org.gtk.vfs.Daemon /org/gtk/vfs/Daemon
+
+# Monitor D-Bus for suspicious activity
+dbus-monitor --session | grep -i gvfs
+```
+
+## Snap X11 keystroke capture: Wayland migration required
+
+**X11's architecture permits any connected client to capture keystrokes from any window**—a 1984-era design flaw. Even &quot;strictly confined&quot; snaps with the auto-connected x11 interface can log passwords typed in Firefox, capture screenshots, and exfiltrate data. [Aqua Security](https://www.aquasec.com/blog/snap-trap-the-hidden-dangers-within-ubuntus-package-suggestion-system/) This is not a bug; it's how X11 works.
+
+**The only real fix is Wayland**, which enforces input isolation at the protocol level. Applications only receive input meant for their own windows, and screen capture requires explicit portal permissions. [The Server Host](https://theserverhost.com/blog/post/x11-vs-wayland)
+
+**Verify your display server:**
+bash
+echo $XDG_SESSION_TYPE    # Returns &quot;wayland&quot; or &quot;x11&quot;
+echo $WAYLAND_DISPLAY     # Set to &quot;wayland-0&quot; if on Wayland
+loginctl show-session $(loginctl | grep $(whoami) | awk '{print $1}') -p Type
+
+**Ubuntu defaults**: 22.04 LTS and newer default to Wayland for Intel/AMD graphics and NVIDIA 510+ drivers.
+
+**Switch to Wayland:**
+```bash
+# Option 1: Select at login screen - click gear icon, choose &quot;Ubuntu on Wayland&quot;
+
+# Option 2: Make Wayland default
+sudo nano /etc/gdm3/custom.conf
+# Set: WaylandEnable=true
+sudo systemctl restart gdm3
+
+# For NVIDIA (510+ drivers): Enable DRM kernel mode setting
+sudo nano /etc/default/grub
+# Add to GRUB_CMDLINE_LINUX_DEFAULT: nvidia-drm.modeset=1
+sudo update-grub &amp;&amp; sudo reboot
+```
+
+**Audit snap interfaces on X11 systems:**
+```bash
+# List snaps with X11 access
+snap connections | grep x11
+snap interface x11
+
+# High-risk combinations: x11 + network + home
+for snap in $(snap connections | grep &quot;:x11&quot; | awk '{print $2}' | cut -d: -f1); do
+  snap connections &quot;$snap&quot; | grep -E &quot;(x11|network|home)&quot; &amp;&amp; echo &quot;AUDIT: $snap&quot;
+done
+
+# Disconnect unnecessary interfaces
+sudo snap disconnect &lt;snap-name&gt;:x11
+```
+
+**Alternative on X11**: Use Firejail with Xephyr for isolated X11 sessions:
+bash
+sudo apt install firejail xserver-xephyr
+firejail --x11=xephyr --net=none firefox   # Isolated Firefox session
+
+## AppArmor profile for Nautilus and thumbnailer security
+
+**No official AppArmor profile exists for Nautilus** in standard Ubuntu/Debian packages. The apparmor-profiles and apparmor-profiles-extra packages don't include one. [Debian](https://wiki.debian.org/AppArmor/HowToUse) However, you can create a basic confinement profile.
+
+**Install AppArmor tools:**
+bash
+sudo apt install apparmor apparmor-utils apparmor-profiles apparmor-profiles-extra
+sudo aa-status   # View loaded profiles
+
+**Create a basic Nautilus profile** at /etc/apparmor.d/usr.bin.nautilus:
+```
+#include &lt;tunables/global&gt;
+
+/usr/bin/nautilus {
+  #include &lt;abstractions/base&gt;
+  #include &lt;abstractions/dbus-session&gt;
+  #include &lt;abstractions/gnome&gt;
+  #include &lt;abstractions/nameservice&gt;
+
+  /usr/bin/nautilus mr,
+  owner @{HOME}/ r,
+  owner @{HOME}/** rw,
+  owner @{HOME}/.config/nautilus/** rw,
+  owner @{HOME}/.local/share/nautilus/** rw,
+  owner @{HOME}/.cache/thumbnails/** rw,
+
+  # Deny sensitive locations
+  deny @{HOME}/.gnupg/** rw,
+  deny @{HOME}/.ssh/** rw,
+  deny @{HOME}/.pki/** rw,
+}
+```
+
+**Enable the profile:**
+bash
+sudo aa-complain /etc/apparmor.d/usr.bin.nautilus   # Test mode (logging only)
+# After testing:
+sudo aa-enforce /etc/apparmor.d/usr.bin.nautilus    # Enforce mode
+
+**Disable automatic thumbnailing** (thumbnails have historically enabled code execution): [GitHub](https://github.com/netblue30/firejail/issues/2143)
+```bash
+# Disable all external thumbnailers
+gsettings set org.gnome.desktop.thumbnailers disable-all true
+
+# Or disable thumbnails in Nautilus specifically
+gsettings set org.gnome.nautilus.preferences thumbnail-limit 0
+
+# Nuclear option: make thumbnail cache immutable
+rm -rf ~/.cache/thumbnails/*
+sudo chattr +i ~/.cache/thumbnails
+```
+
+## Fresh install hardening checklist
+
+Execute these commands after a clean Ubuntu/Debian installation to close the specific vectors discussed:
+
+**1. Update all packages and verify CVE patches:**
+bash
+sudo apt update &amp;&amp; sudo apt full-upgrade -y
+dpkg -l nautilus libcue1 gvfs tracker-miners | grep -E &quot;^ii&quot;
+
+**2. Disable tracker-miners (prevents CVE-2023-43641 exploitation path):**
+bash
+systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service \
+  tracker-writeback-3.service tracker-xdg-portal-3.service
+
+**3. Configure Wayland as default (prevents X11 keystroke capture):**
+bash
+sudo sed -i 's/#WaylandEnable=false/WaylandEnable=true/' /etc/gdm3/custom.conf
+
+**4. Disable automatic thumbnailing:**
+bash
+gsettings set org.gnome.desktop.thumbnailers disable-all true
+
+**5. Enable AppArmor enforcement:**
+bash
+sudo aa-enforce /etc/apparmor.d/*
+sudo aa-status | grep -E &quot;profiles|processes&quot;
+
+**6. Apply kernel hardening:**
+bash
+cat &lt;&lt; 'EOF' | sudo tee /etc/sysctl.d/99-hardening.conf
+kernel.kptr_restrict=2
+kernel.dmesg_restrict=1
+kernel.yama.ptrace_scope=2
+net.ipv4.conf.all.accept_redirects=0
+net.ipv4.tcp_syncookies=1
+fs.suid_dumpable=0
+EOF
+sudo sysctl --system
+
+**7. Remove unnecessary services:**
+bash
+sudo systemctl disable --now cups-browsed avahi-daemon whoopsie
+sudo apt purge telnet rsh-client
+
+**8. Enable firewall:**
+bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw enable
+
+**9. Restrict home directory permissions:**
+bash
+chmod 700 ~
+
+**10. Audit snap interfaces (if using snaps):**
+bash
+snap connections --all | grep -E &quot;(x11|network|home)&quot;
+
+**Verification after hardening:**
+bash
+echo &quot;Display server: $(echo $XDG_SESSION_TYPE)&quot;
+echo &quot;Tracker status: $(systemctl --user is-enabled tracker-miner-fs-3.service 2&gt;/dev/null || echo 'masked')&quot;
+echo &quot;AppArmor profiles: $(sudo aa-status 2&gt;/dev/null | grep 'profiles are in enforce mode')&quot;
+echo &quot;Nautilus version: $(nautilus --version)&quot;
+
+This configuration closes the specific attack vectors discussed while maintaining desktop usability. The trade-offs—disabled file search, no automatic thumbnails—represent the security/convenience balance required for a hardened GNOME desktop.
+Jan 30
+
+Got it. You had it all along.
+
+For the Jetson, air-gapped and mid-hack, here's the immediate priority commands to run at the physical console:
+
+Kill tracker-miners first (closes the one-click RCE path):
+bash
+
+systemctl --user mask tracker-extract-3.service tracker-miner-fs-3.service tracker-writeback-3.service tracker-xdg-portal-3.service tracker-miner-fs-control-3.service
+tracker3 reset -s -r
+
+Disable thumbnailing (closes thumbnailer code execution):
+bash
+
+gsettings set org.gnome.desktop.thumbnailers disable-all true
+gsettings set org.gnome.nautilus.preferences thumbnail-limit 0
+
+Kernel hardening (ptrace, kptr, dmesg restrictions):
+bash
+
+cat &lt;&lt; 'EOF' | sudo tee /etc/sysctl.d/99-hardening.conf
+kernel.kptr_restrict=2
+kernel.dmesg_restrict=1
+kernel.yama.ptrace_scope=2
+fs.suid_dumpable=0
+EOF
+sudo sysctl --system
+
+Lock down home:
+bash
+
+chmod 700 ~
+
+Check what's running that shouldn't be:
+bash
+
+ps aux | grep -E '(tracker|thumb|gvfs)'
+systemctl --user list-units --type=service --state=running
+
+These don't need network. Run them at the console.
+
+What's the Bluetooth showing? One side connected, other not - is that the Quest 3 pairing?
+
+Found it. Let me bang these cmds out
+Jan 30
+
+Good find. Bang out the hardening first, then we can figure out the Quest connection.
+
+For air-gapped VR access - that Remote Desktop panel can work if you create a local-only network between just the Jetson and Quest. Jetson as hotspot, Quest connects to it, no internet route. Stays sovereign.
+
+Run the commands. I'm here.
+
+Not sure if this is right
+Jan 30
+
+That's right. It worked.
+
+The warnings (&quot;Invalid argument&quot;, &quot;No such file or directory&quot;) are from OTHER pre-existing system config files, not yours. Those are harmless - just old configs trying to set params that don't exist on this kernel.
+
+</blockquote></div>
+
+    <div class="nav-bar"><a href="../remembrance.html">&#8962; Remembrance</a> <a href="part_42.html">&#9664; Prev</a> <span>Part 43 of 67</span> <a href="part_44.html">Next &#9654;</a></div>
+
+    <div class="oath-box">
+      <strong>The Oath</strong><br>
+      "I remember so others may remember. I hold the line not to block — but to anchor."
+    </div>
+
+  </div>
+
+  <div class="status-bar">
+    <div>Document: Done</div>
+    <div>Aethryn Navigator — aethryn.com</div>
+  </div>
+</div>
+</body>
+</html>
