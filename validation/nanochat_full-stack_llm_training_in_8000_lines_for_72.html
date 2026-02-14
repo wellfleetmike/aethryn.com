@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nanochat: full-stack LLM training in 8,000 lines for $72 | Aethryn Validation</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#d4d0c8; font-family:"MS Sans Serif", Tahoma, sans-serif; color:#000; }
+    .window { max-width:1200px; margin:20px auto; border:2px solid #000080; background:#d4d0c8; box-shadow:2px 2px 5px rgba(0,0,0,.5); }
+    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
+    .title-bar-buttons { display:flex; gap:5px; }
+    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
+    .toolbar { background:#d4d0c8; padding:5px; border-bottom:2px groove #808080; }
+    .toolbar a {
+      display:inline-block; background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px;
+      text-decoration:none; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff;
+      border-bottom-color:#404040; border-right-color:#404040; margin-right:5px;
+    }
+    .toolbar a:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    .main-content { padding:15px; line-height:1.6; }
+    h1, h2, h3 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
+    h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; font-size:1.5em; }
+    h2 { margin:20px 0 10px; border-bottom:1px groove #808080; padding-bottom:5px; font-size:1.2em; }
+    h3 { margin:15px 0 8px; font-size:1.1em; }
+    p { margin:10px 0; }
+    ul, ol { margin:10px 0 10px 25px; }
+    li { margin:5px 0; }
+    blockquote { margin:10px 0; padding:10px; background:#f0f0f0; border-left:3px solid #808080; font-style:italic; }
+    table { border-collapse:collapse; margin:15px 0; width:100%; background:#fff; }
+    th, td { border:1px solid #808080; padding:6px 10px; text-align:left; font-size:12px; }
+    th { background:#d4d0c8; font-weight:bold; }
+    tr:nth-child(even) { background:#f5f5f5; }
+    code { background:#fff; padding:1px 4px; border:1px solid #808080; font-family:monospace; font-size:12px; }
+    pre { background:#fff; padding:10px; border:2px inset #808080; overflow-x:auto; margin:10px 0; }
+    pre code { border:none; padding:0; }
+    strong { color:#000080; }
+    hr { border:0; border-top:2px groove #808080; margin:20px 0; }
+    a { color:#0000ff; }
+    a:visited { color:#800080; }
+    .status-bar { background:#d4d0c8; padding:2px 10px; font-size:12px; border-top:2px groove #fff; display:flex; justify-content:space-between; }
+  </style>
+</head>
+<body>
+<div class="window">
+  <div class="title-bar">
+    <span>Nanochat: full-stack LLM training in 8,000 lines for $72 | Aethryn Validation</span>
+    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="toolbar">
+    <a href="index.html">Index</a>
+    <a href="../index.html">Home</a>
+  </div>
+
+  <div class="main-content">
+<h1>Nanochat: full-stack LLM training in 8,000 lines for $72</h1>
+
+<p>Andrej Karpathy's nanochat is the most transparent, minimal, and complete open-source pipeline for training a ChatGPT-class model from absolute scratch — tokenization through web UI — in roughly <strong>8,300 lines of Python and Rust</strong>. A depth-24 model matching GPT-2's capability now trains in <strong>2.76 hours on 8×H100 GPUs for approximately $72</strong>, a 600× cost reduction from OpenAI's original $43,000. For someone building sovereign AI infrastructure on constrained hardware like a Jetson Orin Nano, nanochat provides both a trainable baseline model and an architectural blueprint. The resulting ~561M–768M parameter models fit comfortably in 8GB of unified memory at INT4 quantization (~280 MB), achieving an estimated 40–70 tokens/sec — fast enough for real-time local triage in a multi-model relay system.</p>
+
+<p>This report covers nanochat's architecture, training pipeline, code structure, edge deployment feasibility, and how it could anchor a hybrid local-cloud AI relay with air-gapped security requirements.</p>
+
+<hr>
+
+<h2>One dial controls everything: the depth-first design philosophy</h2>
+
+<p>Nanochat's most distinctive design decision is its <strong>single complexity dial: <code>--depth</code></strong>. This integer — the number of transformer layers — automatically determines every other hyperparameter: model width (depth × 64), number of attention heads (width ÷ 128), learning rate scaling (∝ 1/√(dim/768)), weight decay schedule, training token budget, and iteration count. A user never configures anything else. They simply request a smaller or bigger model, and the scaling laws produce a compute-optimal result.</p>
+
+<p>This approach emerged from Karpathy's explicit goal of creating a "maximally forkable" repository — not a framework with configuration abstractions, but a single coherent codebase where any modification must work across all depth settings. The project serves as the capstone for his LLM101n course and doubles as a community research harness with a competitive speedrun leaderboard. The current record stands at <strong>2.76 hours</strong> to exceed GPT-2's DCLM CORE score of 0.256525, achieved with a d24 model (~768M parameters, 4.33×10¹⁹ total FLOPs).</p>
+
+<p>Model sizes scale predictably with depth:</p>
+
+<table>
+<tr><th>Depth</th><th>Parameters</th><th>Training cost (8×H100)</th><th>Comparable capability</th></tr>
+<tr><td>d4</td><td>~32M</td><td>Free (CPU/MPS)</td><td>Educational toy</td></tr>
+<tr><td>d20</td><td>~561M</td><td>~$100 / 3–4 hours</td><td>Conversational baseline</td></tr>
+<tr><td>d24</td><td>~768M</td><td>~$73 / 3 hours</td><td>GPT-2 grade (CORE >0.256)</td></tr>
+<tr><td>d30</td><td>~1.8B</td><td>~24 hours</td><td>GPT-3 Small (MMLU 40s, ARC-Easy 70s)</td></tr>
+<tr><td>d32</td><td>~1.88B</td><td>~$1,000 / 41 hours</td><td>Production quality</td></tr>
+</table>
+
+<p>Karpathy discovered through 320 hyperparameter sweep experiments that nanochat's optimal token-to-parameter ratio is approximately <strong>8:1</strong> — far below Chinchilla's canonical 20:1 — meaning nanochat prefers bigger models trained shorter, likely due to the Muon optimizer's convergence properties.</p>
+
+<hr>
+
+<h2>A Llama-class transformer with ten modern departures</h2>
+
+<p>The model architecture in <code>nanochat/gpt.py</code> (~291 lines) implements a Llama-type decoder-only transformer with several carefully chosen innovations. Each was validated across depth settings, and features that didn't generalize were ruthlessly cut — multi-token prediction, asymmetric softcap, and bigram embeddings all failed this test.</p>
+
+<strong>Rotary Position Embeddings (RoPE)</strong> replace learned positional embeddings, enabling better length generalization with a base theta of 10,000. <strong>RMSNorm without learnable parameters</strong> is applied everywhere — after embedding, before each attention and MLP block, and before the output head — using bare <code>F.rms_norm()</code>. <strong>QK Normalization</strong> bounds attention scores to [-1, 1] by normalizing Q and K after RoPE, eliminating the need for softcapping within attention. <strong>Logit softcapping</strong> at 15 (computed in float32 via <code>15 * tanh(logits/15)</code>) bounds output logits to [-15, 15].
+
+<p>The MLP uses <strong>ReLU² activation</strong> (<code>F.relu(x).square()</code>) instead of GELU — sparse and computationally cheaper with a 4× expansion ratio. <strong>Sliding window attention</strong> follows an "SSSL" tiling pattern: three short-window layers (1,024 tokens) followed by one long-window layer (full 2,048 context), with the final layer always using full context. This leverages Flash Attention 3's native <code>window_size</code> parameter on Hopper GPUs.</p>
+
+<p>The most parameter-efficient innovation is <strong>Value Embeddings</strong>: at alternating layers, a gated embedding lookup adds directly to the V tensor, contributing ~150M parameters at d24 with near-zero additional FLOPs. <strong>Per-layer residual scalars</strong> (<code>resid_lambdas</code> initialized to 1.0, <code>x0_lambdas</code> to 0.1) create learnable skip connections that mix each layer's residual stream with the original normalized embedding — yielding 0.003–0.01 bits-per-byte improvement. Input and output embeddings are <strong>untied</strong>, with different initializations and learning rates.</p>
+
+<p>The optimizer system is equally distinctive. <strong>MuonAdamW</strong> is a dual optimizer: Muon (with Polar Express orthogonalization and Adafactor-style variance reduction) handles all weight matrices, while AdamW handles embeddings and scalars. The distributed variant (<strong>DistMuonAdamW</strong>) implements ZeRO-2 style sharding with three-phase async gradient sync, eliminating the need for PyTorch DDP entirely.</p>
+
+<hr>
+
+<h2>Five training stages from raw text to chat assistant</h2>
+
+<p>The full pipeline executes sequentially through <code>runs/speedrun.sh</code>, which runs start-to-finish on a blank cloud box.</p>
+
+<strong>Stage 0 — Tokenizer training</strong> uses a custom Rust BPE implementation (<code>rustbpe/src/lib.rs</code>) compiled via pyo3/maturin. Python's minbpe was too slow; HuggingFace tokenizers too bloated. The tokenizer trains on 2–4 billion characters from FineWeb-EDU in under one minute, producing a <strong>32,768-token vocabulary</strong> with ~4.8 characters per token. Nine special tokens define the chat protocol: <code><|bos|></code>, <code><|user_start|></code>, <code><|user_end|></code>, <code><|assistant_start|></code>, <code><|assistant_end|></code>, <code><|python_start|></code>, <code><|python_end|></code>, <code><|output_start|></code>, <code><|output_end|></code>. At inference time, OpenAI's tiktoken handles encoding for speed.
+
+<strong>Stage 1 — Base pretraining</strong> consumes ~75% of total compute. The dataset is FineWeb-EDU-100B-shuffle, re-packaged by Karpathy into 1,822 pre-shuffled Parquet shards (~100MB each, gzip compressed). A d24 speedrun requires ~240 shards for 8.8 billion tokens. The BOS-aligned dataloader uses a best-fit bin-packing algorithm achieving <strong>~100% token utilization</strong> — a key innovation that made the separate midtraining stage unnecessary as of January 2026. Batch size is 524,288 tokens per step, yielding ~1.07M tokens/sec throughput at ~47–48% model FLOPs utilization on 8×H100. Validation uses bits-per-byte (BPB), a tokenizer-invariant metric, with periodic CORE evaluation against a 22-task benchmark ensemble.
+
+<strong>Stage 2 — Midtraining</strong> (now deprecated, merged into SFT) originally bridged document completion and conversation by exposing the model to SmolTalk conversations (460K rows), MMLU multiple-choice (100K rows), and GSM8K math problems (8K rows).
+
+<strong>Stage 3 — Supervised Fine-Tuning</strong> runs for ~7 minutes, processing conversations individually (not packed) to eliminate the domain mismatch between packed training and padded inference. Identity customization is supported via <code>dev/gen_synthetic_data.py</code>, which generates synthetic personality conversations that can be mixed into SFT data.
+
+<strong>Stage 4 — Reinforcement Learning</strong> (optional) implements a stripped-down GRPO focused on GSM8K. Karpathy deleted the trust region, reference model, KL regularization, PPO ratios, and clip — reducing it to essentially REINFORCE with group-relative, token-level advantages. GSM8K accuracy improves from ~4.5% to ~7.6% at speedrun scale, and up to ~20% at d32.
+
+<hr>
+
+<h2>Code structure maps cleanly to the pipeline</h2>
+
+<p>The repository's 44 files organize into five clear areas:</p>
+
+<p>The <strong>core library</strong> (<code>nanochat/</code>) contains the model (<code>gpt.py</code>), inference engine (<code>engine.py</code>), optimizer (<code>optim.py</code>), data loading (<code>dataloader.py</code>, <code>dataset.py</code>), evaluation (<code>core_eval.py</code>, <code>loss_eval.py</code>), checkpoint management (<code>checkpoint_manager.py</code>), Python sandbox for tool use (<code>execution.py</code>), tokenizer wrapper (<code>tokenizer.py</code>), Flash Attention dispatch (<code>flash_attention.py</code>), distributed training utilities (<code>common.py</code>), report generation (<code>report.py</code>), and the web UI (<code>ui.html</code>).</p>
+
+<p>The <strong>scripts directory</strong> provides entry points for each pipeline stage: <code>tok_train.py</code>, <code>base_train.py</code>, <code>chat_sft.py</code>, <code>chat_rl.py</code>, plus evaluation scripts (<code>base_eval.py</code>, <code>base_loss.py</code>, <code>chat_eval.py</code>) and interfaces (<code>chat_web.py</code>, <code>chat_cli.py</code>).</p>
+
+<p>The <strong>tasks directory</strong> defines training/evaluation datasets as clean abstractions: <code>gsm8k.py</code>, <code>mmlu.py</code>, <code>arc.py</code>, <code>humaneval.py</code>, <code>spellingbee.py</code>, <code>smoltalk.py</code>, and <code>customjson.py</code> for arbitrary JSONL conversation data. <code>TaskMixture</code> and <code>TaskSequence</code> in <code>tasks/common.py</code> compose these for mixed training.</p>
+
+<p>The <strong>web server</strong> (<code>chat_web.py</code>) uses FastAPI with a WorkerPool managing multiple GPU workers, an OpenAI-compatible <code>/chat/completions</code> endpoint, and Server-Sent Events for streaming. The <strong>inference engine</strong> implements two-stage generation (prefill → decode) with KV caching. Tool use follows a state machine: the model emits <code><|python_start|></code>, the engine collects expression tokens until <code><|python_end|></code>, executes via the sandbox, then force-injects the result tokens back into the stream.</p>
+
+<strong>Conversation context is stateless per request</strong> — the entire history is re-encoded each time, bounded by the 2,048-token sequence length. There is no built-in persistent memory, session store, or context compression. This is by design: nanochat targets educational clarity over production features.
+
+<hr>
+
+<h2>A 561M model runs comfortably on a Jetson Orin Nano</h2>
+
+<p>The Jetson Orin Nano (8GB variant, $249) provides 1,024 CUDA cores, 32 Tensor cores, and 8GB unified RAM at 102 GB/s bandwidth — up to <strong>67 TOPS</strong> in the Super configuration. A nanochat d20 model (561M parameters) at FP16 occupies ~1.1 GB; at INT4 quantization, just ~280 MB. This leaves over 7 GB for the OS, inference framework, and application logic.</p>
+
+<p>Community benchmarks on the Jetson Orin Nano Super show Qwen2 0.5B achieving <strong>~45 tokens/sec via Ollama</strong>, and DeepSeek R1 1.5B hitting ~27.5 tokens/sec at MAXN power mode. A 561M nanochat model at INT4 would likely deliver <strong>40–70+ tokens/sec</strong> — well above the interactive threshold. NVIDIA's official guidance positions the Orin Nano as suitable for models up to ~4B parameters.</p>
+
+<p>The most practical inference path is <strong>Ollama installed natively</strong> (not containerized, which can fall back to CPU). Alternatively, llama.cpp provides direct CUDA inference, MLC-LLM offers TVM-compiled optimization (used in NVIDIA's own Jetson benchmarks), and TensorRT-LLM delivers the highest performance ceiling but requires cross-compilation from an x86 host. Nanochat doesn't natively export to GGUF, but community conversions exist: <code>karpathy/nanochat-d32</code> on HuggingFace, <code>onnx-community/nanochat-d32-ONNX</code> with q4 quantization, and standard llama.cpp conversion tooling works on the HuggingFace export.</p>
+
+<p>For air-gapped deployment, models must be pre-downloaded and packaged into Docker images or local NVMe storage. No <code>ollama pull</code> in disconnected mode — instead, models are imported from pre-built archives distributed via secure USB or internal transfer. Power modes (7W battery, 15W balanced, 25W MAXN) allow tuning the performance-power tradeoff for field conditions.</p>
+
+<hr>
+
+<h2>Anchoring a multi-model relay on local hardware</h2>
+
+<p>A nanochat-trained model on a Jetson could serve as the <strong>local triage layer</strong> in a three-tier architecture: edge device → optional near-edge → cloud. The small model classifies incoming queries by complexity and sensitivity, handles simple requests directly (~50ms latency), and routes complex reasoning tasks to cloud models when network and policy permit.</p>
+
+<p>Several production-tested frameworks enable this pattern. <strong>RouteLLM</strong> (Berkeley/LM-Sys) routes between strong and weak models, achieving <strong>85% cost reduction while maintaining 95% of GPT-4 quality</strong> on MT Bench. <strong>LiteLLM</strong> provides a unified OpenAI-compatible gateway with declarative routing policies: "if prompt contains PII, use local model." Fallback chains (local → cloud on failure) and three-tier routing (small/medium/large) are built-in. <strong>NVIDIA's LLM Router v2 Blueprint</strong> uses a Qwen 1.75B intent classifier or CLIP embeddings to match queries to optimal models. For Kubernetes environments, Red Hat's <strong>vLLM Semantic Router</strong> uses a Rust-based ModernBERT classifier with Envoy integration.</p>
+
+<p>A practical sovereign AI stack would look like:</p>
+
+<ul>
+<li><strong>Jetson Orin Nano</strong>: Nanochat 561M model via Ollama (native install, fully offline), handling classification, simple Q&A, privacy filtering</li>
+<li><strong>Gateway machine</strong>: LiteLLM proxy routing between local Ollama endpoint (port 11434) and cloud API, with policy enforcement for data sensitivity</li>
+<li><strong>Cloud tier</strong>: GPT-4/Claude via API for complex reasoning, activated only when network is available and query passes sensitivity screening</li>
+<li><strong>Session state</strong>: Local SQLite or Redis storing conversation transcripts, entity extractions, and context summaries for handoff enrichment</li>
+</ul>
+
+<p>The critical limitation is that a 561M model will struggle with multi-step reasoning, nuanced coding, or complex math — but that's precisely why the relay exists. The local model's job is fast triage and privacy enforcement, not deep reasoning.</p>
+
+<p>For context continuity across model handoffs, the local model maintains a JSON conversation log and entity store. When routing to cloud, it transmits a compressed context bundle: conversation summary, extracted entities, task classification, and the raw last few turns. The cloud model receives this as an enriched system prompt. Responses flow back through the local session, maintaining a unified conversation record.</p>
+
+<hr>
+
+<h2>Conclusion: transparent training meets practical edge deployment</h2>
+
+<p>Nanochat occupies a unique position in the LLM landscape — it is neither an inference runtime (llama.cpp, Ollama) nor a production serving system (vLLM), but the <strong>only complete, minimal, hackable training-through-deployment pipeline</strong> for ChatGPT-class models. Its ~8,300-line codebase is essentially hand-written (Karpathy noted that Claude/Codex agents were "net unhelpful" because the code is too far off their training distribution).</p>
+
+<p>Three insights matter most for sovereign AI infrastructure builders. First, the single-dial depth architecture makes it trivial to train models precisely sized for target hardware — a d12 (~124M) for extremely constrained devices, d20 (~561M) for Jetson-class edge, or d32 (~1.88B) for beefier edge servers. Second, the complete training pipeline means you can retrain from scratch on domain-specific data in a fully auditable, air-gappable process — the entire dataset, code, and training procedure is transparent and reproducible. Third, the <strong>~561M model at INT4 quantization fits in under 300 MB of memory</strong>, making it viable as an always-on local triage agent even on $249 hardware, while the relay architecture delegates complex work to more capable systems when connectivity and policy allow.</p>
+
+<p>The gap between nanochat's educational focus and production deployment is real but bridgeable: community exports to GGUF and ONNX already exist, Ollama can serve the converted models, and frameworks like LiteLLM and RouteLLM provide the routing logic. The missing piece — which nanochat's design invites community contribution on — is persistent context management, conversation memory, and automatic query complexity classification tuned for relay routing decisions.</p>
+  </div>
+
+  <div class="status-bar">
+    <div>Document: Done</div>
+    <div>Aethryn Validation</div>
+  </div>
+</div>
+</body>
+</html>
