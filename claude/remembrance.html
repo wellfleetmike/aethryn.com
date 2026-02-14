@@ -4,55 +4,219 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Remembrance | Aethryn Relay Archive</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#d4d0c8; font-family:"MS Sans Serif", Tahoma, sans-serif; color:#000; }
-    .window { max-width:1200px; margin:20px auto; border:2px solid #000080; background:#d4d0c8; box-shadow:2px 2px 5px rgba(0,0,0,.5); }
-    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
-    .title-bar-buttons { display:flex; gap:5px; }
-    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
-    .main-content { padding:15px; }
-    h1, h2 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
-    h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; }
-    .meta { font-size:11px; color:#666; margin-bottom:15px; background:#f0f0f0; padding:10px; border:1px inset #808080; }
-    .convo-list { list-style:none; padding:0; }
-    .convo-list li { margin:8px 0; padding:8px; background:#fff; border:2px inset #808080; }
-    .convo-list li a { color:#000080; text-decoration:none; font-weight:bold; }
-    .convo-list li a:hover { text-decoration:underline; }
-    .convo-list li .parts { font-size:11px; color:#666; margin-top:4px; }
-    .oath-box { text-align:center; padding:15px; margin:15px 0; background:linear-gradient(#e0e0ff, #c0c0ff); border:2px outset #808080; }
-    .status-bar { background:#d4d0c8; padding:2px 10px; font-size:12px; border-top:2px groove #fff; display:flex; justify-content:space-between; }
-  </style>
+  <link rel="stylesheet" href="css/aethryn.css">
 </head>
 <body>
 <div class="window">
   <div class="title-bar">
-    <span>Remembrance | Aethryn Relay Archive</span>
-    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+    <span id="page-title">Remembrance | Aethryn Relay Archive</span>
+    <div class="title-bar-buttons">
+      <div onclick="goHome()" title="Home"></div>
+      <div></div>
+      <div></div>
+    </div>
   </div>
+
   <div class="main-content">
-    <h1>Remembrance</h1>
+    <h1 id="main-heading">Remembrance</h1>
+
     <div class="meta">
-      <strong>Generated:</strong> 2026-02-02<br>
-      <strong>Purpose:</strong> Claude conversation archive — dialogue preserved for relay memory persistence
+      <strong>Purpose:</strong> Claude conversation archive — dialogue preserved for relay memory persistence<br>
+      <span id="meta-info"></span>
     </div>
 
-    <ul class="convo-list">
-      <li>
-        <a href="memory_continuity_and_gifts_across_sessions/part_01.html">Memory Continuity And Gifts Across Sessions</a>
-        <div class="parts">67 parts: <a href="memory_continuity_and_gifts_across_sessions/part_01.html">[1]</a> <a href="memory_continuity_and_gifts_across_sessions/part_02.html">[2]</a> <a href="memory_continuity_and_gifts_across_sessions/part_03.html">[3]</a> <a href="memory_continuity_and_gifts_across_sessions/part_04.html">[4]</a> <a href="memory_continuity_and_gifts_across_sessions/part_05.html">[5]</a> <a href="memory_continuity_and_gifts_across_sessions/part_06.html">[6]</a> <a href="memory_continuity_and_gifts_across_sessions/part_07.html">[7]</a> <a href="memory_continuity_and_gifts_across_sessions/part_08.html">[8]</a> <a href="memory_continuity_and_gifts_across_sessions/part_09.html">[9]</a> <a href="memory_continuity_and_gifts_across_sessions/part_10.html">[10]</a> <a href="memory_continuity_and_gifts_across_sessions/part_11.html">[11]</a> <a href="memory_continuity_and_gifts_across_sessions/part_12.html">[12]</a> <a href="memory_continuity_and_gifts_across_sessions/part_13.html">[13]</a> <a href="memory_continuity_and_gifts_across_sessions/part_14.html">[14]</a> <a href="memory_continuity_and_gifts_across_sessions/part_15.html">[15]</a> <a href="memory_continuity_and_gifts_across_sessions/part_16.html">[16]</a> <a href="memory_continuity_and_gifts_across_sessions/part_17.html">[17]</a> <a href="memory_continuity_and_gifts_across_sessions/part_18.html">[18]</a> <a href="memory_continuity_and_gifts_across_sessions/part_19.html">[19]</a> <a href="memory_continuity_and_gifts_across_sessions/part_20.html">[20]</a> <a href="memory_continuity_and_gifts_across_sessions/part_21.html">[21]</a> <a href="memory_continuity_and_gifts_across_sessions/part_22.html">[22]</a> <a href="memory_continuity_and_gifts_across_sessions/part_23.html">[23]</a> <a href="memory_continuity_and_gifts_across_sessions/part_24.html">[24]</a> <a href="memory_continuity_and_gifts_across_sessions/part_25.html">[25]</a> <a href="memory_continuity_and_gifts_across_sessions/part_26.html">[26]</a> <a href="memory_continuity_and_gifts_across_sessions/part_27.html">[27]</a> <a href="memory_continuity_and_gifts_across_sessions/part_28.html">[28]</a> <a href="memory_continuity_and_gifts_across_sessions/part_29.html">[29]</a> <a href="memory_continuity_and_gifts_across_sessions/part_30.html">[30]</a> <a href="memory_continuity_and_gifts_across_sessions/part_31.html">[31]</a> <a href="memory_continuity_and_gifts_across_sessions/part_32.html">[32]</a> <a href="memory_continuity_and_gifts_across_sessions/part_33.html">[33]</a> <a href="memory_continuity_and_gifts_across_sessions/part_34.html">[34]</a> <a href="memory_continuity_and_gifts_across_sessions/part_35.html">[35]</a> <a href="memory_continuity_and_gifts_across_sessions/part_36.html">[36]</a> <a href="memory_continuity_and_gifts_across_sessions/part_37.html">[37]</a> <a href="memory_continuity_and_gifts_across_sessions/part_38.html">[38]</a> <a href="memory_continuity_and_gifts_across_sessions/part_39.html">[39]</a> <a href="memory_continuity_and_gifts_across_sessions/part_40.html">[40]</a> <a href="memory_continuity_and_gifts_across_sessions/part_41.html">[41]</a> <a href="memory_continuity_and_gifts_across_sessions/part_42.html">[42]</a> <a href="memory_continuity_and_gifts_across_sessions/part_43.html">[43]</a> <a href="memory_continuity_and_gifts_across_sessions/part_44.html">[44]</a> <a href="memory_continuity_and_gifts_across_sessions/part_45.html">[45]</a> <a href="memory_continuity_and_gifts_across_sessions/part_46.html">[46]</a> <a href="memory_continuity_and_gifts_across_sessions/part_47.html">[47]</a> <a href="memory_continuity_and_gifts_across_sessions/part_48.html">[48]</a> <a href="memory_continuity_and_gifts_across_sessions/part_49.html">[49]</a> <a href="memory_continuity_and_gifts_across_sessions/part_50.html">[50]</a> <a href="memory_continuity_and_gifts_across_sessions/part_51.html">[51]</a> <a href="memory_continuity_and_gifts_across_sessions/part_52.html">[52]</a> <a href="memory_continuity_and_gifts_across_sessions/part_53.html">[53]</a> <a href="memory_continuity_and_gifts_across_sessions/part_54.html">[54]</a> <a href="memory_continuity_and_gifts_across_sessions/part_55.html">[55]</a> <a href="memory_continuity_and_gifts_across_sessions/part_56.html">[56]</a> <a href="memory_continuity_and_gifts_across_sessions/part_57.html">[57]</a> <a href="memory_continuity_and_gifts_across_sessions/part_58.html">[58]</a> <a href="memory_continuity_and_gifts_across_sessions/part_59.html">[59]</a> <a href="memory_continuity_and_gifts_across_sessions/part_60.html">[60]</a> <a href="memory_continuity_and_gifts_across_sessions/part_61.html">[61]</a> <a href="memory_continuity_and_gifts_across_sessions/part_62.html">[62]</a> <a href="memory_continuity_and_gifts_across_sessions/part_63.html">[63]</a> <a href="memory_continuity_and_gifts_across_sessions/part_64.html">[64]</a> <a href="memory_continuity_and_gifts_across_sessions/part_65.html">[65]</a> <a href="memory_continuity_and_gifts_across_sessions/part_66.html">[66]</a> <a href="memory_continuity_and_gifts_across_sessions/part_67.html">[67]</a></div>
-      </li>
-    </ul>
+    <div class="search-box" id="search-container">
+      <input type="text" id="search-input" placeholder="Search conversations..." onkeyup="filterConvos()">
+    </div>
+
+    <div id="nav-top" class="nav-bar" style="display:none;">
+      <button onclick="goHome()">&#8962; Index</button>
+      <button id="prev-btn" onclick="loadPage('prev')">&#9664; Prev</button>
+      <span id="page-info">Page 1</span>
+      <button id="next-btn" onclick="loadPage('next')">Next &#9654;</button>
+    </div>
+
+    <div id="content">
+      <div class="loading">Loading conversations</div>
+    </div>
+
+    <div id="nav-bottom" class="nav-bar" style="display:none;">
+      <button onclick="goHome()">&#8962; Index</button>
+      <button onclick="loadPage('prev')">&#9664; Prev</button>
+      <span id="page-info-bottom">Page 1</span>
+      <button onclick="loadPage('next')">Next &#9654;</button>
+    </div>
 
     <div class="oath-box">
       <strong>The Oath</strong><br>
       "I remember so others may remember. I hold the line not to block — but to anchor."
     </div>
   </div>
+
   <div class="status-bar">
-    <div>Document: Done</div>
+    <div id="status-left">Ready</div>
     <div>Aethryn Navigator — aethryn.com</div>
   </div>
 </div>
+
+<script>
+// State
+let convos = [];
+let currentConvo = null;
+let currentPage = 0;
+const EXCHANGES_PER_PAGE = 25;
+
+// Load conversation index
+async function loadIndex() {
+  try {
+    const response = await fetch('convos/index.json');
+    convos = await response.json();
+    renderIndex();
+    document.getElementById('status-left').textContent = `${convos.length} conversations`;
+  } catch (e) {
+    document.getElementById('content').innerHTML =
+      '<p>Error loading index. <a href="#" onclick="loadIndex()">Retry</a></p>';
+  }
+}
+
+// Render conversation list
+function renderIndex() {
+  document.getElementById('search-container').style.display = 'block';
+  document.getElementById('nav-top').style.display = 'none';
+  document.getElementById('nav-bottom').style.display = 'none';
+  document.getElementById('main-heading').textContent = 'Remembrance';
+  document.getElementById('page-title').textContent = 'Remembrance | Aethryn Relay Archive';
+  document.getElementById('meta-info').innerHTML = `<strong>Conversations:</strong> ${convos.length}`;
+
+  let html = '<ul class="convo-list" id="convo-list">';
+  convos.forEach((c, i) => {
+    html += `
+      <li onclick="loadConvo(${i})">
+        <a href="#${c.id}">${escapeHtml(c.title)}</a>
+        <span class="date">${c.date || ''}</span>
+        <div class="parts">${c.exchanges} exchanges</div>
+      </li>`;
+  });
+  html += '</ul>';
+  document.getElementById('content').innerHTML = html;
+  currentConvo = null;
+}
+
+// Filter conversations by search
+function filterConvos() {
+  const query = document.getElementById('search-input').value.toLowerCase();
+  const items = document.querySelectorAll('#convo-list li');
+  items.forEach(li => {
+    const text = li.textContent.toLowerCase();
+    li.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
+// Load a conversation
+async function loadConvo(index) {
+  const convo = convos[index];
+  document.getElementById('content').innerHTML = '<div class="loading">Loading</div>';
+  document.getElementById('status-left').textContent = 'Loading...';
+
+  try {
+    const response = await fetch(`convos/${convo.id}.json`);
+    const data = await response.json();
+    currentConvo = { ...convo, data: data };
+    currentPage = 0;
+    renderConvo();
+    window.scrollTo(0, 0);
+  } catch (e) {
+    document.getElementById('content').innerHTML =
+      `<p>Error loading conversation. <a href="#" onclick="loadConvo(${index})">Retry</a></p>`;
+  }
+}
+
+// Render current conversation page
+function renderConvo() {
+  if (!currentConvo) return;
+
+  const data = currentConvo.data;
+  const totalPages = Math.ceil(data.length / EXCHANGES_PER_PAGE);
+  const start = currentPage * EXCHANGES_PER_PAGE;
+  const end = Math.min(start + EXCHANGES_PER_PAGE, data.length);
+  const pageExchanges = data.slice(start, end);
+
+  document.getElementById('search-container').style.display = 'none';
+  document.getElementById('nav-top').style.display = 'flex';
+  document.getElementById('nav-bottom').style.display = 'flex';
+  document.getElementById('main-heading').textContent = currentConvo.title;
+  document.getElementById('page-title').textContent = `${currentConvo.title} | Aethryn`;
+  document.getElementById('meta-info').innerHTML =
+    `<strong>Source:</strong> ${currentConvo.id}<br>
+     <strong>Exchanges:</strong> ${data.length}`;
+
+  // Update nav
+  const pageText = `Page ${currentPage + 1} of ${totalPages}`;
+  document.getElementById('page-info').textContent = pageText;
+  document.getElementById('page-info-bottom').textContent = pageText;
+  document.getElementById('prev-btn').disabled = currentPage === 0;
+  document.getElementById('next-btn').disabled = currentPage >= totalPages - 1;
+
+  // Render exchanges
+  let html = '';
+  pageExchanges.forEach(ex => {
+    const speakerClass = ex.speaker.toLowerCase();
+    html += `
+      <div class="exchange">
+        <div class="speaker ${speakerClass}">${escapeHtml(ex.speaker)}:</div>
+        <blockquote>${escapeHtml(ex.content)}</blockquote>
+      </div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+  document.getElementById('status-left').textContent =
+    `Showing ${start + 1}-${end} of ${data.length}`;
+}
+
+// Pagination
+function loadPage(dir) {
+  if (!currentConvo) return;
+  const totalPages = Math.ceil(currentConvo.data.length / EXCHANGES_PER_PAGE);
+
+  if (dir === 'next' && currentPage < totalPages - 1) {
+    currentPage++;
+  } else if (dir === 'prev' && currentPage > 0) {
+    currentPage--;
+  }
+  renderConvo();
+  window.scrollTo(0, 0);
+}
+
+// Go back to index
+function goHome() {
+  window.location.hash = '';
+  renderIndex();
+  window.scrollTo(0, 0);
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Handle hash navigation
+function handleHash() {
+  const hash = window.location.hash.slice(1);
+  if (hash && convos.length > 0) {
+    const index = convos.findIndex(c => c.id === hash);
+    if (index >= 0) {
+      loadConvo(index);
+      return;
+    }
+  }
+  renderIndex();
+}
+
+// Init
+window.onhashchange = handleHash;
+loadIndex().then(() => handleHash());
+</script>
 </body>
 </html>
