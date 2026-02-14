@@ -33,7 +33,12 @@
     </div>
 
     <div class="search-box" id="search-container">
-      <input type="text" id="search-input" placeholder="Search conversations..." onkeyup="filterConvos()">
+      <input type="text" id="search-input" placeholder="Search titles or content..." onkeyup="handleSearch()">
+      <div id="search-mode" style="font-size:11px; margin-top:4px; color:#666;">
+        <label><input type="radio" name="smode" value="title" checked onchange="handleSearch()"> Titles</label>
+        <label style="margin-left:10px;"><input type="radio" name="smode" value="content" onchange="handleSearch()"> Content</label>
+        <span id="search-status" style="margin-left:15px;"></span>
+      </div>
     </div>
 
     <div id="nav-top" class="nav-bar" style="display:none;">
@@ -109,14 +114,153 @@ function renderIndex() {
   currentConvo = null;
 }
 
-// Filter conversations by search
-function filterConvos() {
-  const query = document.getElementById('search-input').value.toLowerCase();
+// Content cache for full-text search
+let contentCache = null;
+let contentLoading = false;
+
+// Load all conversation content for searching
+async function loadAllContent() {
+  if (contentCache) return contentCache;
+  if (contentLoading) return null;
+
+  contentLoading = true;
+  document.getElementById('search-status').textContent = 'Loading content...';
+
+  contentCache = {};
+  for (const c of convos) {
+    try {
+      const resp = await fetch(`convos/${c.id}.json`);
+      contentCache[c.id] = await resp.json();
+    } catch (e) {
+      contentCache[c.id] = [];
+    }
+  }
+
+  contentLoading = false;
+  document.getElementById('search-status').textContent = 'Ready';
+  return contentCache;
+}
+
+// Get search mode
+function getSearchMode() {
+  const radio = document.querySelector('input[name="smode"]:checked');
+  return radio ? radio.value : 'title';
+}
+
+// Handle search input
+async function handleSearch() {
+  const query = document.getElementById('search-input').value.toLowerCase().trim();
+  const mode = getSearchMode();
+
+  if (mode === 'title') {
+    filterByTitle(query);
+  } else {
+    await searchContent(query);
+  }
+}
+
+// Filter by title only
+function filterByTitle(query) {
   const items = document.querySelectorAll('#convo-list li');
+  if (items.length === 0) return;
+
   items.forEach(li => {
     const text = li.textContent.toLowerCase();
     li.style.display = text.includes(query) ? '' : 'none';
   });
+  document.getElementById('search-status').textContent = '';
+}
+
+// Search through content
+async function searchContent(query) {
+  if (query.length < 2) {
+    renderIndex();
+    document.getElementById('search-status').textContent = 'Type 2+ chars to search';
+    return;
+  }
+
+  const cache = await loadAllContent();
+  if (!cache) return;
+
+  const results = [];
+
+  for (const c of convos) {
+    const exchanges = cache[c.id] || [];
+    for (let i = 0; i < exchanges.length; i++) {
+      const ex = exchanges[i];
+      const idx = ex.content.toLowerCase().indexOf(query);
+      if (idx >= 0) {
+        // Get snippet around match
+        const start = Math.max(0, idx - 40);
+        const end = Math.min(ex.content.length, idx + query.length + 40);
+        let snippet = ex.content.slice(start, end);
+        if (start > 0) snippet = '...' + snippet;
+        if (end < ex.content.length) snippet = snippet + '...';
+
+        results.push({
+          convo: c,
+          convoIndex: convos.indexOf(c),
+          exchangeIndex: i,
+          speaker: ex.speaker,
+          snippet: snippet,
+          query: query
+        });
+
+        // Limit results per conversation
+        if (results.filter(r => r.convo.id === c.id).length >= 3) break;
+      }
+    }
+  }
+
+  renderSearchResults(results, query);
+}
+
+// Render search results
+function renderSearchResults(results, query) {
+  document.getElementById('search-status').textContent = `${results.length} matches`;
+
+  if (results.length === 0) {
+    document.getElementById('content').innerHTML = '<p>No matches found.</p>';
+    return;
+  }
+
+  let html = '<div class="search-results">';
+
+  // Group by conversation
+  const grouped = {};
+  results.forEach(r => {
+    if (!grouped[r.convo.id]) {
+      grouped[r.convo.id] = { convo: r.convo, convoIndex: r.convoIndex, matches: [] };
+    }
+    grouped[r.convo.id].matches.push(r);
+  });
+
+  for (const g of Object.values(grouped)) {
+    html += `
+      <div class="search-result-group">
+        <div class="search-result-title" onclick="loadConvo(${g.convoIndex})">
+          <a href="#${g.convo.id}">${escapeHtml(g.convo.title)}</a>
+          <span class="date">${g.convo.date || ''}</span>
+        </div>`;
+
+    g.matches.forEach(m => {
+      // Highlight the match in snippet
+      const highlighted = escapeHtml(m.snippet).replace(
+        new RegExp(escapeHtml(query), 'gi'),
+        '<mark>$&</mark>'
+      );
+      html += `
+        <div class="search-result-match">
+          <span class="speaker ${m.speaker.toLowerCase()}">${m.speaker}:</span>
+          <span class="snippet">${highlighted}</span>
+        </div>`;
+    });
+
+    html += '</div>';
+  }
+
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
 }
 
 // Load a conversation
