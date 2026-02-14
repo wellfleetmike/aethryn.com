@@ -175,6 +175,14 @@ button:active {
   border:2px inset #808080;
 }
 
+.signature {
+  padding:15px;
+  margin:20px 0;
+  background:#f8f8ff;
+  border:2px groove #808080;
+  font-size:12px;
+}
+
 .meta {
   font-size:11px;
   color:#666;

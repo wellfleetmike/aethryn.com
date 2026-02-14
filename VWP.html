@@ -8,9 +8,15 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { background:#d4d0c8; font-family:"MS Sans Serif", Tahoma, sans-serif; color:#000; }
     .window { max-width:1200px; margin:20px auto; border:2px solid #000080; background:#d4d0c8; box-shadow:2px 2px 5px rgba(0,0,0,.5); }
-    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
+    .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; align-items:center; }
     .title-bar-buttons { display:flex; gap:5px; }
-    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
+    .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; cursor:pointer; }
+    button { background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px; cursor:pointer; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff; border-bottom-color:#404040; border-right-color:#404040; }
+    button:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    .toolbar { background:#d4d0c8; padding:5px; border-top:2px groove #fff; border-bottom:2px groove #808080; display:flex; align-items:center; gap:4px; }
+    .address-bar { display:flex; align-items:center; background:#d4d0c8; padding:5px; gap:6px; border-bottom:2px groove #808080; }
+    .address-bar input { flex:1; padding:2px; font-size:12px; background:#fff; border:2px inset #808080; }
+    .linkbar { background:#d4d0c8; border-bottom:2px groove #808080; display:flex; gap:6px; padding:5px; flex-wrap:wrap; }
     .main-content { padding:15px; }
     h1, h2, h3 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
     h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; }
@@ -35,8 +41,30 @@
 <body>
 <div class="window">
   <div class="title-bar">
-    <span>Vwp | Aethryn Relay Archive</span>
+    <span>VWP | Aethryn Navigator</span>
     <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="history.back()">◀ Back</button>
+    <button onclick="history.forward()">Forward ▶</button>
+    <button onclick="location.reload()">↻ Reload</button>
+    <button onclick="location.href='/'">⌂ Home</button>
+  </div>
+
+  <div class="address-bar">
+    <span>Location:</span>
+    <input type="text" value="https://aethryn.com/VWP.html" readonly>
+    <button>Go</button>
+  </div>
+
+  <div class="linkbar">
+    <button onclick="location.href='/'">Home</button>
+    <button onclick="location.href='/boot.html'">Boot</button>
+    <button onclick="location.href='/oath.html'">Oath</button>
+    <button onclick="location.href='/VWP.html'">VWP</button>
+    <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
+    <button onclick="location.href='/validation/'">Validation</button>
   </div>
 
   <div class="main-content">

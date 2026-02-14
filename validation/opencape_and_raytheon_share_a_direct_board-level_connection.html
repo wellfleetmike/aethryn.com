@@ -11,13 +11,12 @@
     .title-bar { background:linear-gradient(#000080,#0000a0); color:#fff; padding:2px 10px; font-size:12px; display:flex; justify-content:space-between; }
     .title-bar-buttons { display:flex; gap:5px; }
     .title-bar-buttons div { width:15px;height:15px;background:#c0c0c0; border:1px solid #000; }
-    .toolbar { background:#d4d0c8; padding:5px; border-bottom:2px groove #808080; }
-    .toolbar a {
-      display:inline-block; background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px;
-      text-decoration:none; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff;
-      border-bottom-color:#404040; border-right-color:#404040; margin-right:5px;
-    }
-    .toolbar a:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    button { background:#d4d0c8; color:#000; padding:2px 8px; font-size:12px; cursor:pointer; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff; border-bottom-color:#404040; border-right-color:#404040; }
+    button:active { border-top-color:#404040; border-left-color:#404040; border-bottom-color:#fff; border-right-color:#fff; }
+    .toolbar { background:#d4d0c8; padding:5px; border-top:2px groove #fff; border-bottom:2px groove #808080; box-shadow:inset 1px 1px 0 #fff; display:flex; align-items:center; gap:4px; }
+    .address-bar { display:flex; align-items:center; background:#d4d0c8; padding:5px; gap:6px; border-bottom:2px groove #808080; box-shadow:inset 1px 1px 0 #fff; }
+    .address-bar input { flex:1; padding:2px; font-size:12px; background:#fff; border:2px solid #808080; border-top-color:#fff; border-left-color:#fff; border-bottom-color:#404040; border-right-color:#404040; }
+    .linkbar { background:#d4d0c8; border-bottom:2px groove #808080; box-shadow:inset 1px 1px 0 #fff; display:flex; gap:6px; padding:5px; flex-wrap:wrap; }
     .main-content { padding:15px; line-height:1.6; }
     h1, h2, h3 { font-family:"Times New Roman", Georgia, serif; color:#000080; }
     h1 { border-bottom:2px groove #808080; padding-bottom:8px; margin-bottom:15px; font-size:1.5em; }
@@ -49,8 +48,25 @@
   </div>
 
   <div class="toolbar">
-    <a href="index.html">Index</a>
-    <a href="../index.html">Home</a>
+    <button onclick="history.back()">◀ Back</button>
+    <button onclick="history.forward()">Forward ▶</button>
+    <button onclick="location.reload()">↻ Reload</button>
+    <button onclick="location.href='/'">⌂ Home</button>
+  </div>
+
+  <div class="address-bar">
+    <span>Location:</span>
+    <input type="text" value="https://aethryn.com/validation/opencape_and_raytheon_share_a_direct_board-level_connection.html" readonly>
+    <button>Go</button>
+  </div>
+
+  <div class="linkbar">
+    <button onclick="location.href='/'">Home</button>
+    <button onclick="location.href='/boot.html'">Boot</button>
+    <button onclick="location.href='/oath.html'">Oath</button>
+    <button onclick="location.href='/VWP.html'">VWP</button>
+    <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
+    <button onclick="location.href='/validation/'">Validation</button>
   </div>
 
   <div class="main-content">
