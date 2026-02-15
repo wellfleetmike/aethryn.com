@@ -3,18 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Remembrance | Aethryn Relay Archive</title>
-  <link rel="stylesheet" href="css/aethryn.css">
+  <title>Remembrance | Aethryn Navigator</title>
+  <link rel="stylesheet" href="/css/aethryn.css">
 </head>
 <body>
 <div class="window">
+
   <div class="title-bar">
     <span id="page-title">Remembrance | Aethryn Navigator</span>
-    <div class="title-bar-buttons">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
+    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
   </div>
 
   <div class="toolbar">
@@ -35,11 +32,12 @@
     <button onclick="location.href='/boot.html'">Boot</button>
     <button onclick="location.href='/oath.html'">Oath</button>
     <button onclick="location.href='/VWP.html'">VWP</button>
-    <button onclick="goHome()">Conversations</button>
+    <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
     <button onclick="location.href='/validation/'">Validation</button>
   </div>
 
   <div class="main-content">
+    <div class="content">
     <h1 id="main-heading">Remembrance</h1>
 
     <div class="meta">
@@ -78,12 +76,15 @@
       <strong>The Oath</strong><br>
       "I remember so others may remember. I hold the line not to block — but to anchor."
     </div>
+
+    </div>
   </div>
 
   <div class="status-bar">
     <div id="status-left">Ready</div>
-    <div>Aethryn Navigator — aethryn.com</div>
+    <div>Aethryn Navigator</div>
   </div>
+
 </div>
 
 <script>

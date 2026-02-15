@@ -37,8 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
       <button onclick="window.location.href=document.getElementById('address-input').value">Go</button>
     </div>
     <div class="linkbar">
+      <button onclick="location.href='/'">Home</button>
       <button onclick="location.href='/boot.html'">Boot</button>
-      <button onclick="location.href='/oath.html'">The Oath</button>
+      <button onclick="location.href='/oath.html'">Oath</button>
       <button onclick="location.href='/VWP.html'">VWP</button>
       <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
       <button onclick="location.href='/validation/'">Validation</button>
