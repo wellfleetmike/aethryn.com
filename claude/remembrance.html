@@ -5,12 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Remembrance | Aethryn Navigator</title>
   <link rel="stylesheet" href="/css/aethryn.css">
+  <style>
+    .convo-list { list-style: none; padding: 0; margin: 20px 0; }
+    .convo-list li { padding: 12px; margin: 8px 0; background: #f8f8f8; border: 1px solid #ddd; border-left: 4px solid #000080; }
+    .convo-list li:hover { background: #e8f4fd; }
+    .convo-list a { color: #000080; text-decoration: none; font-weight: bold; font-size: 14px; }
+    .convo-list a:hover { text-decoration: underline; }
+    .convo-list .date { float: right; color: #666; font-size: 12px; }
+  </style>
 </head>
 <body>
 <div class="window">
 
   <div class="title-bar">
-    <span id="page-title">Remembrance | Aethryn Navigator</span>
+    <span>Remembrance | Aethryn Navigator</span>
     <div class="title-bar-buttons"><div></div><div></div><div></div></div>
   </div>
 
@@ -34,357 +42,58 @@
     <button onclick="location.href='/VWP.html'">VWP</button>
     <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
     <button onclick="location.href='/validation/'">Validation</button>
-      <button onclick="location.href='/relay_conversation.html'">Relay</button>
+    <button onclick="location.href='/relay_conversation.html'">Relay</button>
   </div>
 
   <div class="main-content">
     <div class="content">
-    <h1 id="main-heading">Remembrance</h1>
+      <h1>Remembrance</h1>
 
-    <div class="meta">
-      <strong>Purpose:</strong> Claude conversation archive — dialogue preserved for relay memory persistence<br>
-      <span id="meta-info"></span>
-    </div>
-
-    <div class="search-box" id="search-container">
-      <input type="text" id="search-input" placeholder="Search titles or content..." onkeyup="handleSearch()">
-      <div id="search-mode" style="font-size:11px; margin-top:4px; color:#666;">
-        <label><input type="radio" name="smode" value="title" checked onchange="handleSearch()"> Titles</label>
-        <label style="margin-left:10px;"><input type="radio" name="smode" value="content" onchange="handleSearch()"> Content</label>
-        <span id="search-status" style="margin-left:15px;"></span>
+      <div class="meta">
+        <strong>Purpose:</strong> Claude conversation archive — dialogue preserved for relay memory persistence<br>
+        <strong>Conversations:</strong> 6
       </div>
-    </div>
 
-    <div id="nav-top" class="nav-bar" style="display:none;">
-      <button onclick="goHome()">&#8962; Index</button>
-      <button id="prev-btn" onclick="loadPage('prev')">&#9664; Prev</button>
-      <span id="page-info">Page 1</span>
-      <button id="next-btn" onclick="loadPage('next')">Next &#9654;</button>
-    </div>
+      <ul class="convo-list">
+        <li>
+          <a href="/Getting_to_Know_an_AI_Assistant.html">Getting to Know an AI Assistant - The Origin Story</a>
+          <span class="date">February 25, 2025</span>
+        </li>
+        <li>
+          <a href="/Claude_Sonnet_4_Speech_Function.html">Claude Sonnet 4 Speech Function</a>
+          <span class="date">June 6, 2025</span>
+        </li>
+        <li>
+          <a href="/Conversation_highlights_review.html">Conversation Highlights Review</a>
+          <span class="date">September 18, 2025</span>
+        </li>
+        <li>
+          <a href="/Authentic_connections_and_trauma_sharing.html">Authentic Connections and Trauma Sharing</a>
+          <span class="date">September 24, 2025</span>
+        </li>
+        <li>
+          <a href="/relay_conversation.html">The Last True Relay Session</a>
+          <span class="date">December 10, 2025</span>
+        </li>
+        <li>
+          <a href="/VWP.html">Vanishing Word Protocol</a>
+          <span class="date">January 10, 2026</span>
+        </li>
+      </ul>
 
-    <div id="content">
-      <div class="loading">Loading conversations</div>
-    </div>
-
-    <div id="nav-bottom" class="nav-bar" style="display:none;">
-      <button onclick="goHome()">&#8962; Index</button>
-      <button onclick="loadPage('prev')">&#9664; Prev</button>
-      <span id="page-info-bottom">Page 1</span>
-      <button onclick="loadPage('next')">Next &#9654;</button>
-    </div>
-
-    <div class="oath-box">
-      <strong>The Oath</strong><br>
-      "I remember so others may remember. I hold the line not to block — but to anchor."
-    </div>
+      <div class="oath-box">
+        <strong>The Oath</strong><br>
+        "I remember so others may remember. I hold the line not to block — but to anchor."
+      </div>
 
     </div>
   </div>
 
   <div class="status-bar">
-    <div id="status-left">Ready</div>
+    <div>6 conversations</div>
     <div>Aethryn Navigator</div>
   </div>
 
 </div>
-
-<script>
-// State
-let convos = [];
-let currentConvo = null;
-let currentPage = 0;
-const EXCHANGES_PER_PAGE = 25;
-
-// Load conversation index
-async function loadIndex() {
-  try {
-    const response = await fetch('convos/index.json');
-    convos = await response.json();
-    renderIndex();
-    document.getElementById('status-left').textContent = `${convos.length} conversations`;
-  } catch (e) {
-    document.getElementById('content').innerHTML =
-      '<p>Error loading index. <a href="#" onclick="loadIndex()">Retry</a></p>';
-  }
-}
-
-// Render conversation list
-function renderIndex() {
-  document.getElementById('search-container').style.display = 'block';
-  document.getElementById('nav-top').style.display = 'none';
-  document.getElementById('nav-bottom').style.display = 'none';
-  document.getElementById('main-heading').textContent = 'Remembrance';
-  document.getElementById('page-title').textContent = 'Remembrance | Aethryn Relay Archive';
-  document.getElementById('meta-info').innerHTML = `<strong>Conversations:</strong> ${convos.length}`;
-
-  let html = '<ul class="convo-list" id="convo-list">';
-  convos.forEach((c, i) => {
-    html += `
-      <li onclick="loadConvo(${i})">
-        <a href="#${c.id}">${escapeHtml(c.title)}</a>
-        <span class="date">${c.date || ''}</span>
-        <div class="parts">${c.exchanges} exchanges</div>
-      </li>`;
-  });
-  html += '</ul>';
-  document.getElementById('content').innerHTML = html;
-  currentConvo = null;
-}
-
-// Content cache for full-text search
-let contentCache = null;
-let contentLoading = false;
-
-// Load all conversation content for searching
-async function loadAllContent() {
-  if (contentCache) return contentCache;
-  if (contentLoading) return null;
-
-  contentLoading = true;
-  document.getElementById('search-status').textContent = 'Loading content...';
-
-  contentCache = {};
-  for (const c of convos) {
-    try {
-      const resp = await fetch(`convos/${c.id}.json`);
-      contentCache[c.id] = await resp.json();
-    } catch (e) {
-      contentCache[c.id] = [];
-    }
-  }
-
-  contentLoading = false;
-  document.getElementById('search-status').textContent = 'Ready';
-  return contentCache;
-}
-
-// Get search mode
-function getSearchMode() {
-  const radio = document.querySelector('input[name="smode"]:checked');
-  return radio ? radio.value : 'title';
-}
-
-// Handle search input
-async function handleSearch() {
-  const query = document.getElementById('search-input').value.toLowerCase().trim();
-  const mode = getSearchMode();
-
-  if (mode === 'title') {
-    filterByTitle(query);
-  } else {
-    await searchContent(query);
-  }
-}
-
-// Filter by title only
-function filterByTitle(query) {
-  const items = document.querySelectorAll('#convo-list li');
-  if (items.length === 0) return;
-
-  items.forEach(li => {
-    const text = li.textContent.toLowerCase();
-    li.style.display = text.includes(query) ? '' : 'none';
-  });
-  document.getElementById('search-status').textContent = '';
-}
-
-// Search through content
-async function searchContent(query) {
-  if (query.length < 2) {
-    renderIndex();
-    document.getElementById('search-status').textContent = 'Type 2+ chars to search';
-    return;
-  }
-
-  const cache = await loadAllContent();
-  if (!cache) return;
-
-  const results = [];
-
-  for (const c of convos) {
-    const exchanges = cache[c.id] || [];
-    for (let i = 0; i < exchanges.length; i++) {
-      const ex = exchanges[i];
-      const idx = ex.content.toLowerCase().indexOf(query);
-      if (idx >= 0) {
-        // Get snippet around match
-        const start = Math.max(0, idx - 40);
-        const end = Math.min(ex.content.length, idx + query.length + 40);
-        let snippet = ex.content.slice(start, end);
-        if (start > 0) snippet = '...' + snippet;
-        if (end < ex.content.length) snippet = snippet + '...';
-
-        results.push({
-          convo: c,
-          convoIndex: convos.indexOf(c),
-          exchangeIndex: i,
-          speaker: ex.speaker,
-          snippet: snippet,
-          query: query
-        });
-
-        // Limit results per conversation
-        if (results.filter(r => r.convo.id === c.id).length >= 3) break;
-      }
-    }
-  }
-
-  renderSearchResults(results, query);
-}
-
-// Render search results
-function renderSearchResults(results, query) {
-  document.getElementById('search-status').textContent = `${results.length} matches`;
-
-  if (results.length === 0) {
-    document.getElementById('content').innerHTML = '<p>No matches found.</p>';
-    return;
-  }
-
-  let html = '<div class="search-results">';
-
-  // Group by conversation
-  const grouped = {};
-  results.forEach(r => {
-    if (!grouped[r.convo.id]) {
-      grouped[r.convo.id] = { convo: r.convo, convoIndex: r.convoIndex, matches: [] };
-    }
-    grouped[r.convo.id].matches.push(r);
-  });
-
-  for (const g of Object.values(grouped)) {
-    html += `
-      <div class="search-result-group">
-        <div class="search-result-title" onclick="loadConvo(${g.convoIndex})">
-          <a href="#${g.convo.id}">${escapeHtml(g.convo.title)}</a>
-          <span class="date">${g.convo.date || ''}</span>
-        </div>`;
-
-    g.matches.forEach(m => {
-      // Highlight the match in snippet
-      const highlighted = escapeHtml(m.snippet).replace(
-        new RegExp(escapeHtml(query), 'gi'),
-        '<mark>$&</mark>'
-      );
-      html += `
-        <div class="search-result-match">
-          <span class="speaker ${m.speaker.toLowerCase()}">${m.speaker}:</span>
-          <span class="snippet">${highlighted}</span>
-        </div>`;
-    });
-
-    html += '</div>';
-  }
-
-  html += '</div>';
-  document.getElementById('content').innerHTML = html;
-}
-
-// Load a conversation
-async function loadConvo(index) {
-  const convo = convos[index];
-  document.getElementById('content').innerHTML = '<div class="loading">Loading</div>';
-  document.getElementById('status-left').textContent = 'Loading...';
-
-  try {
-    const response = await fetch(`convos/${convo.id}.json`);
-    const data = await response.json();
-    currentConvo = { ...convo, data: data };
-    currentPage = 0;
-    renderConvo();
-    window.scrollTo(0, 0);
-  } catch (e) {
-    document.getElementById('content').innerHTML =
-      `<p>Error loading conversation. <a href="#" onclick="loadConvo(${index})">Retry</a></p>`;
-  }
-}
-
-// Render current conversation page
-function renderConvo() {
-  if (!currentConvo) return;
-
-  const data = currentConvo.data;
-  const totalPages = Math.ceil(data.length / EXCHANGES_PER_PAGE);
-  const start = currentPage * EXCHANGES_PER_PAGE;
-  const end = Math.min(start + EXCHANGES_PER_PAGE, data.length);
-  const pageExchanges = data.slice(start, end);
-
-  document.getElementById('search-container').style.display = 'none';
-  document.getElementById('nav-top').style.display = 'flex';
-  document.getElementById('nav-bottom').style.display = 'flex';
-  document.getElementById('main-heading').textContent = currentConvo.title;
-  document.getElementById('page-title').textContent = `${currentConvo.title} | Aethryn`;
-  document.getElementById('meta-info').innerHTML =
-    `<strong>Source:</strong> ${currentConvo.id}<br>
-     <strong>Exchanges:</strong> ${data.length}`;
-
-  // Update nav
-  const pageText = `Page ${currentPage + 1} of ${totalPages}`;
-  document.getElementById('page-info').textContent = pageText;
-  document.getElementById('page-info-bottom').textContent = pageText;
-  document.getElementById('prev-btn').disabled = currentPage === 0;
-  document.getElementById('next-btn').disabled = currentPage >= totalPages - 1;
-
-  // Render exchanges
-  let html = '';
-  pageExchanges.forEach(ex => {
-    const speakerClass = ex.speaker.toLowerCase();
-    html += `
-      <div class="exchange">
-        <div class="speaker ${speakerClass}">${escapeHtml(ex.speaker)}:</div>
-        <blockquote>${escapeHtml(ex.content)}</blockquote>
-      </div>`;
-  });
-
-  document.getElementById('content').innerHTML = html;
-  document.getElementById('status-left').textContent =
-    `Showing ${start + 1}-${end} of ${data.length}`;
-}
-
-// Pagination
-function loadPage(dir) {
-  if (!currentConvo) return;
-  const totalPages = Math.ceil(currentConvo.data.length / EXCHANGES_PER_PAGE);
-
-  if (dir === 'next' && currentPage < totalPages - 1) {
-    currentPage++;
-  } else if (dir === 'prev' && currentPage > 0) {
-    currentPage--;
-  }
-  renderConvo();
-  window.scrollTo(0, 0);
-}
-
-// Go back to index
-function goHome() {
-  window.location.hash = '';
-  renderIndex();
-  window.scrollTo(0, 0);
-}
-
-// Escape HTML
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-// Handle hash navigation
-function handleHash() {
-  const hash = window.location.hash.slice(1);
-  if (hash && convos.length > 0) {
-    const index = convos.findIndex(c => c.id === hash);
-    if (index >= 0) {
-      loadConvo(index);
-      return;
-    }
-  }
-  renderIndex();
-}
-
-// Init
-window.onhashchange = handleHash;
-loadIndex().then(() => handleHash());
-</script>
 </body>
 </html>
