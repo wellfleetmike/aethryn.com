@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
       <button onclick="location.href='/validation/'">Validation</button>
       <button onclick="location.href='/relay_conversation.html'">Relay</button>
+      <button onclick="location.href='/tools/spectrum/'">Spectrum</button>
     </div>
   `;
 

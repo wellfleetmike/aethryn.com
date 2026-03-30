@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>US RF Spectrum Research Tool | Aethryn Navigator</title>
+  <link rel="stylesheet" href="/css/aethryn.css">
+  <style>
+    /* ============================================
+       SPECTRUM TOOL — Styles within Navigator chrome
+       Dark visualization area, tan Navigator shell
+       ============================================ */
+
+    /* Override main-content for the spectrum layout */
+    .spectrum-layout {
+      display: grid;
+      grid-template-rows: 1fr;
+      grid-template-columns: 1fr 380px;
+      background: #0d1117;
+      min-height: 60vh;
+      max-height: 75vh;
+      border: 2px inset #808080;
+    }
+
+    @media (max-width: 900px) {
+      .spectrum-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 50vh auto;
+      }
+    }
+
+    /* Spectrum variables */
+    :root {
+      --spec-bg-primary: #0d1117;
+      --spec-bg-secondary: #161b22;
+      --spec-bg-tertiary: #21262d;
+      --spec-border: #30363d;
+      --spec-text-primary: #e6edf3;
+      --spec-text-secondary: #8b949e;
+      --spec-text-muted: #484f58;
+      --spec-accent-blue: #58a6ff;
+      --spec-accent-green: #3fb950;
+      --spec-accent-red: #f85149;
+      --spec-accent-purple: #bc8cff;
+      --spec-accent-orange: #d29922;
+      --spec-accent-cyan: #39d2c0;
+      --band-govt: #f8514988;
+      --band-commercial: #58a6ff88;
+      --band-shared: #bc8cff88;
+      --band-ism: #3fb95088;
+      --band-unallocated: #30363d88;
+      --band-govt-solid: #f85149;
+      --band-commercial-solid: #58a6ff;
+      --band-shared-solid: #bc8cff;
+      --band-ism-solid: #3fb950;
+    }
+
+    /* Spectrum toolbar (inside the dark area) */
+    .spectrum-header {
+      background: var(--spec-bg-secondary);
+      border-bottom: 1px solid var(--spec-border);
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      gap: 12px;
+      grid-column: 1 / -1;
+      flex-wrap: wrap;
+    }
+
+    .spectrum-header h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--spec-text-primary);
+      white-space: nowrap;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    /* Search box */
+    #search-box {
+      flex: 1;
+      max-width: 360px;
+      position: relative;
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 5px 10px 5px 28px;
+      background: var(--spec-bg-tertiary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      color: var(--spec-text-primary);
+      font-size: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    #search-input:focus {
+      border-color: var(--spec-accent-blue);
+      box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.15);
+    }
+
+    #search-input::placeholder { color: var(--spec-text-muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--spec-text-muted);
+      font-size: 12px;
+    }
+
+    #search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--spec-bg-secondary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      margin-top: 4px;
+      max-height: 350px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+    }
+
+    .search-result-item {
+      padding: 6px 10px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--spec-border);
+      font-size: 12px;
+      color: var(--spec-text-primary);
+    }
+
+    .search-result-item:hover { background: var(--spec-bg-tertiary); }
+
+    .search-result-type {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--spec-text-muted);
+      margin-right: 6px;
+    }
+
+    /* Filter buttons */
+    .filter-group {
+      display: flex;
+      gap: 3px;
+    }
+
+    .filter-btn {
+      padding: 3px 8px;
+      font-size: 11px;
+      border: 1px solid var(--spec-border);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--spec-text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .filter-btn:hover { background: var(--spec-bg-tertiary); }
+    .filter-btn.active { background: var(--spec-bg-tertiary); color: var(--spec-text-primary); border-color: var(--spec-accent-blue); }
+    .filter-btn[data-filter="government"] { border-left: 3px solid var(--band-govt-solid); }
+    .filter-btn[data-filter="commercial"] { border-left: 3px solid var(--band-commercial-solid); }
+    .filter-btn[data-filter="shared"] { border-left: 3px solid var(--band-shared-solid); }
+    .filter-btn[data-filter="ism"] { border-left: 3px solid var(--band-ism-solid); }
+
+    #header-stats {
+      font-size: 11px;
+      color: var(--spec-text-muted);
+      white-space: nowrap;
+      margin-left: auto;
+    }
+
+    /* Spectrum container */
+    #spectrum-container {
+      overflow: hidden;
+      position: relative;
+      background: var(--spec-bg-primary);
+    }
+
+    #spectrum-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Band tooltips */
+    .band-tooltip {
+      position: absolute;
+      background: var(--spec-bg-secondary);
+      border: 1px solid var(--spec-border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 50;
+      max-width: 280px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      color: var(--spec-text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    .band-tooltip .freq-range { color: var(--spec-accent-cyan); font-weight: 600; }
+    .band-tooltip .service-name { color: var(--spec-text-primary); }
+    .band-tooltip .user-type { font-size: 11px; color: var(--spec-text-secondary); }
+
+    /* Legend */
+    #spectrum-legend {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      display: flex;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--spec-text-secondary);
+      background: var(--spec-bg-secondary);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--spec-border);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* Zoom controls */
+    #zoom-controls {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .zoom-btn {
+      width: 26px;
+      height: 26px;
+      background: var(--spec-bg-secondary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      color: var(--spec-text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .zoom-btn:hover { background: var(--spec-bg-tertiary); }
+
+    /* Frequency indicator */
+    #freq-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--spec-bg-secondary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: var(--spec-accent-cyan);
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+
+    /* Detail panel */
+    #detail-panel {
+      background: var(--spec-bg-secondary);
+      border-left: 1px solid var(--spec-border);
+      overflow-y: auto;
+      padding: 14px;
+      color: var(--spec-text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 13px;
+    }
+
+    #detail-panel h2 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--spec-text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    #detail-panel h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--spec-text-secondary);
+      margin: 14px 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+
+    /* Detail tabs */
+    .detail-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--spec-border);
+    }
+
+    .detail-tab {
+      padding: 6px 10px;
+      font-size: 12px;
+      color: var(--spec-text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .detail-tab:hover { color: var(--spec-text-primary); }
+    .detail-tab.active { color: var(--spec-accent-blue); border-bottom-color: var(--spec-accent-blue); }
+
+    /* Detail rows */
+    .detail-section { margin-bottom: 14px; }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      font-size: 12px;
+      border-bottom: 1px solid var(--spec-border);
+    }
+
+    .detail-row .label { color: var(--spec-text-secondary); }
+    .detail-row .value { color: var(--spec-text-primary); text-align: right; max-width: 55%; }
+    .detail-row .value.money { color: var(--spec-accent-green); font-family: 'SF Mono', Consolas, monospace; }
+
+    /* Company cards */
+    .company-card {
+      background: var(--spec-bg-tertiary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+
+    .company-card:hover { border-color: var(--spec-accent-blue); }
+    .company-card .name { font-weight: 600; font-size: 12px; color: var(--spec-text-primary); }
+    .company-card .type { font-size: 10px; color: var(--spec-text-muted); text-transform: uppercase; }
+    .company-card .amount { font-size: 12px; color: var(--spec-accent-green); font-family: 'SF Mono', Consolas, monospace; }
+
+    /* Auction items */
+    .auction-item {
+      background: var(--spec-bg-tertiary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+    }
+
+    .auction-item:hover { border-color: var(--spec-accent-blue); }
+    .auction-item .auction-name { font-weight: 600; font-size: 12px; }
+    .auction-item .auction-meta { font-size: 11px; color: var(--spec-text-secondary); display: flex; gap: 10px; margin-top: 3px; }
+
+    /* Rulemaking items */
+    .rulemaking-item {
+      background: var(--spec-bg-tertiary);
+      border: 1px solid var(--spec-border);
+      border-left: 3px solid var(--spec-accent-orange);
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .rulemaking-item .title { font-weight: 600; color: var(--spec-text-primary); }
+    .rulemaking-item .docket { color: var(--spec-accent-orange); font-family: monospace; }
+    .rulemaking-item .status { color: var(--spec-text-muted); font-size: 11px; }
+
+    /* Notes */
+    #notes-section textarea {
+      width: 100%;
+      min-height: 50px;
+      background: var(--spec-bg-tertiary);
+      border: 1px solid var(--spec-border);
+      border-radius: 4px;
+      color: var(--spec-text-primary);
+      padding: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    #notes-section .note-save-btn {
+      margin-top: 4px;
+      padding: 3px 10px;
+      background: var(--spec-accent-blue);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* ISM highlight */
+    .ism-highlight {
+      background: rgba(63, 185, 80, 0.1);
+      border: 1px solid var(--band-ism-solid);
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .ism-highlight h3 { color: var(--band-ism-solid); }
+
+    /* Welcome panel */
+    #detail-welcome {
+      color: var(--spec-text-muted);
+      text-align: center;
+      padding: 30px 16px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    #detail-welcome h2 {
+      color: var(--spec-text-secondary);
+      margin-bottom: 12px;
+    }
+
+    /* Loading */
+    .loading {
+      color: var(--spec-text-muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 16px;
+    }
+
+    /* Scrollbar inside spectrum area */
+    #detail-panel::-webkit-scrollbar { width: 6px; }
+    #detail-panel::-webkit-scrollbar-track { background: var(--spec-bg-primary); }
+    #detail-panel::-webkit-scrollbar-thumb { background: var(--spec-border); border-radius: 3px; }
+    #detail-panel::-webkit-scrollbar-thumb:hover { background: var(--spec-text-muted); }
+  </style>
+</head>
+<body>
+<div class="window">
+
+  <div class="title-bar">
+    <span>US RF Spectrum Research Tool | Aethryn Navigator</span>
+    <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="history.back()">&#9664; Back</button>
+    <button onclick="history.forward()">Forward &#9654;</button>
+    <button onclick="location.reload()">&#8635; Reload</button>
+    <button onclick="location.href='/'">&#8962; Home</button>
+    <div class="logo-small">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="bgSmall" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1E90FF"/>
+            <stop offset="100%" stop-color="#000080"/>
+          </linearGradient>
+        </defs>
+        <rect width="200" height="200" fill="url(#bgSmall)" />
+        <path d="M0 140 Q100 100 200 140 V200 H0 Z" fill="black"/>
+        <text x="50%" y="65%" text-anchor="middle" font-size="140" font-family="Times New Roman, Georgia, serif" fill="white">A</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="address-bar">
+    <span>Location:</span>
+    <input type="text" value="https://aethryn.com/tools/spectrum/" readonly>
+    <button>Go</button>
+  </div>
+
+  <div class="linkbar">
+    <button onclick="location.href='/'">Home</button>
+    <button onclick="location.href='/boot.html'">Boot</button>
+    <button onclick="location.href='/oath.html'">Oath</button>
+    <button onclick="location.href='/VWP.html'">VWP</button>
+    <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
+    <button onclick="location.href='/validation/'">Validation</button>
+    <button onclick="location.href='/relay_conversation.html'">Relay</button>
+    <button onclick="location.href='/tools/spectrum/'">Spectrum</button>
+  </div>
+
+  <!-- Spectrum header bar (dark) -->
+  <div class="spectrum-header">
+    <h2>US RF SPECTRUM</h2>
+
+    <div id="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="search-input" placeholder="Search frequency, company, service, auction...">
+      <div id="search-results"></div>
+    </div>
+
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="government">Govt</button>
+      <button class="filter-btn" data-filter="commercial">Commercial</button>
+      <button class="filter-btn" data-filter="shared">Shared</button>
+      <button class="filter-btn" data-filter="ism">ISM/Unlicensed</button>
+    </div>
+
+    <div id="header-stats"></div>
+  </div>
+
+  <!-- Two-column spectrum layout -->
+  <div class="spectrum-layout">
+    <!-- Left: visualization -->
+    <div id="spectrum-container">
+      <svg id="spectrum-svg"></svg>
+
+      <div id="zoom-controls">
+        <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
+        <button class="zoom-btn" id="zoom-out" title="Zoom Out">&minus;</button>
+        <button class="zoom-btn" id="zoom-reset" title="Reset View">&#8634;</button>
+      </div>
+
+      <div id="freq-indicator"></div>
+
+      <div id="spectrum-legend">
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--band-govt-solid)"></div>
+          Government
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--band-commercial-solid)"></div>
+          Commercial
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--band-shared-solid)"></div>
+          Shared
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--band-ism-solid)"></div>
+          ISM/Unlicensed
+        </div>
+      </div>
+
+      <div class="band-tooltip" id="band-tooltip" style="display:none"></div>
+    </div>
+
+    <!-- Right: detail panel -->
+    <div id="detail-panel">
+      <div id="detail-welcome">
+        <h2>US Radio Frequency Spectrum</h2>
+        <p>3 kHz &mdash; 300 GHz</p>
+        <p style="margin-top:10px">Click any band in the spectrum map to drill down.</p>
+        <p>Search by frequency, company name, or service type.</p>
+        <p style="margin-top:10px; font-size:11px">
+          Use scroll to zoom. Drag to pan.<br>
+          Click a band for allocation details, auction history,<br>
+          license holders, company profiles, and regulatory status.
+        </p>
+        <div id="db-stats" style="margin-top:20px; text-align:left; font-size:11px;"></div>
+      </div>
+      <div id="detail-content" style="display:none"></div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div>Document: Done</div>
+    <div>Aethryn Navigator</div>
+  </div>
+</div>
+
+<script src="/tools/spectrum/d3.v7.min.js"></script>
+<script src="/tools/spectrum/spectrum.js"></script>
+</body>
+</html>
