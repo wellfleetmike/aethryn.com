@@ -463,6 +463,21 @@
       margin-bottom: 12px;
     }
 
+    /* Follow the Money button */
+    .follow-money-btn {
+      background: #161b22;
+      color: #d29922;
+      border: 1px solid #d29922;
+      border-radius: 4px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .follow-money-btn:hover { background: #21262d; }
+
     /* Loading */
     .loading {
       color: #b0b0b0;
@@ -505,9 +520,20 @@
       <button class="filter-btn" data-filter="ism">ISM/Unlicensed</button>
     </div>
 
+    <button class="follow-money-btn" id="follow-money-btn" onclick="showFollowMoneyInput()">💰 Follow the Money</button>
+
     <a href="/" class="aethryn-home-btn">⌂ Aethryn</a>
 
     <div id="header-stats"></div>
+
+    <!-- Follow the Money input (hidden by default) -->
+    <div id="follow-money-bar" style="display:none;grid-column:1/-1;background:#161b22;padding:6px 12px;border-bottom:1px solid #30363d;display:none;align-items:center;gap:8px;">
+      <span style="color:#d29922;font-size:12px;font-weight:600">💰 Enter company:</span>
+      <input type="text" id="follow-money-input" placeholder="e.g. Verizon, AT&T, Dish Network, T-Mobile..."
+             style="flex:1;max-width:300px;padding:4px 8px;background:#21262d;border:1px solid #30363d;border-radius:4px;color:#e0e0e0;font-size:12px;outline:none;">
+      <button onclick="doFollowMoney()" style="background:#d29922;color:#000;border:none;border-radius:4px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer">Go</button>
+      <button onclick="hideFollowMoneyInput()" style="background:#21262d;color:#a0a0a0;border:1px solid #30363d;border-radius:4px;padding:4px 8px;font-size:11px;cursor:pointer">✕</button>
+    </div>
   </div>
 
   <!-- Left: visualization -->

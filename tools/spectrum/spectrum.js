@@ -15,6 +15,8 @@ let allGovtAllocations = [];
 let allRulemaking = [];
 let currentBand = null;
 let activeFilter = 'all';
+let followMoneyCompany = null;  // Name of company being tracked
+let followMoneyRanges = [];     // Frequency ranges to highlight
 
 // Notes in localStorage
 function getLocalNotes() {
@@ -281,6 +283,50 @@ function renderSpectrum(transform = d3.zoomIdentity) {
                 .text(ism.band_name || ism.freq_display || '');
         }
     });
+
+    // Follow the Money — highlight company spectrum holdings
+    if (followMoneyCompany && followMoneyRanges.length > 0) {
+        followMoneyRanges.forEach(range => {
+            const x1 = newScale(range.freq_lower_hz);
+            const x2 = newScale(range.freq_upper_hz);
+            if (x2 < 0 || x1 > width) return;
+
+            const bw = Math.max(x2 - x1, 3);
+            // Gold highlight bar
+            g.append('rect')
+                .attr('x', Math.max(x1, 0))
+                .attr('y', bandY - 6)
+                .attr('width', Math.min(bw, width - Math.max(x1, 0)))
+                .attr('height', yBandHeight + 12)
+                .attr('fill', 'rgba(210, 153, 34, 0.25)')
+                .attr('stroke', '#d29922')
+                .attr('stroke-width', 2)
+                .attr('pointer-events', 'none');
+
+            // Company marker at top
+            if (bw > 20) {
+                g.append('text')
+                    .attr('x', Math.max(x1, 0) + bw / 2)
+                    .attr('y', bandY - 10)
+                    .attr('text-anchor', 'middle')
+                    .attr('fill', '#d29922')
+                    .attr('font-size', '9px')
+                    .attr('font-weight', '600')
+                    .attr('pointer-events', 'none')
+                    .text(formatMoney(range.bid_amount));
+            }
+        });
+
+        // Company name label at top of map
+        g.append('text')
+            .attr('x', width / 2)
+            .attr('y', 14)
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#d29922')
+            .attr('font-size', '13px')
+            .attr('font-weight', '700')
+            .text('💰 ' + followMoneyCompany + ' — ' + followMoneyRanges.length + ' holdings');
+    }
 }
 
 function generateFreqTicks(min, max) {
@@ -541,12 +587,16 @@ function loadAuctionDetail(auctionNum) {
 }
 
 function loadCompanyByName(name) {
+    // Route through Follow the Money for full experience
+    followTheMoney(name);
+    return;
+
+    // Legacy code below kept for reference
     const company = allCompanies.find(c =>
         (c.name && c.name.toLowerCase().includes(name.toLowerCase())) ||
         (c.legal_name && c.legal_name.toLowerCase().includes(name.toLowerCase()))
     );
 
-    // Find all auction results for this company
     const holdings = allAuctionResults.filter(r =>
         r.company_name && r.company_name.toLowerCase().includes(name.toLowerCase())
     ).map(r => {
@@ -655,6 +705,151 @@ function loadNotes(fMin, fMax) {
             <div style="color:var(--spec-text-muted);font-size:10px;margin-top:3px">${n.created}</div>
         </div>
     `).join('');
+}
+
+// ============================================
+// FOLLOW THE MONEY
+// ============================================
+
+function followTheMoney(companyName) {
+    // Find the company profile
+    const company = allCompanies.find(c =>
+        (c.name && c.name.toLowerCase().includes(companyName.toLowerCase())) ||
+        (c.legal_name && c.legal_name.toLowerCase().includes(companyName.toLowerCase()))
+    );
+
+    // Build list of all names to search — parent + subsidiaries
+    const searchNames = [companyName.toLowerCase()];
+    if (company) {
+        if (company.name) searchNames.push(company.name.toLowerCase());
+        if (company.legal_name) searchNames.push(company.legal_name.toLowerCase());
+        if (company.subsidiaries) {
+            // Parse subsidiaries — could be JSON array or comma-separated
+            try {
+                const subs = JSON.parse(company.subsidiaries);
+                if (Array.isArray(subs)) subs.forEach(s => searchNames.push(s.toLowerCase()));
+            } catch {
+                company.subsidiaries.split(/[,;]/).forEach(s => {
+                    const trimmed = s.trim().toLowerCase();
+                    if (trimmed) searchNames.push(trimmed);
+                });
+            }
+        }
+    }
+
+    // Also find child companies whose parent matches
+    allCompanies.forEach(c => {
+        if (c.parent_company && searchNames.includes(c.parent_company.toLowerCase())) {
+            searchNames.push(c.name.toLowerCase());
+            if (c.legal_name) searchNames.push(c.legal_name.toLowerCase());
+        }
+    });
+
+    const uniqueNames = [...new Set(searchNames)];
+
+    // Find all auction results matching any of these names
+    const holdings = allAuctionResults.filter(r =>
+        r.company_name && uniqueNames.some(n => r.company_name.toLowerCase().includes(n))
+    ).map(r => {
+        const auction = allAuctions.find(a => a.auction_number === r.auction_number);
+        return {
+            ...r,
+            auction_name: auction?.auction_name,
+            freq_band: auction?.freq_band,
+            freq_lower_hz: auction?.freq_lower_hz,
+            freq_upper_hz: auction?.freq_upper_hz
+        };
+    }).filter(h => h.freq_lower_hz && h.freq_upper_hz);
+
+    // Set global state for map highlighting
+    followMoneyCompany = company?.name || companyName;
+    followMoneyRanges = holdings;
+
+    // Re-render map with highlights
+    renderSpectrum(d3.zoomTransform(svg.node()));
+
+    // Build the detail panel
+    const content = document.getElementById('detail-content');
+    document.getElementById('detail-welcome').style.display = 'none';
+    content.style.display = 'block';
+
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h2 style="margin:0">💰 ${escapeHtml(followMoneyCompany)}</h2>
+        <button onclick="clearFollowMoney()" style="background:#21262d;color:#d4d4d4;border:1px solid #30363d;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer">✕ Clear</button>
+    </div>`;
+
+    // Company profile
+    if (company) {
+        html += `<div class="detail-section">
+            ${company.legal_name ? `<div class="detail-row"><span class="label">Legal Name</span><span class="value">${escapeHtml(company.legal_name)}</span></div>` : ''}
+            ${company.parent_company ? `<div class="detail-row"><span class="label">Parent</span><span class="value">${escapeHtml(company.parent_company)}</span></div>` : ''}
+            ${company.company_type ? `<div class="detail-row"><span class="label">Type</span><span class="value">${escapeHtml(company.company_type)}</span></div>` : ''}
+            ${company.description ? `<div class="detail-row"><span class="label">Description</span><span class="value">${escapeHtml(company.description)}</span></div>` : ''}
+            ${company.headquarters ? `<div class="detail-row"><span class="label">HQ</span><span class="value">${escapeHtml(company.headquarters)}</span></div>` : ''}
+            ${company.govt_contracts ? `<div class="detail-row"><span class="label">Govt Contracts</span><span class="value">${escapeHtml(company.govt_contracts)}</span></div>` : ''}
+            ${company.defense_intel_connections ? `<div class="detail-row"><span class="label">Defense/Intel</span><span class="value">${escapeHtml(company.defense_intel_connections)}</span></div>` : ''}
+            ${company.subsidiaries ? `<div class="detail-row"><span class="label">Subsidiaries</span><span class="value">${escapeHtml(company.subsidiaries)}</span></div>` : ''}
+        </div>`;
+    }
+
+    // Searched names
+    if (uniqueNames.length > 1) {
+        html += `<div style="font-size:11px;color:#a0a0a0;margin-bottom:12px">Searched: ${uniqueNames.map(n => escapeHtml(n)).join(', ')}</div>`;
+    }
+
+    // Holdings summary
+    let totalSpent = 0;
+    let bandsSeen = new Set();
+    holdings.forEach(h => { totalSpent += h.bid_amount || 0; bandsSeen.add(h.freq_band || h.auction_name); });
+
+    html += `<div class="detail-section" style="background:#161b22;border:1px solid #d29922;border-radius:6px;padding:12px;margin-bottom:16px">
+        <div class="detail-row"><span class="label" style="color:#d29922;font-weight:600">Total Spectrum Spend</span><span class="value money" style="font-size:16px">${formatMoney(totalSpent)}</span></div>
+        <div class="detail-row"><span class="label">Auction Wins</span><span class="value">${holdings.length}</span></div>
+        <div class="detail-row"><span class="label">Unique Bands</span><span class="value">${bandsSeen.size}</span></div>
+    </div>`;
+
+    // All holdings sorted by frequency
+    if (holdings.length > 0) {
+        html += '<h3>All Holdings by Frequency</h3>';
+        holdings.sort((a, b) => (a.freq_lower_hz || 0) - (b.freq_lower_hz || 0));
+        holdings.forEach(h => {
+            html += `<div class="auction-item" data-freq-min="${h.freq_lower_hz}" data-freq-max="${h.freq_upper_hz}">
+                <div class="auction-name">${escapeHtml(h.auction_name || h.freq_band || 'Auction ' + h.auction_number)}</div>
+                <div class="auction-meta">
+                    <span style="color:var(--spec-accent-green);font-family:monospace">${formatMoney(h.bid_amount)}</span>
+                    <span>${escapeHtml(h.company_name || '')}</span>
+                    ${h.license_area ? `<span>${escapeHtml(h.license_area)}</span>` : ''}
+                </div>
+            </div>`;
+        });
+    } else {
+        html += '<p class="loading">No auction holdings found for this entity.</p>';
+    }
+
+    content.innerHTML = html;
+
+    // Wire up holding clicks
+    content.querySelectorAll('.auction-item[data-freq-min]').forEach(item => {
+        item.addEventListener('click', function() {
+            const fMin = parseFloat(this.dataset.freqMin);
+            const fMax = parseFloat(this.dataset.freqMax);
+            if (fMin && fMax) selectBandByFreq(fMin, fMax);
+        });
+    });
+
+    // Scroll to detail
+    setTimeout(() => {
+        document.getElementById('detail-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+}
+
+function clearFollowMoney() {
+    followMoneyCompany = null;
+    followMoneyRanges = [];
+    renderSpectrum(d3.zoomTransform(svg.node()));
+    document.getElementById('detail-content').style.display = 'none';
+    document.getElementById('detail-welcome').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ============================================
@@ -800,6 +995,40 @@ document.getElementById('zoom-out').addEventListener('click', () => {
 
 document.getElementById('zoom-reset').addEventListener('click', () => {
     svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity);
+});
+
+// ============================================
+// FOLLOW THE MONEY — UI Controls
+// ============================================
+
+function showFollowMoneyInput() {
+    const bar = document.getElementById('follow-money-bar');
+    bar.style.display = 'flex';
+    document.getElementById('follow-money-input').focus();
+}
+
+function hideFollowMoneyInput() {
+    document.getElementById('follow-money-bar').style.display = 'none';
+    document.getElementById('follow-money-input').value = '';
+}
+
+function doFollowMoney() {
+    const input = document.getElementById('follow-money-input');
+    const name = input.value.trim();
+    if (!name) return;
+    hideFollowMoneyInput();
+    followTheMoney(name);
+}
+
+// Enter key in follow money input
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('follow-money-input');
+    if (input) {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doFollowMoney();
+            if (e.key === 'Escape') hideFollowMoneyInput();
+        });
+    }
 });
 
 // ============================================
