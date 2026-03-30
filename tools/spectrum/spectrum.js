@@ -188,7 +188,22 @@ function renderSpectrum(transform = d3.zoomIdentity) {
 
     // Filter bands
     let bands = spectrumData.bands;
-    if (activeFilter !== 'all' && activeFilter !== 'ism') {
+    if (activeFilter === 'ism') {
+        // Show only bands that overlap with known ISM/unlicensed frequency ranges
+        const ismRanges = allIsmBands.length > 0 ? allIsmBands : [
+            { freq_lower_hz: 6765e3, freq_upper_hz: 6795e3 },
+            { freq_lower_hz: 13553e3, freq_upper_hz: 13567e3 },
+            { freq_lower_hz: 26957e3, freq_upper_hz: 27283e3 },
+            { freq_lower_hz: 902e6, freq_upper_hz: 928e6 },
+            { freq_lower_hz: 2400e6, freq_upper_hz: 2483.5e6 },
+            { freq_lower_hz: 5150e6, freq_upper_hz: 5825e6 },
+            { freq_lower_hz: 5925e6, freq_upper_hz: 7125e6 },
+            { freq_lower_hz: 57e9, freq_upper_hz: 71e9 }
+        ];
+        bands = bands.filter(b => ismRanges.some(ism =>
+            b.freq_lower_hz < ism.freq_upper_hz && b.freq_upper_hz > ism.freq_lower_hz
+        ));
+    } else if (activeFilter !== 'all') {
         bands = bands.filter(b => b.color_category === activeFilter);
     }
 

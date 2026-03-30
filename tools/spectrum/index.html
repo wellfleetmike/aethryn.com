@@ -27,20 +27,30 @@
       height: 100vh;
     }
 
-    /* Home link */
-    .home-link {
-      position: fixed;
-      top: 8px;
-      left: 12px;
-      z-index: 200;
-      color: #58a6ff;
+    /* Aethryn home button — beveled retro style matching homepage */
+    .aethryn-home-btn {
+      background: #d4d0c8;
+      color: #000080;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid #808080;
+      border-top-color: #fff;
+      border-left-color: #fff;
+      border-bottom-color: #404040;
+      border-right-color: #404040;
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
       text-decoration: none;
-      font-size: 12px;
-      font-weight: 600;
-      opacity: 0.7;
-      transition: opacity 0.2s;
+      display: inline-block;
+      white-space: nowrap;
     }
-    .home-link:hover { opacity: 1; }
+    .aethryn-home-btn:active {
+      border-top-color: #404040;
+      border-left-color: #404040;
+      border-bottom-color: #fff;
+      border-right-color: #fff;
+    }
 
     .spectrum-header { grid-column: 1 / -1; }
 
@@ -478,8 +488,6 @@
 <body>
 <div id="app">
 
-  <a href="/" class="home-link">Aethryn</a>
-
   <!-- Spectrum header bar -->
   <div class="spectrum-header">
     <h2>US RF SPECTRUM</h2>
@@ -497,6 +505,8 @@
       <button class="filter-btn" data-filter="shared">Shared</button>
       <button class="filter-btn" data-filter="ism">ISM/Unlicensed</button>
     </div>
+
+    <a href="/" class="aethryn-home-btn">⌂ Aethryn</a>
 
     <div id="header-stats"></div>
   </div>
