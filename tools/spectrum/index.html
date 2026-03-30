@@ -16,15 +16,14 @@
       background: #0d1117;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
       color: #e0e0e0;
-      overflow: hidden;
-      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     #app {
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-      grid-template-columns: 1fr 380px;
-      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     /* Aethryn home button — beveled retro style matching homepage */
@@ -52,17 +51,8 @@
       border-right-color: #fff;
     }
 
-    .spectrum-header { grid-column: 1 / -1; }
-
     .spectrum-layout {
       display: contents;
-    }
-
-    @media (max-width: 900px) {
-      #app {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto 50vh auto;
-      }
     }
 
     /* Spectrum variables */
@@ -211,12 +201,14 @@
       margin-left: auto;
     }
 
-    /* Spectrum container */
+    /* Spectrum container — fixed height, full width */
     #spectrum-container {
       overflow: hidden;
       position: relative;
       background: var(--spec-bg-primary);
-      grid-column: 1;
+      width: 100%;
+      height: 55vh;
+      min-height: 350px;
     }
 
     #spectrum-svg {
@@ -311,16 +303,17 @@
       font-family: 'SF Mono', Consolas, monospace;
     }
 
-    /* Detail panel */
+    /* Detail panel — below the map, full width */
     #detail-panel {
       background: var(--spec-bg-secondary);
-      border-left: 1px solid var(--spec-border);
-      overflow-y: auto;
-      padding: 14px;
+      border-top: 1px solid var(--spec-border);
+      padding: 20px;
       color: var(--spec-text-primary);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
       font-size: 13px;
-      grid-column: 2;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     #detail-panel h2 {
@@ -478,11 +471,17 @@
       padding: 16px;
     }
 
-    /* Scrollbar inside spectrum area */
-    #detail-panel::-webkit-scrollbar { width: 6px; }
-    #detail-panel::-webkit-scrollbar-track { background: var(--spec-bg-primary); }
-    #detail-panel::-webkit-scrollbar-thumb { background: var(--spec-border); border-radius: 3px; }
-    #detail-panel::-webkit-scrollbar-thumb:hover { background: var(--spec-text-muted); }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--spec-bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--spec-border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #606060; }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      #spectrum-container { height: 45vh; min-height: 280px; }
+      #detail-panel { padding: 14px; }
+    }
   </style>
 </head>
 <body>

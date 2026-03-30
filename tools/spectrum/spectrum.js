@@ -353,6 +353,11 @@ function selectBand(band) {
     const content = document.getElementById('detail-content');
     content.style.display = 'block';
 
+    // Scroll detail panel into view
+    setTimeout(() => {
+        document.getElementById('detail-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+
     // Filter data client-side
     const allocations = allAllocations.filter(a => a.freq_upper_hz >= fMin && a.freq_lower_hz <= fMax);
     const auctions = allAuctions.filter(a => a.freq_upper_hz >= fMin && a.freq_lower_hz <= fMax);
