@@ -55,7 +55,7 @@ function hz(v) {
   return v + ' Hz';
 }
 
-function $(n) { if (!n) return '$0'; if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B'; if (n >= 1e6) return '$' + (n/1e6).toFixed(0) + 'M'; if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K'; return '$' + n; }
+function fmt(n) { if (!n) return '$0'; if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B'; if (n >= 1e6) return '$' + (n/1e6).toFixed(0) + 'M'; if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K'; return '$' + n; }
 
 function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
@@ -176,7 +176,7 @@ function renderFollowMoneyPanel() {
   <h3 style="font-size:13px;font-weight:700;margin-bottom:4px">${esc(entity.name)}</h3>
   <div style="font-size:10px;color:var(--muted);margin-bottom:14px">${esc(entity.industry_description?.substring(0, 100) || '')}</div>
   <div class="stat-grid" style="grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">
-    <div class="stat-card gold" style="padding:8px"><div class="stat-value" style="font-size:16px">${$(totalSpend)}</div><div class="stat-label">Total Spend</div></div>
+    <div class="stat-card gold" style="padding:8px"><div class="stat-value" style="font-size:16px">${fmt(totalSpend)}</div><div class="stat-label">Total Spend</div></div>
     <div class="stat-card" style="padding:8px"><div class="stat-value" style="font-size:16px">${auctionCount}</div><div class="stat-label">Auctions</div></div>
   </div>
   <div class="section-title">Holdings (${holdings.length})</div>
@@ -184,7 +184,7 @@ function renderFollowMoneyPanel() {
 
   holdings.sort((a, b) => (b.bid_amount || 0) - (a.bid_amount || 0)).slice(0, 20).forEach(h => {
     html += `<div style="padding:3px 0;font-size:10px;display:flex;justify-content:space-between;border-bottom:1px solid var(--bg3)">
-      <span style="color:var(--text2)">${esc(h.bands || h.auction_name)}</span><span class="money">${$(h.bid_amount)}</span></div>`;
+      <span style="color:var(--text2)">${esc(h.bands || h.auction_name)}</span><span class="money">${fmt(h.bid_amount)}</span></div>`;
   });
 
   html += `</div><div class="section-title">Network (${relatedEntities.length})</div><div style="max-height:250px;overflow-y:auto">`;
@@ -192,7 +192,7 @@ function renderFollowMoneyPanel() {
     html += `<div style="padding:4px 0;border-bottom:1px solid var(--bg3);display:flex;justify-content:space-between;align-items:center">
       <div><button class="entity-link" onclick="selectEntity(${re.id})" style="font-size:10px">${esc(re.name)}</button>
       <div style="font-size:8px;color:var(--muted)">${re.status || ''} ${re.is_defense_contractor ? '| DOD' : ''}</div></div>
-      ${re.total_spectrum_spend > 0 ? `<span class="money" style="font-size:9px">${$(re.total_spectrum_spend)}</span>` : ''}
+      ${re.total_spectrum_spend > 0 ? `<span class="money" style="font-size:9px">${fmt(re.total_spectrum_spend)}</span>` : ''}
     </div>`;
   });
   html += '</div>';
@@ -259,7 +259,7 @@ function initSearch() {
         if (aMatches.length) {
           html += `<div class="sr-group-title">AUCTIONS</div>`;
           aMatches.forEach(a => {
-            html += `<div class="sr-item"><span class="sr-name">#${a.auction_number}: ${esc(a.name)}</span><span class="sr-meta">${$(a.total_revenue)}</span></div>`;
+            html += `<div class="sr-item"><span class="sr-name">#${a.auction_number}: ${esc(a.name)}</span><span class="sr-meta">${fmt(a.total_revenue)}</span></div>`;
           });
         }
       }
@@ -511,7 +511,7 @@ function renderBandDetail(el) {
       const winners = bids.filter(bid => bid.is_winner);
       const losers = bids.filter(bid => !bid.is_winner);
       html += `<div class="card" style="cursor:pointer">
-        <div style="display:flex;justify-content:space-between"><span class="card-title">Auction ${a.auction_number}: ${esc(a.name)}</span><span class="money">${$(a.total_revenue)}</span></div>
+        <div style="display:flex;justify-content:space-between"><span class="card-title">Auction ${a.auction_number}: ${esc(a.name)}</span><span class="money">${fmt(a.total_revenue)}</span></div>
         <div style="font-size:10px;color:var(--muted);margin-top:3px">${a.start_date} | ${a.num_bidders} bidders | ${a.num_winners} winners</div>`;
 
       if (winners.length) {
@@ -520,7 +520,7 @@ function renderBandDetail(el) {
           html += `<div style="padding:3px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--bg3)">
             <div><span style="color:var(--gold);margin-right:4px;font-weight:700">$</span>${bid.entity_id ? `<button class="entity-link" onclick="selectEntity(${bid.entity_id})">${esc(bid.entity_name||bid.bidder_name)}</button>` : esc(bid.bidder_name)}
             ${bid.is_defense_contractor ? '<span class="defense-flag" style="margin-left:4px">DOD</span>' : ''}</div>
-            <span style="color:var(--gold);font-weight:600;font-size:11px">${$(bid.bid_amount)}</span></div>`;
+            <span style="color:var(--gold);font-weight:600;font-size:11px">${fmt(bid.bid_amount)}</span></div>`;
         });
       }
       if (losers.length) {
@@ -528,7 +528,7 @@ function renderBandDetail(el) {
         losers.slice(0,8).forEach(bid => {
           html += `<div style="padding:2px 0;display:flex;justify-content:space-between;opacity:.7;font-size:11px">
             <span>${bid.entity_id ? `<button class="entity-link" onclick="selectEntity(${bid.entity_id})">${esc(bid.entity_name||bid.bidder_name)}</button>` : esc(bid.bidder_name)}</span>
-            <span style="color:var(--muted)">${$(bid.bid_amount)}</span></div>`;
+            <span style="color:var(--muted)">${fmt(bid.bid_amount)}</span></div>`;
         });
       }
       html += '</div>';
@@ -584,7 +584,7 @@ function renderEntityDetail(el) {
 
   // Stats
   html += `<div class="stat-grid" style="grid-template-columns:1fr 1fr;gap:6px;margin:14px 0">
-    <div class="stat-card gold" style="padding:8px"><div class="stat-value" style="font-size:16px">${$(e.total_spectrum_spend)}</div><div class="stat-label">Spend</div></div>
+    <div class="stat-card gold" style="padding:8px"><div class="stat-value" style="font-size:16px">${fmt(e.total_spectrum_spend)}</div><div class="stat-label">Spend</div></div>
     <div class="stat-card" style="padding:8px"><div class="stat-value" style="font-size:16px">${e.auction_count||0}</div><div class="stat-label">Auctions</div></div>
   </div>`;
 
@@ -620,7 +620,7 @@ function renderEntityDetail(el) {
       html += `<tr class="${b.is_winner ? 'winner' : ''}">
         <td style="font-size:10px">#${b.auction_number}</td>
         <td style="font-size:10px">${esc(b.bands||'')}</td>
-        <td class="money">${$(b.bid_amount)}</td>
+        <td class="money">${fmt(b.bid_amount)}</td>
         <td><span class="badge ${b.is_winner?'badge-gold':'badge-red'}">${b.is_winner?'WON':'LOST'}</span></td></tr>`;
     });
     html += '</tbody></table>';
@@ -698,7 +698,7 @@ function drawGraph(defenseOnly) {
 
   node.filter(d=>(d.total_spectrum_spend||0)>1e9).append('text').attr('dy',d=>-(rad(d)+4)).attr('text-anchor','middle')
     .attr('fill','#4a4a6a').attr('font-size','8px').attr('font-family','inherit').attr('pointer-events','none')
-    .text(d=>$(d.total_spectrum_spend));
+    .text(d=>fmt(d.total_spectrum_spend));
 
   const sim = d3.forceSimulation(nodes)
     .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>d.relationship_type==='parent-subsidiary'?50:100))
@@ -716,7 +716,7 @@ function showContextMenu(x, y, entity) {
   menu.innerHTML = `<button class="ctx-item" onclick="selectEntity(${entity.id});hideContextMenu()">View: ${esc(entity.name?.substring(0,25))}</button>
     <button class="ctx-item gold" onclick="activateFollowMoney(${entity.id});hideContextMenu()">$ Follow the Money</button>
     <div class="ctx-divider"></div>
-    <div style="padding:4px 10px;font-size:9px;color:var(--muted)">${$(entity.total_spectrum_spend)} | ${entity.is_defense_contractor?'DOD':''} ${entity.status||''}</div>`;
+    <div style="padding:4px 10px;font-size:9px;color:var(--muted)">${fmt(entity.total_spectrum_spend)} | ${entity.is_defense_contractor?'DOD':''} ${entity.status||''}</div>`;
   menu.style.left = x+'px'; menu.style.top = y+'px'; menu.style.display = 'block';
 }
 function hideContextMenu() { document.getElementById('context-menu').style.display = 'none'; }
@@ -736,7 +736,7 @@ function renderDefenseView() {
   defEntities.forEach(e => {
     html += `<tr class="defense"><td><button class="entity-link" onclick="selectEntity(${e.id})">${esc(e.name)}</button>
       <div style="font-size:8px;color:var(--muted)">${esc(e.industry_description?.substring(0,60)||'')}</div></td>
-      <td class="money">${$(e.total_spectrum_spend)}</td>
+      <td class="money">${fmt(e.total_spectrum_spend)}</td>
       <td><span class="badge badge-${e.status==='active'?'green':'amber'}">${esc(e.status)}</span></td>
       <td>${e.is_intel_community?'<span class="defense-flag">IC</span>':''}</td>
       <td><button class="sr-follow" onclick="activateFollowMoney(${e.id})">$</button></td></tr>`;
@@ -754,7 +754,7 @@ function renderGhostsView() {
   ghosts.forEach(e => {
     html += `<tr class="ghost"><td><button class="entity-link" onclick="selectEntity(${e.id})">${esc(e.name)}</button></td>
       <td><span class="badge badge-${e.status==='acquired'?'amber':e.status==='merged'?'purple':'red'}">${esc(e.status)}</span></td>
-      <td class="money">${$(e.total_spectrum_spend)}</td>
+      <td class="money">${fmt(e.total_spectrum_spend)}</td>
       <td>${e.auction_count||0}</td>
       <td><button class="sr-follow" onclick="activateFollowMoney(${e.id})">$</button></td></tr>`;
   });
@@ -785,12 +785,12 @@ function renderTimelineView() {
   data.filter(d=>d.total_revenue>5e9).forEach(d=>{
     svg.append('text').attr('x',x(d.date)).attr('y',y(d.total_revenue)-r(d.num_licenses||1)-6)
       .attr('text-anchor','middle').attr('fill','#a0a0b8').attr('font-size','9px').attr('font-family','inherit')
-      .text(`#${d.auction_number}: ${$(d.total_revenue)}`);
+      .text(`#${d.auction_number}: ${fmt(d.total_revenue)}`);
   });
 
   svg.append('g').attr('transform',`translate(0,${h-margin.bottom})`).call(d3.axisBottom(x).ticks(d3.timeYear.every(2)))
     .selectAll('text').attr('fill','#606078').attr('font-family','inherit').attr('font-size','10px');
-  svg.append('g').attr('transform',`translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d=>$(d)))
+  svg.append('g').attr('transform',`translate(${margin.left},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d=>fmt(d)))
     .selectAll('text').attr('fill','#606078').attr('font-family','inherit').attr('font-size','10px');
   svg.selectAll('.domain,.tick line').attr('stroke','#2a2a4a');
 
@@ -903,7 +903,7 @@ async function init() {
 
   // Header stats
   document.getElementById('header-stats').innerHTML =
-    `${stats.totalAllocations} bands | ${stats.totalEntities} entities | ${$(stats.totalRevenue)}`;
+    `${stats.totalAllocations} bands | ${stats.totalEntities} entities | ${fmt(stats.totalRevenue)}`;
 
   initSearch();
   updateNav();
