@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spectrum Intelligence Platform</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#0f0f18;--bg3:#141422;--surface:#1a1a2e;--elevated:#222240;
+  --border:#2a2a4a;--border2:#3a3a5a;
+  --text:#e0e0e8;--text2:#a0a0b8;--muted:#606078;
+  --gold:#d4af37;--gold-dim:#a08828;--gold-glow:rgba(212,175,55,0.3);
+  --red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--green:#3fb950;--amber:#d29922;--cyan:#39d2c0;
+  --font:'JetBrains Mono','Fira Code','SF Mono',Consolas,monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;overflow:hidden;height:100vh}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+
+#app{display:flex;flex-direction:column;height:100vh}
+
+/* Header */
+.header{display:flex;align-items:center;height:44px;padding:0 12px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0;gap:8px;z-index:100}
+.logo{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--text);white-space:nowrap;display:flex;align-items:center;gap:6px}
+.logo-icon{color:var(--gold);font-size:16px}
+.nav{display:flex;gap:2px;margin-left:12px}
+.nav-btn{background:none;border:none;color:var(--muted);font-family:var(--font);font-size:10px;padding:5px 10px;cursor:pointer;border-radius:3px;letter-spacing:.5px;text-transform:uppercase;transition:all .15s}
+.nav-btn:hover{color:var(--text2);background:var(--bg3)}
+.nav-btn.active{color:var(--gold);background:var(--surface)}
+.back-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:11px;padding:3px 8px;border-radius:3px;cursor:pointer}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Search */
+.search-wrap{position:relative;flex:0 1 300px;margin-left:auto}
+.search-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:11px;padding:5px 10px;border-radius:3px;outline:none}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--muted)}
+.search-dropdown{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;max-height:380px;overflow-y:auto;z-index:200;box-shadow:0 12px 36px rgba(0,0,0,.5);padding:4px;display:none}
+.search-dropdown.open{display:block}
+.sr-group-title{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:4px 8px;margin-top:4px}
+.sr-item{padding:6px 10px;border-radius:3px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:11px;transition:background .1s}
+.sr-item:hover{background:var(--surface)}
+.sr-name{color:var(--text)}
+.sr-meta{color:var(--muted);font-size:10px}
+.sr-follow{background:var(--surface);border:1px solid var(--border);color:var(--gold);font-family:var(--font);font-size:10px;padding:1px 6px;border-radius:2px;cursor:pointer;font-weight:700}
+.sr-follow:hover{background:var(--gold);color:var(--bg)}
+
+/* Follow the Money button */
+.ftm-btn{background:var(--surface);border:1px solid var(--border);color:var(--gold);font-family:var(--font);font-size:10px;padding:4px 12px;cursor:pointer;border-radius:3px;letter-spacing:1px;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:4px;transition:all .2s}
+.ftm-btn:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.ftm-btn.active{background:var(--gold);color:var(--bg);border-color:var(--gold);animation:pulse-gold 2s ease-in-out infinite}
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 5px var(--gold-glow)}50%{box-shadow:0 0 20px var(--gold-glow)}}
+
+.header-stats{font-size:9px;color:var(--muted);white-space:nowrap}
+
+/* Main layout */
+.main{display:flex;flex:1;overflow:hidden}
+.detail-panel{width:400px;min-width:400px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;position:relative;display:none}
+.detail-panel.open{display:block}
+.main-view{flex:1;overflow:hidden;position:relative}
+.ftm-panel{width:340px;min-width:340px;background:var(--bg2);border-left:2px solid var(--gold);overflow-y:auto;display:none}
+.ftm-panel.open{display:block}
+
+.close-btn{position:absolute;top:6px;right:6px;background:var(--surface);border:1px solid var(--border);color:var(--text2);width:24px;height:24px;border-radius:3px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:5}
+.close-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* Spectrum map */
+#spectrum-container{width:100%;height:100%;position:relative;overflow:hidden}
+#spectrum-svg{cursor:grab;width:100%;height:100%}
+#spectrum-svg:active{cursor:grabbing}
+#band-tooltip{display:none;position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:10px 14px;z-index:100;max-width:350px;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:12px}
+#freq-indicator{position:absolute;top:8px;right:8px;color:var(--gold);font-weight:600;font-size:12px;z-index:5}
+.spectrum-controls{position:absolute;top:8px;left:8px;display:flex;gap:2px;z-index:5}
+.zoom-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);width:28px;height:28px;border-radius:3px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.zoom-btn:hover{border-color:var(--blue);color:var(--blue)}
+.filter-bar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:5}
+
+/* Tabs */
+.tab-bar{display:flex;gap:1px;border-bottom:1px solid var(--border);margin-bottom:12px}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:var(--font);font-size:10px;padding:6px 12px;cursor:pointer;transition:all .15s}
+.tab-btn:hover{color:var(--text2)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:12px;margin-bottom:8px}
+.card:hover{border-color:var(--border2)}
+.card-title{font-size:12px;font-weight:600;color:var(--text)}
+
+/* Entity link */
+.entity-link{color:var(--blue);cursor:pointer;border:none;background:none;font-family:var(--font);font-size:inherit;padding:0}
+.entity-link:hover{color:var(--gold);text-decoration:underline}
+
+/* Badges */
+.badge{display:inline-block;padding:1px 6px;border-radius:2px;font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.badge-red{background:rgba(248,81,73,.2);color:var(--red);border:1px solid rgba(248,81,73,.3)}
+.badge-blue{background:rgba(88,166,255,.2);color:var(--blue);border:1px solid rgba(88,166,255,.3)}
+.badge-purple{background:rgba(188,140,255,.2);color:var(--purple);border:1px solid rgba(188,140,255,.3)}
+.badge-green{background:rgba(63,185,80,.2);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.badge-amber{background:rgba(210,153,34,.2);color:var(--amber);border:1px solid rgba(210,153,34,.3)}
+.badge-gold{background:rgba(212,175,55,.2);color:var(--gold);border:1px solid rgba(212,175,55,.3)}
+
+.money{color:var(--green);font-weight:600}
+.defense-flag{color:var(--red);font-size:9px;font-weight:700;letter-spacing:1px}
+
+/* Stats grid */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:16px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:12px;text-align:center}
+.stat-value{font-size:20px;font-weight:700;color:var(--text)}
+.stat-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.stat-card.gold .stat-value{color:var(--gold)}
+.stat-card.red .stat-value{color:var(--red)}
+.stat-card.blue .stat-value{color:var(--blue)}
+
+/* Data table */
+.data-table{width:100%;border-collapse:collapse;font-size:11px}
+.data-table th{text-align:left;padding:6px 10px;background:var(--bg3);color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;font-size:9px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+.data-table td{padding:5px 10px;border-bottom:1px solid var(--border);color:var(--text2)}
+.data-table tr:hover td{background:var(--surface)}
+.data-table tr.winner td{background:rgba(212,175,55,.05)}
+.data-table tr.defense td{border-left:2px solid var(--red)}
+
+/* Section title */
+.section-title{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* View containers */
+.view-container{padding:20px;overflow-y:auto;height:100%}
+
+/* Graph */
+.graph-svg{width:100%;height:100%;background:var(--bg)}
+.graph-legend{position:absolute;bottom:12px;left:12px;background:rgba(10,10,15,.92);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:9px}
+.graph-controls{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:5}
+.graph-ctrl-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);font-family:var(--font);font-size:10px;padding:4px 10px;border-radius:3px;cursor:pointer}
+.graph-ctrl-btn:hover{border-color:var(--blue);color:var(--blue)}
+.graph-ctrl-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* Context menu */
+.context-menu{position:fixed;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:4px;z-index:2000;min-width:200px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.ctx-item{display:block;width:100%;background:none;border:none;color:var(--text);font-family:var(--font);font-size:11px;padding:6px 10px;text-align:left;cursor:pointer;border-radius:3px}
+.ctx-item:hover{background:var(--surface)}
+.ctx-item.gold:hover{background:var(--gold);color:var(--bg)}
+.ctx-divider{height:1px;background:var(--border);margin:3px 0}
+
+/* Responsive */
+@media(max-width:900px){
+  .detail-panel{width:100%;min-width:100%;position:absolute;z-index:50;height:100%}
+  .ftm-panel{width:100%;min-width:100%;position:absolute;z-index:50;height:100%;right:0}
+  .header-stats{display:none}
+  .search-wrap{flex:0 1 200px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="header">
+    <h1 class="logo"><span class="logo-icon">◈</span>SPECTRUM INTEL</h1>
+    <span id="back-btn" class="back-btn" style="display:none" onclick="goBack()">←</span>
+    <nav class="nav" id="nav"></nav>
+    <div class="search-wrap">
+      <input class="search-input" id="search" type="text" placeholder="Search or enter frequency... (Ctrl+K)" autocomplete="off">
+      <div class="search-dropdown" id="search-dropdown"></div>
+    </div>
+    <button class="ftm-btn" id="ftm-btn" onclick="toggleFollowMoney()">
+      <span style="font-weight:900;font-size:13px">$</span>
+      <span id="ftm-label">FOLLOW THE MONEY</span>
+    </button>
+    <div class="header-stats" id="header-stats"></div>
+  </header>
+  <main class="main">
+    <aside class="detail-panel" id="detail-panel">
+      <button class="close-btn" onclick="closeDetail()">✕</button>
+      <div id="detail-content" style="padding:14px"></div>
+    </aside>
+    <div class="main-view" id="main-view"></div>
+    <aside class="ftm-panel" id="ftm-panel">
+      <button class="close-btn" onclick="deactivateFollowMoney()">✕</button>
+      <div id="ftm-content" style="padding:14px"></div>
+    </aside>
+  </main>
+</div>
+<div id="band-tooltip"></div>
+<div class="context-menu" id="context-menu" style="display:none"></div>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
