@@ -342,11 +342,16 @@ function renderSpectrum(transform = d3.zoomIdentity) {
   // Axis
   const axG = g.append('g').attr('transform', `translate(0,${bandY + yBandHeight + 5})`);
   const [dMin, dMax] = ns.domain();
+  let lastLabelX = -100;
   genTicks(dMin, dMax).forEach(f => {
     const x = ns(f);
     if (x >= 0 && x <= w) {
       axG.append('line').attr('x1',x).attr('x2',x).attr('y1',0).attr('y2',6).attr('stroke','#2a2a4a');
-      axG.append('text').attr('x',x).attr('y',18).attr('text-anchor','middle').attr('fill','#606078').attr('font-size','10px').attr('font-family','inherit').text(hz(f));
+      // Only draw label if far enough from the previous one
+      if (x - lastLabelX > 60) {
+        axG.append('text').attr('x',x).attr('y',18).attr('text-anchor','middle').attr('fill','#606078').attr('font-size','10px').attr('font-family','inherit').text(hz(f));
+        lastLabelX = x;
+      }
     }
   });
 
@@ -381,8 +386,8 @@ function renderSpectrum(transform = d3.zoomIdentity) {
       .attr('x', Math.max(x1,0)).attr('y', bandY)
       .attr('width', Math.min(bw, w - Math.max(x1,0)))
       .attr('height', yBandHeight)
-      .attr('fill', c.fill).attr('stroke', isSelected ? '#d4af37' : bw > 3 ? c.stroke : 'none')
-      .attr('stroke-width', isSelected ? 2 : .5).attr('cursor','pointer');
+      .attr('fill', c.fill).attr('stroke', isSelected ? '#d4af37' : bw > 2 ? c.stroke : 'none')
+      .attr('stroke-width', isSelected ? 2 : bw > 20 ? 1 : .5).attr('cursor','pointer');
 
     rect.on('mouseenter', function(ev) {
       d3.select(this).attr('fill', c.hover);
@@ -439,15 +444,7 @@ function renderSpectrum(transform = d3.zoomIdentity) {
       .text('$ ' + (followMoneyEntity?.name || '') + ' — ' + holdings.length + ' holdings');
   }
 
-  // Legend
-  const lg = g.append('g').attr('transform',`translate(10,${h-24})`);
-  let lx = 0;
-  [['government','Government'],['non-government','Commercial'],['shared','Shared'],['unlicensed','ISM/Unlicensed']].forEach(([k,l]) => {
-    const c = BAND_COLORS[k];
-    lg.append('rect').attr('x',lx).attr('y',0).attr('width',10).attr('height',10).attr('fill',c.fill).attr('stroke',c.stroke).attr('stroke-width',.5).attr('rx',2);
-    lg.append('text').attr('x',lx+14).attr('y',9).attr('fill','#606078').attr('font-size','10px').attr('font-family','inherit').text(l);
-    lx += l.length * 7 + 24;
-  });
+  // Legend removed — filter bar serves as color legend
 }
 
 // ============================================================
@@ -708,6 +705,19 @@ function drawGraph(defenseOnly) {
     .on('tick',()=>{
       link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
       node.attr('transform',d=>`translate(${d.x},${d.y})`);
+    })
+    .on('end', () => {
+      // Zoom to fit all nodes after simulation stabilizes
+      try {
+        const svgW = svg.node().clientWidth || 800, svgH = svg.node().clientHeight || 600;
+        const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y);
+        if (!xs.length) return;
+        const x0 = Math.min(...xs) - 50, x1 = Math.max(...xs) + 50;
+        const y0 = Math.min(...ys) - 50, y1 = Math.max(...ys) + 50;
+        const scale = Math.min(svgW / (x1 - x0), svgH / (y1 - y0), 1.5) * 0.9;
+        const tx = (svgW - scale * (x0 + x1)) / 2, ty = (svgH - scale * (y0 + y1)) / 2;
+        svg.transition().duration(800).call(d3.zoom().scaleExtent([.1,8]).on('zoom', e => g.attr('transform', e.transform)).transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+      } catch(e) { /* SVG might not be in DOM anymore */ }
     });
 }
 
