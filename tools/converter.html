@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="US-ASCII">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aethryn Navigator - Text Sanitizer</title>
+  <link rel="stylesheet" href="/css/aethryn.css">
+  <style>
+    /* --- Converter tool specifics --- */
+    .converter { width:100%; }
+    .converter textarea {
+      width:100%;
+      min-height:160px;
+      padding:6px;
+      font-family:monospace;
+      font-size:13px;
+      background:#fff;
+      border:2px solid #808080;
+      border-top-color:#404040;
+      border-left-color:#404040;
+      border-bottom-color:#fff;
+      border-right-color:#fff;
+      resize:vertical;
+    }
+    .converter label {
+      display:block;
+      font-weight:bold;
+      color:#000080;
+      margin:12px 0 4px;
+    }
+    .converter .controls {
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin:12px 0;
+    }
+    .converter .stats {
+      font-size:11px;
+      color:#666;
+      background:#f0f0f0;
+      padding:8px;
+      border:1px inset #808080;
+      margin-top:12px;
+    }
+    .converter .rule-list { margin:10px 0 10px 25px; }
+    .converter .rule-list li { margin:5px 0; }
+  </style>
+</head>
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <span>Aethryn Navigator - [Version 3.49]</span>
+      <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+    </div>
+
+    <div class="toolbar">
+      <button onclick="history.back()">&#9664; Back</button>
+      <button onclick="history.forward()">Forward &#9654;</button>
+      <button onclick="location.reload()">&#8635; Reload</button>
+      <button onclick="location.href='/'">&#8962; Home</button>
+      <div class="logo-small">
+        <svg viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="bgSmall" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#1E90FF"/>
+              <stop offset="100%" stop-color="#000080"/>
+            </linearGradient>
+          </defs>
+          <rect width="200" height="200" fill="url(#bgSmall)" />
+          <path d="M0 140 Q100 100 200 140 V200 H0 Z" fill="black"/>
+          <text x="50%" y="65%" text-anchor="middle" font-size="140" font-family="Times New Roman, Georgia, serif" fill="white">A</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="address-bar">
+      <span>Location:</span>
+      <input type="text" value="https://aethryn.com/tools/converter.html" readonly>
+      <button>Go</button>
+    </div>
+
+    <div class="linkbar">
+      <button onclick="location.href='/'">Home</button>
+      <button onclick="location.href='/boot.html'">Boot</button>
+      <button onclick="location.href='/oath.html'">Oath</button>
+      <button onclick="location.href='/VWP.html'">VWP</button>
+      <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
+      <button onclick="location.href='/validation/'">Validation</button>
+      <button onclick="location.href='/relay_conversation.html'">Relay</button>
+      <button onclick="location.href='/tools/spectrum-v3/'">Spectrum</button>
+      <button onclick="location.href='/tools/converter.html'">Converter</button>
+    </div>
+
+    <div class="main-content">
+      <div class="content">
+        <h1>Text Sanitizer</h1>
+        <p>Paste any text below and convert it to the 98-character ASCII whitelist
+           (the 95 printable ASCII characters plus tab, line feed, and carriage
+           return). All processing happens in your browser -- nothing is sent
+           anywhere.</p>
+
+        <h2>What it does</h2>
+        <ul class="rule-list">
+          <li>Converts smart quotes to straight quotes</li>
+          <li>Converts em dashes to double hyphens and en dashes to a single hyphen</li>
+          <li>Converts ellipsis to three periods and non-breaking spaces to spaces</li>
+          <li>Removes zero-width characters entirely</li>
+          <li>Strips everything else that falls outside the whitelist</li>
+        </ul>
+
+        <div class="converter">
+          <label for="input">Input</label>
+          <textarea id="input" placeholder="Paste text here..."></textarea>
+
+          <div class="controls">
+            <button onclick="convertText()">Convert</button>
+            <button onclick="copyOutput()">Copy Output</button>
+            <button onclick="clearAll()">Clear</button>
+          </div>
+
+          <label for="output">Output (98-character ASCII)</label>
+          <textarea id="output" readonly placeholder="Sanitized text appears here..."></textarea>
+
+          <div class="stats" id="stats">Ready.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div>Document: Done</div>
+      <div>Aethryn Navigator</div>
+    </div>
+  </div>
+
+  <script>
+    // The 98-character ASCII whitelist:
+    //   - 95 printable characters, 0x20 (space) through 0x7E (tilde)
+    //   - tab (0x09), line feed (0x0A), carriage return (0x0D)
+    // Escapes are used throughout so this file stays pure ASCII.
+    var WHITELIST = /[^\x09\x0A\x0D\x20-\x7E]/g;
+
+    function sanitize(text) {
+      var out = text;
+
+      // Smart double quotes, guillemets, and double primes -> straight double quote
+      out = out.replace(/[\u201C\u201D\u201E\u201F\u2033\u2036\u00AB\u00BB]/g, '"');
+
+      // Smart single quotes, apostrophes, and primes -> straight single quote
+      out = out.replace(/[\u2018\u2019\u201A\u201B\u2032\u2035\u2039\u203A]/g, "'");
+
+      // Em dash and horizontal bar -> double hyphen
+      out = out.replace(/[\u2014\u2015]/g, '--');
+
+      // En dash and minus sign -> single hyphen
+      out = out.replace(/[\u2013\u2212]/g, '-');
+
+      // Ellipsis -> three periods
+      out = out.replace(/\u2026/g, '...');
+
+      // Non-breaking and other unicode spaces -> regular space
+      out = out.replace(/[\u00A0\u2000-\u200A\u202F\u205F\u3000]/g, ' ');
+
+      // Zero-width characters, word joiner, and BOM -> nothing
+      out = out.replace(/[\u200B\u200C\u200D\u2060\uFEFF]/g, '');
+
+      // Strip everything else outside the 98-character whitelist
+      out = out.replace(WHITELIST, '');
+
+      return out;
+    }
+
+    function convertText() {
+      var input = document.getElementById('input').value;
+      var output = sanitize(input);
+      document.getElementById('output').value = output;
+
+      var removed = input.length - output.length;
+      var stats = document.getElementById('stats');
+      stats.textContent = 'Input: ' + input.length + ' characters | ' +
+        'Output: ' + output.length + ' characters | ' +
+        'Net change: ' + (removed >= 0 ? '-' : '+') + Math.abs(removed) +
+        ' characters.';
+    }
+
+    function copyOutput() {
+      var output = document.getElementById('output');
+      output.select();
+      output.setSelectionRange(0, output.value.length);
+      var ok = false;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(output.value);
+        ok = true;
+      } else {
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      }
+      document.getElementById('stats').textContent =
+        ok ? 'Output copied to clipboard.' : 'Copy failed -- select the text manually.';
+    }
+
+    function clearAll() {
+      document.getElementById('input').value = '';
+      document.getElementById('output').value = '';
+      document.getElementById('stats').textContent = 'Ready.';
+    }
+  </script>
+</body>
+</html>
