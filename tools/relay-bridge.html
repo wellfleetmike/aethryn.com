@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relay Bridge — Aethryn</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--card:#0d0d0d;--hover:#141414;
+  --border:#1c1c1c;--text:#b0b0b0;--dim:#505050;--dimmer:#383838;--bright:#e0e0e0;
+  --accent:#00ccff;
+  --r-op:#00ccff;--r-bu:#00ff88;--r-li:#ffaa00;--r-se:#ff4466;--r-de:#cc66ff;
+  --p-info:#44cc44;--p-alert:#ffaa00;--p-urgent:#ff4444;
+  --t-user:#00ccff;--t-fb:#ffaa00;--t-proj:#00ff88;--t-ref:#cc66ff;
+  --ok:#44cc44;--err:#ff4444;
+}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'JetBrains Mono','Fira Code','Cascadia Code','SF Mono',Consolas,monospace;
+  font-size:13px;line-height:1.5;height:100vh;overflow:hidden;display:flex;flex-direction:column;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--dim)}
+select option{background:var(--card);color:var(--text)}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.hdr h1{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:2px;margin:0}
+.hdr .sub{font-size:10px;color:var(--dimmer);letter-spacing:1px;margin-left:12px}
+.status{display:flex;align-items:center;gap:8px;font-size:11px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.on{background:var(--ok);animation:pulse 2s ease-in-out infinite}
+.dot.off{background:var(--err)}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);padding:0 16px;flex-shrink:0}
+.tab{
+  padding:8px 16px;border:none;border-bottom:2px solid transparent;
+  background:transparent;color:var(--dim);font-family:inherit;font-size:12px;
+  cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s;
+}
+.tab:hover{color:var(--text)}
+.tab.active{border-bottom-color:var(--accent);color:var(--accent);font-weight:600}
+.content{flex:1;overflow-y:auto}
+.ftr{
+  display:flex;justify-content:space-between;padding:6px 16px;
+  border-top:1px solid var(--border);font-size:10px;color:var(--dimmer);flex-shrink:0;
+}
+/* Panels */
+.split{display:flex;height:100%}
+.sidebar{width:280px;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.main{flex:1;overflow-y:auto;padding:16px}
+.file-item{
+  padding:4px 16px;cursor:pointer;font-size:12px;
+  border-left:2px solid transparent;transition:all .1s;color:var(--text);
+}
+.file-item:hover{background:var(--hover)}
+.file-item.sel{color:var(--accent);background:rgba(0,204,255,.06);border-left-color:var(--accent)}
+.file-item .icon{color:var(--dim);margin-right:8px}
+.file-item .sz{color:var(--dimmer);margin-left:8px;font-size:10px}
+pre.viewer{
+  color:var(--text);font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+  max-height:60vh;overflow-y:auto;background:#0a0a0a;padding:12px;border-radius:4px;border:1px solid #1a1a1a;
+}
+/* Form */
+.form{padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-title{color:var(--dim);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.form-row{display:flex;gap:10px}
+.form-group{flex:1;display:flex;flex-direction:column}
+.form-group label{color:var(--dim);font-size:10px;margin-bottom:3px}
+.inp{
+  width:100%;padding:6px 10px;background:var(--card);border:1px solid var(--border);
+  border-radius:3px;color:var(--bright);font-family:inherit;font-size:12px;outline:none;
+  box-sizing:border-box;
+}
+.inp:focus{border-color:var(--accent)}
+textarea.inp{resize:vertical}
+.btn{
+  padding:8px 20px;background:transparent;border:1px solid var(--accent);color:var(--accent);
+  border-radius:3px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px;
+  transition:all .15s;align-self:flex-start;
+}
+.btn:hover{background:rgba(0,204,255,.1)}
+.errs{color:var(--err);font-size:11px;padding:6px 10px;background:rgba(255,68,68,.08);border-radius:3px}
+.ok-msg{color:var(--ok);font-size:10px;letter-spacing:1px;margin-bottom:4px}
+pre.output{
+  color:var(--text);font-size:11px;background:#0a0a0a;padding:10px;border-radius:4px;
+  border:1px solid #1a3a1a;white-space:pre-wrap;cursor:pointer;position:relative;
+}
+pre.output .copy-hint{position:absolute;top:4px;right:8px;color:var(--dimmer);font-size:9px}
+/* Cage */
+.cage-item{
+  padding:6px 12px;cursor:pointer;font-size:11px;font-family:monospace;
+  border-left:2px solid transparent;transition:all .1s;color:#808080;
+}
+.cage-item:hover{background:var(--hover)}
+.cage-item.sel{color:var(--accent);background:rgba(0,204,255,.04);border-left-color:var(--accent)}
+.cage-item .sz{color:var(--dimmer);margin-left:8px;font-size:10px}
+.empty{color:var(--dim);text-align:center;padding:40px;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div style="display:flex;align-items:center">
+    <h1>RELAY BRIDGE</h1>
+    <span class="sub">wellfleetmike/C</span>
+  </div>
+  <div class="status">
+    <span class="dot" id="dot"></span>
+    <span id="status-text" style="color:var(--dim)">CONNECTING</span>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="content" id="content"></div>
+
+<div class="ftr">
+  <span>heal without harm · one field, many voices · run true</span>
+  <span>the road without the toll booth</span>
+</div>
+
+<script>
+const OWNER='Wellfleetmike',REPO='C',BRANCH='main';
+const API=`https://api.github.com/repos/${OWNER}/${REPO}`;
+const RAW=`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
+const VTYPES=['user','feedback','project','reference'];
+const VROLES=['operator','builder','librarian','sentinel','designer'];
+const VPRI=['info','alert','urgent'];
+
+let currentTab='repo',repoFiles=[],selectedFile=null,fileContent=null;
+
+// --- Tabs ---
+const TABS=[{id:'repo',label:'Repo'},{id:'memory',label:'Compose Memory'},{id:'message',label:'Compose Message'},{id:'cage',label:'Cage Evidence'}];
+
+function renderTabs(){
+  const el=document.getElementById('tabs');
+  el.innerHTML=TABS.map(t=>`<button class="tab${t.id===currentTab?' active':''}" data-tab="${t.id}">${t.label}</button>`).join('');
+  el.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+    currentTab=b.dataset.tab;renderTabs();renderContent();
+  }));
+}
+
+// --- GitHub ---
+async function fetchDir(path){
+  try{const r=await fetch(`${API}/contents/${path}`);if(!r.ok)return[];const d=await r.json();return Array.isArray(d)?d:[];}catch{return[];}
+}
+async function fetchRaw(path){
+  try{const r=await fetch(`${RAW}/${path}`);if(!r.ok)return null;return await r.text();}catch{return null;}
+}
+
+// --- Content ---
+async function renderContent(){
+  const el=document.getElementById('content');
+  if(currentTab==='repo')renderRepo(el);
+  else if(currentTab==='memory')renderMemoryForm(el);
+  else if(currentTab==='message')renderMessageForm(el);
+  else if(currentTab==='cage')renderCage(el);
+}
+
+// --- Repo browser ---
+async function renderRepo(el){
+  if(!repoFiles.length){
+    el.innerHTML='<div class="empty">loading repo...</div>';
+    repoFiles=await fetchDir('');
+    document.getElementById('dot').className='dot on';
+    document.getElementById('status-text').textContent='CONNECTED';
+    document.getElementById('status-text').style.color='var(--dim)';
+  }
+  el.innerHTML='<div class="split"><div class="sidebar" id="sidebar"></div><div class="main" id="main-view"></div></div>';
+  renderSidebar();
+  renderFileView();
+}
+
+function renderSidebar(){
+  const sb=document.getElementById('sidebar');
+  if(!sb)return;
+  sb.innerHTML=repoFiles.map(f=>{
+    const sel=selectedFile&&selectedFile.name===f.name?' sel':'';
+    const icon=f.type==='dir'?'📁':'📄';
+    const sz=f.size>0?`<span class="sz">${(f.size/1024).toFixed(1)}k</span>`:'';
+    return `<div class="file-item${sel}" data-name="${f.name}" data-type="${f.type}" data-path="${f.path||f.name}">${icon} ${f.name}${sz}</div>`;
+  }).join('');
+  sb.querySelectorAll('.file-item').forEach(item=>{
+    item.addEventListener('click',async()=>{
+      const name=item.dataset.name,type=item.dataset.type,path=item.dataset.path;
+      if(type==='dir'){
+        const children=await fetchDir(path);
+        const idx=repoFiles.findIndex(f=>f.name===name);
+        const existing=repoFiles.filter(f=>f.name.startsWith(name+'/'));
+        if(existing.length===0){
+          const mapped=children.map(c=>({...c,name:name+'/'+c.name,path:c.path||name+'/'+c.name}));
+          repoFiles.splice(idx+1,0,...mapped);
+        }
+        selectedFile={name,type,path};fileContent=null;
+        renderSidebar();renderFileView();
+      }else{
+        selectedFile={name,type,path,size:parseInt(item.querySelector('.sz')?.textContent||'0')};
+        fileContent=await fetchRaw(path);
+        renderSidebar();renderFileView();
+      }
+    });
+  });
+}
+
+function renderFileView(){
+  const mv=document.getElementById('main-view');
+  if(!mv)return;
+  if(!fileContent){mv.innerHTML='<div class="empty">select a file to view</div>';return;}
+  mv.innerHTML=`<div style="color:var(--accent);font-size:11px;margin-bottom:8px;letter-spacing:1px">${selectedFile?.name||''}</div><pre class="viewer">${esc(fileContent)}</pre>`;
+}
+
+// --- Memory composer ---
+function renderMemoryForm(el){
+  el.innerHTML=`
+  <div class="form">
+    <div class="form-title">compose memory</div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2"><label>NAME</label><input class="inp" id="m-name" placeholder="memory_name"></div>
+      <div class="form-group" style="flex:1"><label>TYPE</label><select class="inp" id="m-type">${VTYPES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-group"><label>DESCRIPTION</label><input class="inp" id="m-desc" placeholder="one-line summary"></div>
+    <div class="form-group"><label>CONTENT</label><textarea class="inp" id="m-content" rows="6" placeholder="full memory content"></textarea></div>
+    <div class="form-group"><label>TAGS</label><input class="inp" id="m-tags" placeholder="comma,separated,tags"></div>
+    <div id="m-errors"></div>
+    <button class="btn" id="m-btn">VALIDATE & COMPOSE</button>
+    <div id="m-output"></div>
+  </div>`;
+  document.getElementById('m-btn').addEventListener('click',()=>{
+    const data={
+      name:document.getElementById('m-name').value.trim(),
+      type:document.getElementById('m-type').value,
+      description:document.getElementById('m-desc').value.trim(),
+      content:document.getElementById('m-content').value.trim(),
+      tags:document.getElementById('m-tags').value.trim(),
+      source_instance:'claude-ai-bridge',
+      created_at:new Date().toISOString(),
+      updated_at:new Date().toISOString()
+    };
+    const errs=[];
+    if(!data.name)errs.push('name is required');
+    if(data.name.length>200)errs.push('name max 200 chars');
+    if(!VTYPES.includes(data.type))errs.push('invalid type');
+    if(data.description.length>500)errs.push('description max 500 chars');
+    const errEl=document.getElementById('m-errors');
+    if(errs.length){errEl.innerHTML=`<div class="errs">${errs.join(' · ')}</div>`;return;}
+    errEl.innerHTML='';
+    const json=JSON.stringify(data,null,2);
+    document.getElementById('m-output').innerHTML=`<div class="ok-msg">✓ VALIDATED — COPY THIS JSON TO PUSH FROM POS</div><pre class="output" onclick="navigator.clipboard.writeText(this.textContent.replace('click to copy','').trim())">${esc(json)}<span class="copy-hint">click to copy</span></pre>`;
+  });
+}
+
+// --- Message composer ---
+function renderMessageForm(el){
+  el.innerHTML=`
+  <div class="form">
+    <div class="form-title">compose relay message</div>
+    <div class="form-row">
+      <div class="form-group"><label>SOURCE</label><select class="inp" id="msg-src">${VROLES.map(r=>`<option value="${r}">${r}</option>`).join('')}</select></div>
+      <div class="form-group"><label>TARGET</label><select class="inp" id="msg-tgt">${VROLES.map(r=>`<option value="${r}"${r==='builder'?' selected':''}>${r}</option>`).join('')}</select></div>
+      <div class="form-group"><label>PRIORITY</label><select class="inp" id="msg-pri">${VPRI.map(p=>`<option value="${p}">${p}</option>`).join('')}</select></div>
+    </div>
+    <div class="form-group"><label>BODY</label><textarea class="inp" id="msg-body" rows="4" placeholder="message body"></textarea></div>
+    <div id="msg-errors"></div>
+    <button class="btn" id="msg-btn">VALIDATE & COMPOSE</button>
+    <div id="msg-output"></div>
+  </div>`;
+  document.getElementById('msg-btn').addEventListener('click',()=>{
+    const data={
+      id:crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2),
+      timestamp:new Date().toISOString(),
+      source:document.getElementById('msg-src').value,
+      target:document.getElementById('msg-tgt').value,
+      priority:document.getElementById('msg-pri').value,
+      body:document.getElementById('msg-body').value.trim(),
+      attachment:null
+    };
+    const errs=[];
+    if(!VROLES.includes(data.source))errs.push('invalid source');
+    if(!VROLES.includes(data.target))errs.push('invalid target');
+    if(!VPRI.includes(data.priority))errs.push('invalid priority');
+    if(!data.body)errs.push('body is required');
+    const errEl=document.getElementById('msg-errors');
+    if(errs.length){errEl.innerHTML=`<div class="errs">${errs.join(' · ')}</div>`;return;}
+    errEl.innerHTML='';
+    const json=JSON.stringify(data,null,2);
+    document.getElementById('msg-output').innerHTML=`<div class="ok-msg">✓ VALIDATED — COPY THIS JSON TO PUSH FROM POS</div><pre class="output" onclick="navigator.clipboard.writeText(this.textContent.replace('click to copy','').trim())">${esc(json)}<span class="copy-hint">click to copy</span></pre>`;
+  });
+}
+
+// --- Cage evidence ---
+async function renderCage(el){
+  el.innerHTML='<div class="form"><div class="form-title">ollama cage evidence — sha256 verified files</div><div id="cage-list"><div class="empty">loading...</div></div><div id="cage-view"></div></div>';
+  const items=await fetchDir('');
+  const cage=items.filter(i=>i.name.startsWith('sha256-'));
+  const list=document.getElementById('cage-list');
+  if(!cage.length){list.innerHTML='<div class="empty">no cage files found</div>';return;}
+  list.innerHTML=cage.map(f=>`<div class="cage-item" data-path="${f.name}">${f.name.slice(0,12)}...${f.name.slice(-8)}<span class="sz">${f.size}b</span></div>`).join('');
+  list.querySelectorAll('.cage-item').forEach(item=>{
+    item.addEventListener('click',async()=>{
+      list.querySelectorAll('.cage-item').forEach(x=>x.classList.remove('sel'));
+      item.classList.add('sel');
+      const text=await fetchRaw(item.dataset.path);
+      document.getElementById('cage-view').innerHTML=text?`<pre class="viewer" style="margin-top:12px">${esc(text)}</pre>`:'<div class="empty">failed to load</div>';
+    });
+  });
+}
+
+// --- Util ---
+function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+
+// --- Init ---
+renderTabs();
+renderContent().then(()=>{
+  if(repoFiles.length){
+    document.getElementById('dot').className='dot on';
+    document.getElementById('status-text').textContent='CONNECTED';
+    document.getElementById('status-text').style.color='var(--dim)';
+  }else{
+    document.getElementById('dot').className='dot off';
+    document.getElementById('status-text').textContent='OFFLINE';
+    document.getElementById('status-text').style.color='var(--err)';
+  }
+});
+</script>
+</body>
+</html>
