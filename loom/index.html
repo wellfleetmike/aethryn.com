@@ -15,6 +15,10 @@
   --amber:#e0a340;
   --teal:#2f7d78;
   --rule:#3a4f50;
+  /* DESIGN PASS 2026-08-09: --rule at 1.70:1 on the chassis is invisible.
+     Anything whose EDGE has to be seen (chip, speaker, disabled button)
+     uses --rule-hi instead. --rule stays for dividers, which are decor. */
+  --rule-hi:#5c7876;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -26,7 +30,9 @@ body{
   line-height:1.7;
   -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 120px}
+/* 168px, not 120px: the fixed bar measures 130px tall at 390px wide once
+   the why-line wraps, so 120px let the bar sit on the last 10px of content. */
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 168px}
 
 /* instrument panel header */
 header{
@@ -34,15 +40,17 @@ header{
   border-bottom:2px solid var(--rule);padding-bottom:16px;margin-bottom:32px;
 }
 .mark{
-  font-size:13px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;
+  font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
   color:var(--amber);
 }
 .mark span{color:var(--plate);opacity:.55}
 .lamps{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+/* Tracked 11px caps is the worst setting there is for a dyslexic reader,
+   and this is the one element that says where you are. 12px, tracking cut. */
 .lamp{
   display:flex;align-items:center;gap:8px;
-  font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
-  color:#7d8f8c;
+  font-size:12px;letter-spacing:.10em;text-transform:uppercase;font-weight:700;
+  color:#96a7a4;
 }
 .lamp i{
   width:9px;height:9px;border-radius:50%;background:#3a4f50;display:block;
@@ -60,7 +68,7 @@ h1{
 
 /* speak button */
 .speak{
-  background:none;border:1px solid var(--rule);color:#9fb0ad;
+  background:none;border:1px solid var(--rule-hi);color:#b9c7c4;
   width:44px;height:44px;border-radius:6px;cursor:pointer;flex:none;
   display:inline-flex;align-items:center;justify-content:center;
 }
@@ -111,9 +119,12 @@ input[type=text]{
   border:1px solid var(--plate-edge);border-radius:4px;
   padding:16px 18px;font:inherit;font-size:26px;font-weight:700;
 }
+/* An empty cream slab is the biggest thing on step 1 and it says nothing.
+   The prompt is light-weight so it cannot be mistaken for a typed name. */
+input[type=text]::placeholder{color:var(--ink-soft);font-weight:400;opacity:1}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .chip{
-  background:transparent;color:var(--plate);border:1px solid var(--rule);
+  background:rgba(233,229,218,.06);color:var(--plate);border:1px solid var(--rule-hi);
   border-radius:4px;padding:12px 16px;font:inherit;font-size:17px;cursor:pointer;text-align:left;
 }
 .chip:hover{border-color:var(--amber)}
@@ -132,9 +143,15 @@ input[type=text]{
   background:transparent;color:var(--plate);
 }
 .btn.go{background:var(--amber);border-color:var(--amber);color:#20160a}
-.btn.go[disabled]{background:#3a4f50;border-color:#3a4f50;color:#7d8f8c;cursor:not-allowed}
+/* Was a filled slab at 2.56:1 -- it read as broken, not as not-yet.
+   Now an outline that is plainly a button, with the label legible. */
+/* border is lighter than --rule-hi because the bar is a lighter surface
+   than the chassis; --rule-hi only clears 3:1 against the chassis. */
+.btn.go[disabled]{
+  background:transparent;border:1px dashed #6b8785;color:#b9c7c4;cursor:not-allowed;
+}
 .btn.ghost:hover{border-color:var(--plate)}
-.why{color:#9fb0ad;font-size:16px;margin-left:auto;text-align:right;max-width:34ch}
+.why{color:#b9c7c4;font-size:17px;margin-left:auto;text-align:right;max-width:34ch}
 
 /* sheet */
 .sheet{background:var(--plate);color:var(--ink);border-radius:4px;padding:30px;margin-top:22px}
@@ -152,7 +169,14 @@ input[type=text]{
 .rowbtns .btn.go{color:#20160a}
 details{margin-top:26px;border-top:1px solid var(--plate-edge);padding-top:14px}
 summary{cursor:pointer;font-weight:800;font-size:17px}
-.nums{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;line-height:1.85;white-space:pre-wrap;margin-top:12px}
+/* Space-padded monospace columns do not survive 390px -- every value
+   wrapped out of its column. Labelled rows instead; they stack cleanly. */
+.nums{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;align-items:baseline}
+.nums dt{
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-soft);
+}
+.nums dd{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;line-height:1.6}
 .draft{
   margin-top:14px;font-size:15px;color:var(--ink-soft);border-left:3px solid var(--teal);
   padding-left:14px;max-width:56ch;
@@ -163,6 +187,19 @@ summary{cursor:pointer;font-weight:800;font-size:17px}
   body{font-size:18px}
   .bar .inner{flex-wrap:wrap}
   .why{width:100%;text-align:left;margin-left:0}
+  /* THE SCAN FIX. Emblem stacked above the title made every role card
+     310px tall -- exactly one card per phone screen, so six cards could
+     never be compared, only remembered. Emblem beside the title puts two
+     cards in the fold and the grid becomes scannable again. */
+  .plate{padding:16px 18px}
+  .plate .top{flex-direction:row;align-items:center;gap:14px}
+  .plate .top svg{width:56px;height:56px;margin:0}
+  .plate .title{font-size:20px}
+  .plate .foot{padding-top:10px}
+  /* Four sheet actions shrink-wrapped to four different widths. */
+  .rowbtns .btn{flex:1 1 100%}
+  .nums{grid-template-columns:1fr;gap:2px}
+  .nums dt{margin-top:12px}
 }
 </style>
 </head>
@@ -188,7 +225,7 @@ summary{cursor:pointer;font-weight:800;font-size:17px}
 
   <div class="field">
     <label class="big" for="cname">Name</label>
-    <input type="text" id="cname" autocomplete="off" spellcheck="false" placeholder="">
+    <input type="text" id="cname" autocomplete="off" spellcheck="false" placeholder="Type a name">
   </div>
 
   <div class="field">
@@ -233,6 +270,9 @@ summary{cursor:pointer;font-weight:800;font-size:17px}
       <h1>This is you.</h1>
       <p class="sub">Loom has the rest. You do not need to hold any of it.</p>
     </div>
+    <button class="speak" id="s4say" data-say="This is you. Loom has the rest. You do not need to hold any of it." aria-label="Read this aloud">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
   </div>
   <div class="sheet" id="sheet"></div>
 </section>
@@ -452,6 +492,10 @@ function show(){
   document.getElementById("back").style.visibility = state.step === 1 ? "hidden" : "visible";
   var next = document.getElementById("next");
   next.textContent = state.step === 3 ? "Make my sheet" : (state.step === 4 ? "Start over" : "Next");
+  /* DESIGN PASS 2026-08-09: Start over throws the character away with no
+     confirm, and it lands in the same spot Next occupied three taps ago.
+     It does not get to wear the primary colour. */
+  next.classList.toggle("go", state.step !== 4);
   next.disabled = state.step !== 4 && !ready();
   document.getElementById("why").textContent = whyNot();
   renderLamps();
@@ -506,16 +550,21 @@ function renderSheet(){
   h += '<button class="btn" id="savesheet">Save sheet</button>';
   h += '<button class="btn" id="linksheet">Copy my link</button>';
   h += '</div>';
-  h += '<details><summary>Show the numbers</summary><div class="nums">'
-     + esc("class      " + r.cls + ", level 1\n"
-         + "hit points " + n.hp + "\n"
-         + "armor      " + n.ac + "\n"
-         + "scores     STR " + n.str + "  DEX " + n.dex + "  CON " + n.con
-                   + "  INT " + n.int + "  WIS " + n.wis + "  CHA " + n.cha + "\n"
-         + n.saves + "\n"
-         + "gear       " + n.kit + "\n"
-         + "features   " + n.note)
-     + '</div><p class="draft">Checked line by line against SRD 5.2. Your skills, '
+  var numrows = [
+    ["class",      r.cls + ", level 1"],
+    ["hit points", String(n.hp)],
+    ["armor",      n.ac],
+    ["scores",     "STR " + n.str + "  DEX " + n.dex + "  CON " + n.con
+                 + "  INT " + n.int + "  WIS " + n.wis + "  CHA " + n.cha],
+    ["strong",     n.saves.replace(/^Strong:\s*/, "")],
+    ["gear",       n.kit],
+    ["features",   n.note]
+  ];
+  h += '<details><summary>Show the numbers</summary><dl class="nums">'
+     + numrows.map(function(row){
+         return '<dt>' + esc(row[0]) + '</dt><dd>' + esc(row[1]) + '</dd>';
+       }).join("")
+     + '</dl><p class="draft">Checked line by line against SRD 5.2. Your skills, '
      + 'background, and cantrips get chosen at the table, with Loom. You do not have '
      + 'to remember any of this.</p></details>';
   document.getElementById("sheet").innerHTML = h;
@@ -584,6 +633,9 @@ function restoreFromHash(){
     document.getElementById("s4").querySelector("h1").textContent = "Welcome back, " + state.name + ".";
     document.getElementById("s4").querySelector(".sub").textContent =
       "Loom still has you. Nothing was lost.";
+    /* the step-4 heading speaker reads whatever the heading now says */
+    document.getElementById("s4say").setAttribute("data-say",
+      "Welcome back, " + state.name + ". Loom still has you. Nothing was lost.");
     return true;
   } catch(e){ return false; }
 }
