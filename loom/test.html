@@ -135,6 +135,54 @@
       loop_desktop.png. Explicit width/height on the element makes
       the locked geometry actually render.
 
+  ==================================================================
+  ROUND 8. Flow panel, 1 of 3. Layout still LOCKED -- everything
+  below is affordance language, emphasis and TIMING.
+  ==================================================================
+
+    TWO AFFORDANCE CLASSES, and this was the real finding: the panel
+      taught "bordered box = tappable" with its two buttons and then
+      broke its own rule with six kit tiles, six stat badges and a
+      level pill wearing the same costume. They are now separated by
+      DEPTH, which survives greyscale and survives colour blindness:
+        RAISED  = you can press it. A lighter face, a lit bevel along
+                  the TOP inside edge, a hard 3px shelf under it and
+                  a cast shadow. Buttons only. Two of them.
+        SUNKEN  = you can read it. A face DARKER than the panel, a
+                  shadow falling in from the top inside edge, no
+                  shelf, no cast shadow. Tiles, stats, level, xp.
+      The load-bearing edge in both classes is still the 1px border
+      at its measured ratio (brass on the sunken face is 4.4:1); the
+      bevels are shading inside that edge, not the edge itself.
+    THE RARITY GLOW was the worst offender -- a 2px accent border
+      plus a halo on the tile's OUTER EDGE is exactly the shape a
+      button has, so the two equipped tiles read as "these are the
+      controls." Backwards. The accent border is gone and the halo
+      now HUGS THE ICON: a radial centred on the glyph, under it,
+      breathing on --b. Equipped is ornament sitting on a display
+      object. The accent still says it three ways -- the icon's own
+      stroke, the halo, and the label colour.
+    THE ENTRANCE had collapsed into one event: ten things landing
+      together between 0.4s and 1.0s, and a shield that already
+      existed instead of arriving. It is staged in five waves now --
+      frame and corners, the figure, THE NAME ALONE at 0.60s, kit
+      and stats at 0.88s, and the shield STRIKING at 1.12s with the
+      shock ring firing on the landing frame at 1.38s. The eyes are
+      last, at 1.58s. Everything is over by 1.92s.
+    THE DRIVE LINE is her voice, so it is in quotation marks now,
+      with a small dim speaker glyph beside it -- ornament, not a
+      control -- so the pairing with Read this aloud is unambiguous.
+      It also stood down: two hooks were competing, and the hook is
+      "The one nobody sees coming." The drive keeps the bottom edge
+      at 16px (the prose floor, not below it) in cream instead of
+      lit gold, and its band lost most of its gold wash.
+    THE SHIELD gained a small AC tag above ARMOR, because AC is the
+      word they will hear said at the table and ARMOR is the word
+      they can read. Both, stacked, neither shrunk.
+    THE LEVEL PILL came down one step -- dimmer gold on a darker
+      face, and it lost its lit bevel with the rest of the static
+      class -- so Tessa wins the first look every time.
+
   THE ENGINE. One canvas behind the tableau, one rAF loop:
     - a flickering torch pool (one pre-rendered sprite, one blit)
     - 18 embers on a phone / 30 on desktop (three 32px sprites, N
@@ -165,7 +213,12 @@
   /* contrast is measured against the panel field #1b1610 unless noted */
   --ground:#0d0a07;
   --field:#1b1610;        /* the panel                                  */
-  --well:#241d15;         /* tiles and badges, one step up from field   */
+  /* ROUND 8: the two affordance classes have their own surfaces.
+     RAISED is one step UP from the field and carries a lit top bevel.
+     SUNKEN is one step DOWN and carries a shadow falling in from the
+     top. Nothing wears both. --brass on --sunk measures 4.4:1. */
+  --well:#2b2318;         /* RAISED. buttons, and nothing else          */
+  --sunk:#130e09;         /* SUNKEN. tiles, stats, level, xp            */
   --brass:#96743a;        /* edges. 3.9:1 on the well, 4.5:1 on field   */
   --brass-lo:#6b5230;     /* art only, never a load-bearing edge        */
   --gold:#d9ae63;         /* ornament and headers. 9.0:1 on field       */
@@ -291,21 +344,26 @@ body{
   color:var(--gold);white-space:nowrap;
 }
 .kind svg{vertical-align:.02em;margin:0 5px}
+/* SUNKEN, and one step down in contrast on top of that: it was a lit
+   pill with a bevel sitting at the end of the name's own line, which is
+   the one place on the panel nothing is allowed to compete. Dimmer gold
+   (5.3:1 on its face, still a reading colour), darker face, no bevel.
+   Tessa wins the first look. */
 .lvl{
   flex:none;margin-left:auto;
   border:1px solid var(--brass);border-radius:999px;
-  background:#251c12;
+  background:var(--sunk);
   padding:2px 11px;
   font-family:Georgia,'Times New Roman',serif;
-  font-size:12px;letter-spacing:.05em;line-height:1.25;color:var(--gold);
+  font-size:12px;letter-spacing:.05em;line-height:1.25;color:#b08b48;
   white-space:nowrap;
-  box-shadow:inset 0 1px 0 rgba(242,220,174,.14);
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.7);
 }
 .xp{
   display:block;margin-top:6px;height:8px;
   border:1px solid var(--brass);border-radius:5px;
-  background:#100b07;overflow:hidden;
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.8);
+  background:var(--sunk);overflow:hidden;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.85);
 }
 .xp i{display:block;height:100%;width:16%;
   background:linear-gradient(90deg,#7a5c2c,var(--amber));}
@@ -366,37 +424,45 @@ body{
 }
 .rail.l{grid-column:1}
 .rail.r{grid-column:3}
+/* SUNKEN. A kit tile is a thing you read, not a thing you press, and
+   round 7 dressed it exactly like the buttons. Face darker than the
+   panel, shadow falling in from the top edge, no shelf, no cast
+   shadow. The 1px brass border is the load-bearing edge: 4.4:1 on
+   this face, 4.2:1 against the panel around it. */
 .tile{
   position:relative;
   height:62px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:2px;
-  background:var(--well);
-  border:1px solid var(--brass);border-radius:3px;
-  box-shadow:inset 0 0 0 1px #120d09;
+  background:var(--sunk);
+  border:1px solid var(--brass);border-radius:2px;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.8), inset 0 0 0 1px rgba(0,0,0,.5);
   padding:3px;text-align:center;
 }
-.tile svg{width:26px;height:26px;display:block;flex:none}
+.tile svg{width:26px;height:26px;display:block;flex:none;
+  position:relative;z-index:1}
 .tile b{font-size:11px;font-weight:600;line-height:1.1;letter-spacing:.02em;
-  color:var(--cream);white-space:nowrap}
-/* the rarity halo is its own layer so it can breathe without repainting
-   the tile. round 3's glow was invisible: too small, too faint. */
-.tile.green,.tile.violet{border-width:2px;padding:2px}
-/* the rule, and it was not being followed: an equipped tile's LABEL
-   inherits its tile's accent. A green border with a cream word looks
-   like two unrelated decisions. Both colours are reading colours on
-   the well -- green 9.4:1, violet 7.3:1. */
-.tile.green{border-color:var(--green)}
-.tile.violet{border-color:var(--violet)}
+  color:var(--cream);white-space:nowrap;position:relative;z-index:1}
+/* EQUIPPED IS ORNAMENT ON A DISPLAY OBJECT. Round 7 put a 2px accent
+   border and a halo on the tile's OUTER EDGE -- which is the shape a
+   button has, so Daggers and Ring read as "the two controls." Exactly
+   backwards. The accent border is gone; the halo now hugs the ICON,
+   sitting under the glyph and breathing on --b. The accent still says
+   it three ways: the icon's stroke, the halo, the label.
+   Both label colours are reading colours on this face -- green
+   10.4:1, violet 7.8:1. */
 .tile.green b{color:var(--green)}
 .tile.violet b{color:var(--violet)}
 .tile.green::after,.tile.violet::after{
-  content:"";position:absolute;inset:-2px;border-radius:4px;
-  pointer-events:none;z-index:-1;
-  opacity:calc(.34 + var(--b) * .66);
+  content:"";position:absolute;left:50%;top:39%;
+  width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;
+  pointer-events:none;z-index:0;
+  opacity:calc(.42 + var(--b) * .58);
 }
-.tile.green::after{box-shadow:0 0 16px 2px rgba(111,212,137,.44)}
-.tile.violet::after{box-shadow:0 0 16px 2px rgba(189,147,240,.48)}
+.tile.green::after{background:radial-gradient(circle closest-side,
+  rgba(111,212,137,.46) 0%,rgba(111,212,137,.17) 46%,rgba(111,212,137,0) 78%)}
+.tile.violet::after{background:radial-gradient(circle closest-side,
+  rgba(189,147,240,.50) 0%,rgba(189,147,240,.18) 46%,rgba(189,147,240,0) 78%)}
 
 /* ---- the fold: "what you can do" as an overlay, not a band -----------
    It covers the tableau while it is open, so pressing it costs the
@@ -423,28 +489,42 @@ body{
   content:"";position:absolute;left:2px;top:.5em;
   width:8px;height:8px;background:var(--gold);transform:rotate(45deg);
 }
+/* RAISED -- it is a button, so it wears what the other buttons wear. */
 .shut{
   flex:none;margin-top:12px;align-self:center;
-  background:#241d15;color:var(--gold-hi);
-  border:1px solid var(--brass);border-radius:3px;
+  background:linear-gradient(180deg,#372d1f,var(--well) 60%,#1f1a12);
+  color:var(--gold-hi);
+  border:1px solid var(--brass);border-radius:4px;
   padding:8px 26px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(242,220,174,.22),
+             0 3px 0 #0d0906,
+             0 5px 10px rgba(0,0,0,.5);
 }
-.shut:hover{background:#2f2618}
+.shut:hover{background:linear-gradient(180deg,#41361f,#332a1c 60%,#251f15)}
+.shut:active{transform:translateY(3px);
+  box-shadow:inset 0 1px 0 rgba(242,220,174,.16), 0 0 0 #0d0906}
 
 /* ---- band 3: stats and the controls ---------------------------------- */
 .base{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .stats{list-style:none;margin:0;padding:0;
   display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+/* SUNKEN, same class as the tiles and for the same reason: six boxes
+   sitting directly above two buttons, wearing the buttons' costume. */
 .stats li{
-  background:var(--well);
-  border:1px solid var(--brass);border-radius:3px;
+  background:var(--sunk);
+  border:1px solid var(--brass);border-radius:2px;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.8), inset 0 0 0 1px rgba(0,0,0,.5);
   padding:3px 1px 4px;text-align:center;
 }
 .stats b{display:block;font-family:Georgia,'Times New Roman',serif;
   font-size:20px;font-weight:400;line-height:1;color:var(--cream)}
 .stats span{display:block;margin-top:1px;font-size:10px;line-height:1.2;
   letter-spacing:.06em;color:var(--cream-dim)}
-.stats .hi{border-color:#c8a05a;box-shadow:0 0 12px rgba(224,163,64,.20)}
+/* DEX and CON are emphasised from the INSIDE now. The old outer glow
+   was a halo around the box edge, which is a raised cue -- the warm
+   light is inside the well instead, where a lit recess belongs. */
+.stats .hi{border-color:#c8a05a;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.72), inset 0 0 11px rgba(224,163,64,.20)}
 .stats .hi b{color:var(--gold-hi)}
 .stats .hi span{color:var(--gold)}
 
@@ -457,24 +537,39 @@ body{
   font:inherit;font-size:14px;font-weight:700;line-height:1.4;cursor:pointer;
   white-space:nowrap;
 }
+/* RAISED, and now the ONLY raised things on the panel: a lit bevel
+   along the top inside edge, a hard 3px shelf underneath, and a cast
+   shadow on the panel. Nothing static wears any of the three. */
 .say{
-  background:var(--amber);color:var(--ink);
+  background:linear-gradient(180deg,#eeb75c,var(--amber) 62%,#cf8f2c);
+  color:var(--ink);
   border:1px solid #f0c777;
-  box-shadow:0 2px 0 var(--amber-dk), 0 0 24px rgba(224,163,64,.24);
+  box-shadow:inset 0 1px 0 rgba(255,246,225,.6),
+             0 3px 0 var(--amber-dk),
+             0 5px 10px rgba(0,0,0,.5),
+             0 0 24px rgba(224,163,64,.22);
 }
-.say:hover{background:#eeb457}
-.say:active{transform:translateY(2px);box-shadow:0 0 0 var(--amber-dk)}
+.say:hover{background:linear-gradient(180deg,#f4c470,#eeb457 62%,#d8992f)}
+.say:active{transform:translateY(3px);
+  box-shadow:inset 0 1px 0 rgba(255,246,225,.4), 0 0 0 var(--amber-dk)}
 .say.speaking{background:#2a2013;color:var(--amber);border-color:var(--amber);
-  box-shadow:0 2px 0 #120d09}
+  box-shadow:inset 0 1px 0 rgba(224,163,64,.3), 0 3px 0 #120d09,
+             0 5px 10px rgba(0,0,0,.5)}
 /* the second control is drawn, not amber: there is only one lit control
-   on this panel and it is the one that talks */
+   on this panel and it is the one that talks. It is still RAISED --
+   raised is what says "press me", and the two press-able things on the
+   panel have to belong to the same class. */
 .more{
-  background:#241d15;color:var(--gold-hi);
+  background:linear-gradient(180deg,#372d1f,var(--well) 60%,#1f1a12);
+  color:var(--gold-hi);
   border:1px solid var(--brass);
-  box-shadow:0 2px 0 #120d09;
+  box-shadow:inset 0 1px 0 rgba(242,220,174,.22),
+             0 3px 0 #0d0906,
+             0 5px 10px rgba(0,0,0,.5);
 }
-.more:hover{background:#2f2618}
-.more:active{transform:translateY(2px);box-shadow:0 0 0 #120d09}
+.more:hover{background:linear-gradient(180deg,#41361f,#332a1c 60%,#251f15)}
+.more:active{transform:translateY(3px);
+  box-shadow:inset 0 1px 0 rgba(242,220,174,.16), 0 0 0 #0d0906}
 .more svg{flex:none;transition:transform .18s ease}
 .more[aria-expanded="true"] svg{transform:rotate(180deg)}
 .say svg{flex:none}
@@ -482,19 +577,31 @@ body{
 /* ---- band 4: the drive. the bottom edge of the panel. ----------------
    Inset 30px each side so the bottom corner ornaments cannot touch it.
    Round 5 clipped this line. ----------------------------------------- */
+/* ROUND 8: two hooks were competing. The hook is the role line -- "The
+   one nobody sees coming" -- and this was outshouting it in lit gold on
+   a gold-washed band. It stands down: cream instead of gold-hi, 16px
+   instead of 17 (the prose floor, and it stops AT the floor), and the
+   band keeps only a whisper of the wash. It still owns the bottom edge.
+   The quotation marks and the glyph are the other half of the note --
+   it is her VOICE, and the glyph pairs it with Read this aloud. */
 .drive{
   flex:0 0 auto;
   margin:7px calc(var(--fp) * -1) 0;
   border-top:1px solid var(--brass);
-  background:linear-gradient(180deg,rgba(217,174,99,.07),rgba(0,0,0,.34));
-  padding:7px 38px 8px;text-align:center;
+  background:linear-gradient(180deg,rgba(217,174,99,.035),rgba(0,0,0,.34));
+  padding:7px 38px 9px;text-align:center;   /* 1 + 7 + 21 + 9 = 38, unmoved */
 }
 .drive p{
   margin:0 auto;
   font-family:Georgia,'Times New Roman',serif;
-  font-size:17px;line-height:1.28;color:var(--gold-hi);
+  font-size:16px;line-height:1.32;color:var(--cream);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
+/* ORNAMENT, not a control: no box, no border, no shelf, dim, and it
+   cannot be pressed. It marks the line as spoken; the amber button is
+   still the only thing on the panel that speaks. */
+.drive svg{flex:none;vertical-align:-2px;margin-right:7px;
+  color:var(--cream-dim);opacity:.8}
 
 .legal{flex:0 0 auto;margin:4px 2px 0;font-size:10px;line-height:1.4;
   color:var(--cream-dim);text-align:center}
@@ -518,20 +625,27 @@ body{
    glyph edges exactly as crisp as they are at rest. */
 @keyframes cutIn   {from{clip-path:inset(-24px 100% -24px 0)} to{clip-path:inset(-24px -10% -24px 0)}}
 @keyframes fadeIn  {from{opacity:0} to{opacity:1}}
-/* the shield arrives with weight: overshoot, land hard, settle */
+/* THE STRIKE. Round 7's shield was resolved by 0.4s -- it existed
+   rather than arrived, which is the note. It falls further now, from
+   higher, lands harder and later, and it is the ONLY thing moving when
+   it does: kit and stats have finished, the eyes have not started.
+   The landing frame is 56% of 0.46s after 1.12s, which is 1.38s, and
+   that is the number the shock ring and the flash are set to. */
 @keyframes strike{
-  0%  {opacity:0;transform:translateY(-40px) scale(1.7)}
-  52% {opacity:1;transform:translateY(4px)  scale(.93)}
-  70% {opacity:1;transform:translateY(-3px) scale(1.04)}
-  86% {transform:translateY(1px) scale(.99)}
+  0%  {opacity:0;transform:translateY(-64px) scale(2.0)}
+  30% {opacity:1}
+  56% {opacity:1;transform:translateY(6px)  scale(.88)}
+  70% {opacity:1;transform:translateY(-5px) scale(1.06)}
+  84% {transform:translateY(2px) scale(.98)}
+  93% {transform:translateY(-1px) scale(1.01)}
   100%{opacity:1;transform:none}
 }
 @keyframes ringOut{
-  0%  {opacity:0;transform:scale(.35)}
-  18% {opacity:.9}
-  100%{opacity:0;transform:scale(2.4)}
+  0%  {opacity:0;transform:scale(.30)}
+  14% {opacity:1}
+  100%{opacity:0;transform:scale(2.7)}
 }
-@keyframes impact{0%,100%{opacity:0} 8%{opacity:.55} 60%{opacity:0}}
+@keyframes impact{0%,100%{opacity:0} 7%{opacity:.62} 55%{opacity:0}}
 /* the eyes are last: dark, then overbright, then their working level */
 @keyframes eyesLight{
   0%  {opacity:0;filter:brightness(.2)}
@@ -540,42 +654,54 @@ body{
 }
 @keyframes panelIn{from{opacity:0;transform:scale(.985)} to{opacity:1;transform:none}}
 
-.anim .frame  {animation:frameIn .28s ease-out both}
-.anim .cnr.tl {animation:cornerIn .24s ease-out .12s both}
-.anim .cnr.tr {animation:cornerIn .24s ease-out .16s both}
-.anim .cnr.bl {animation:cornerIn .24s ease-out .20s both}
-.anim .cnr.br {animation:cornerIn .24s ease-out .24s both}
-.anim .torch  {animation:fadeIn .5s linear .16s both}
-.anim .fig    {animation:riseIn .42s ease-out .20s both}
-.anim .shield {animation:strike .42s cubic-bezier(.2,.7,.3,1) .36s both}
-.anim #shock  {animation:ringOut .48s ease-out .48s both}
-.anim #flash  {animation:impact .56s linear .46s both}
-.anim .name   {animation:cutIn .26s cubic-bezier(.3,.9,.2,1) .60s both}
-.anim .kind   {animation:riseIn .20s ease-out .72s both}
-.anim .lvl    {animation:riseIn .20s ease-out .76s both}
-.anim .xp     {animation:fadeIn .22s linear .80s both}
-.anim .role   {animation:riseIn .20s ease-out .84s both}
-.anim .rule   {animation:fadeIn .22s linear .88s both}
+/* THE WAVES. Round 7 fired ten of these between 0.40 and 1.00 and they
+   arrived as one event -- there was nothing to watch because everything
+   happened at once. Five beats now, each with clear air around it:
+
+     0.00  WAVE 1  the frame, then the four corners, one at a time
+     0.28  WAVE 2  the figure rises out of the dark
+     0.60  WAVE 3  THE NAME, alone. Nothing else moves for 80ms.
+             0.68    the kind, the level, the bar, the role, the rule
+     0.88  WAVE 4  the kit rails, then the six stats
+     1.12  WAVE 5  THE SHIELD STRIKES. Lands 1.38, ring and flash on
+                   the landing frame. Controls and the drive behind it.
+     1.58  LAST    the eyes light. Ends 1.92s. Nothing after it. */
+.anim .frame  {animation:frameIn .30s ease-out both}
+.anim .cnr.tl {animation:cornerIn .26s ease-out .10s both}
+.anim .cnr.tr {animation:cornerIn .26s ease-out .13s both}
+.anim .cnr.bl {animation:cornerIn .26s ease-out .16s both}
+.anim .cnr.br {animation:cornerIn .26s ease-out .19s both}
+.anim .torch  {animation:fadeIn .55s linear .20s both}
+.anim .fig    {animation:riseIn .46s ease-out .28s both}
+.anim .name   {animation:cutIn .30s cubic-bezier(.3,.9,.2,1) .60s both}
+.anim .kind   {animation:riseIn .20s ease-out .68s both}
+.anim .lvl    {animation:riseIn .20s ease-out .70s both}
+.anim .xp     {animation:fadeIn .24s linear .72s both}
+.anim .role   {animation:riseIn .20s ease-out .76s both}
+.anim .rule   {animation:fadeIn .24s linear .80s both}
 .anim .tile   {animation:riseIn .20s ease-out both}
-.anim .rail.l .tile:nth-child(1){animation-delay:.92s}
-.anim .rail.l .tile:nth-child(2){animation-delay:.97s}
-.anim .rail.l .tile:nth-child(3){animation-delay:1.02s}
-.anim .rail.r .tile:nth-child(1){animation-delay:.95s}
-.anim .rail.r .tile:nth-child(2){animation-delay:1.00s}
-.anim .rail.r .tile:nth-child(3){animation-delay:1.05s}
+.anim .rail.l .tile:nth-child(1){animation-delay:.88s}
+.anim .rail.l .tile:nth-child(2){animation-delay:.92s}
+.anim .rail.l .tile:nth-child(3){animation-delay:.96s}
+.anim .rail.r .tile:nth-child(1){animation-delay:.90s}
+.anim .rail.r .tile:nth-child(2){animation-delay:.94s}
+.anim .rail.r .tile:nth-child(3){animation-delay:.98s}
 .anim .stats li{animation:riseIn .18s ease-out both}
-.anim .stats li:nth-child(1){animation-delay:1.08s}
-.anim .stats li:nth-child(2){animation-delay:1.12s}
-.anim .stats li:nth-child(3){animation-delay:1.16s}
-.anim .stats li:nth-child(4){animation-delay:1.20s}
-.anim .stats li:nth-child(5){animation-delay:1.24s}
-.anim .stats li:nth-child(6){animation-delay:1.28s}
-.anim .controls{animation:riseIn .24s ease-out 1.20s both}
-.anim .drive  {animation:riseIn .26s ease-out 1.28s both}
-.anim .legal  {animation:fadeIn .28s linear 1.34s both}
-.anim #eyes   {animation:eyesLight .34s ease-out 1.36s both}
-.anim #eyeamb {animation:eyesLight .40s ease-out 1.36s both}
-.anim #eyespill{animation:eyesLight .34s ease-out 1.36s both}
+.anim .stats li:nth-child(1){animation-delay:.96s}
+.anim .stats li:nth-child(2){animation-delay:.99s}
+.anim .stats li:nth-child(3){animation-delay:1.02s}
+.anim .stats li:nth-child(4){animation-delay:1.05s}
+.anim .stats li:nth-child(5){animation-delay:1.08s}
+.anim .stats li:nth-child(6){animation-delay:1.11s}
+.anim .shield {animation:strike .46s cubic-bezier(.25,.72,.28,1) 1.12s both}
+.anim #flash  {animation:impact .52s linear 1.36s both}
+.anim #shock  {animation:ringOut .50s ease-out 1.38s both}
+.anim .controls{animation:riseIn .24s ease-out 1.24s both}
+.anim .drive  {animation:riseIn .26s ease-out 1.34s both}
+.anim .legal  {animation:fadeIn .28s linear 1.44s both}
+.anim #eyes   {animation:eyesLight .34s ease-out 1.58s both}
+.anim #eyeamb {animation:eyesLight .40s ease-out 1.58s both}
+.anim #eyespill{animation:eyesLight .34s ease-out 1.58s both}
 .anim .scroll {animation:panelIn .16s ease-out both}
 .still #shock,.still #flash{display:none}
 
@@ -624,7 +750,11 @@ body{
   .controls{flex:0 0 auto;width:360px}
   .say,.more{font-size:15px;padding:11px 8px}
   .drive{padding:8px 46px 9px}
-  .drive p{font-size:19px}
+  .drive p{font-size:18px}
+  .drive svg{width:17px;height:17px}
+  /* the halo scales with the icon it hugs -- 34px glyph, 58px halo */
+  .tile.green::after,.tile.violet::after{
+    width:58px;height:58px;margin:-29px 0 0 -29px}
   .legal{font-size:11px}
   .can{flex-direction:row;gap:22px}
   .can li{flex:1 1 0;font-size:17px}
@@ -643,6 +773,14 @@ body{
   .name,.kind,.drive p,.stats .hi b,.stats .hi span{color:#4a3a12}
   .role,.stats b{color:#1a1208}
   .stats span,.tile b,.legal{color:#3d3325}
+  /* on paper there is no depth and no glow, so the two classes stop
+     being two classes: everything is a hairline box on white and the
+     accent labels come back to ink, where green on white would not
+     have cleared anything. */
+  .tile,.stats li,.lvl,.xp{background:#fff;box-shadow:none;border-color:#8a7440}
+  .tile.green b,.tile.violet b{color:#3d3325}
+  .lvl{color:#4a3a12}
+  .drive svg{color:#6b5c3e}
   .tile.green::after,.tile.violet::after{display:none}
   .xp i{background:#4a3a12}
   .drive{background:none;border-top-color:#4a3a12}
@@ -1136,7 +1274,7 @@ body{
            true 34px: still the biggest number on the page.
            ============================================================ -->
       <div class="acwrap">
-        <svg class="shield" viewBox="0 0 74 88" role="img" aria-label="Armor 13">
+        <svg class="shield" viewBox="0 0 74 88" role="img" aria-label="Armor class 13">
           <defs>
             <linearGradient id="shieldface" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#2a2114"/>
@@ -1151,8 +1289,20 @@ body{
                 fill="url(#shieldface)" stroke="#d9ae63" stroke-width="2" stroke-linejoin="round"/>
           <path d="M37,10 L65,18 C65,44 56,64 37,79 C18,64 9,44 9,18 Z"
                 fill="none" stroke="#96743a" stroke-width="1.2" stroke-linejoin="round"/>
-          <text x="37" y="28" text-anchor="middle" letter-spacing="1"
-                font-family="Georgia,'Times New Roman',serif" font-size="11" fill="#d9ae63">ARMOR</text>
+          <!-- ROUND 8: the tag. ARMOR is the word they can read; AC is
+               the word they will hear said at the table, and a keepsake
+               that only carries one of the two makes the other one a
+               thing you have to be told. Stacked, so neither had to
+               shrink to fit beside the other: the pill sits where the
+               shield is at full width and clears the inner rule by 4px
+               each side, ARMOR drops 8px to make room, and 13 does not
+               move at all -- it is still the big number on the page. -->
+          <rect x="25.5" y="14.5" width="23" height="11" rx="5.5"
+                fill="#241a0f" stroke="#96743a" stroke-width="1"/>
+          <text x="37.7" y="23.2" text-anchor="middle" letter-spacing="1.3"
+                font-family="Georgia,'Times New Roman',serif" font-size="9.5" fill="#d9ae63">AC</text>
+          <text x="37.5" y="36" text-anchor="middle" letter-spacing="1"
+                font-family="Georgia,'Times New Roman',serif" font-size="10.5" fill="#d9ae63">ARMOR</text>
           <text x="37" y="64" text-anchor="middle"
                 font-family="Georgia,'Times New Roman',serif" font-size="34" fill="#f2dcae">13</text>
         </svg>
@@ -1232,7 +1382,10 @@ body{
 
   <!-- ===== BAND 4: the drive. the bottom edge. ======================= -->
   <div class="drive">
-    <p>Somebody took something of mine.</p>
+    <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+       ><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg
+       >"Somebody took something of mine."</p>
   </div>
 
 </div>
@@ -1263,7 +1416,7 @@ var ALOUD = [
   "Your kit: a hood, a cloak, boots, and thieves tools.",
   "Two daggers, uncommon.",
   "A silver ring, very rare.",
-  "Your armor is thirteen. You are level one.",
+  "Your armor class, A C, is thirteen. You are level one.",
   "And this is why you are out here.",
   "Somebody took something of mine."
 ].join(" ");
