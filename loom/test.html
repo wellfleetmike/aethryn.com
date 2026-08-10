@@ -183,6 +183,28 @@
       face, and it lost its lit bevel with the rest of the static
       class -- so Tessa wins the first look every time.
 
+  ==================================================================
+  ROUND 9. Dyslexic panel, 0 of 3. Copy, voice, and one measured
+  number. No layout, no drawing.
+  ==================================================================
+
+    THE FOLDED LIST was written as sentences with clauses in them.
+      A clause is a second read. Each line is one thing now, and the
+      one line that carried two things ("into rooms that are locked,
+      and out of them again") is two lines, because the way out is
+      its own promise and it is the half a rogue actually sells.
+        You open locked doors. / You get back out too.
+        You spot traps first.
+        Surprise attacks hit hard.
+    THE VOICE gained the six stats, spoken between the kit and the
+      armor class, and a one-line picture of Tessa near the top.
+      The drawing is the largest thing on this page and the only
+      description of it lived in an aria-label, which a sighted
+      dyslexic player is never given.
+    THE AC TAG measured 9.5px against a 10px floor. It is 10 now,
+      with the baseline moved 0.26 to keep it centred in its pill.
+      Nothing else on the shield moved.
+
   THE ENGINE. One canvas behind the tableau, one rAF loop:
     - a flickering torch pool (one pre-rendered sprite, one blit)
     - 18 embers on a phone / 30 on desktop (three 32px sprites, N
@@ -1299,8 +1321,14 @@ body{
                move at all -- it is still the big number on the page. -->
           <rect x="25.5" y="14.5" width="23" height="11" rx="5.5"
                 fill="#241a0f" stroke="#96743a" stroke-width="1"/>
-          <text x="37.7" y="23.2" text-anchor="middle" letter-spacing="1.3"
-                font-family="Georgia,'Times New Roman',serif" font-size="9.5" fill="#d9ae63">AC</text>
+          <!-- ROUND 9: 9.5 was under the 10px floor, and the shield is
+               drawn 1:1 with its phone size so 9.5 in the viewBox was
+               9.5 real pixels. 10px Georgia caps are 6.92 tall, so the
+               baseline drops to 23.46 to keep the ink centred in an
+               11px pill: 2.04 clear above, 2.04 below. The pair still
+               measures 15.2 wide inside a 22px pill. Nothing moved. -->
+          <text x="37.7" y="23.46" text-anchor="middle" letter-spacing="1.3"
+                font-family="Georgia,'Times New Roman',serif" font-size="10" fill="#d9ae63">AC</text>
           <text x="37.5" y="36" text-anchor="middle" letter-spacing="1"
                 font-family="Georgia,'Times New Roman',serif" font-size="10.5" fill="#d9ae63">ARMOR</text>
           <text x="37" y="64" text-anchor="middle"
@@ -1343,9 +1371,10 @@ body{
     <div class="scroll" id="scroll" hidden>
       <h2>What you can do</h2>
       <ul class="can">
-        <li>You get into rooms that are locked, and out of them again.</li>
-        <li>You notice the trap before anyone steps on it.</li>
-        <li>When you catch someone off guard, you hurt them badly.</li>
+        <li>You open locked doors.</li>
+        <li>You get back out too.</li>
+        <li>You spot traps first.</li>
+        <li>Surprise attacks hit hard.</li>
       </ul>
       <button class="shut" id="shut" type="button">Close</button>
     </div>
@@ -1405,17 +1434,33 @@ body{
    ROUND 6: the tiles dropped their rarity words to get small, so
    the voice picked them up. Nothing lost meaning; it changed
    channel.
+
+   *** ALOUD HAND-MIRRORS THE VISIBLE COPY. There is no binding and
+   nothing generates it. If you edit a word on the panel, edit it
+   here IN THE SAME CHANGE, or the page will say something it does
+   not show -- which at this table is worse than saying nothing. ***
+
+   ROUND 9: the six stats were on the panel and never in the voice,
+   so a player who reads with their ears had no numbers at all. They
+   sit between the kit and the armor class, in the order they are
+   drawn. The one line she is never given -- what she LOOKS like --
+   is up top now: the drawing is the biggest thing on the page and
+   an aria-label is not read to anyone who can see the screen.
    --------------------------------------------------------------- */
 var ALOUD = [
   "Tessa. Elf. Rogue.",
   "The one nobody sees coming.",
+  "A hooded elf. Her face is in shadow and her eyes are lit.",
   "Here is what you can do.",
-  "You get into rooms that are locked, and out of them again.",
-  "You notice the trap before anyone steps on it.",
-  "When you catch someone off guard, you hurt them badly.",
+  "You open locked doors.",
+  "You get back out too.",
+  "You spot traps first.",
+  "Surprise attacks hit hard.",
   "Your kit: a hood, a cloak, boots, and thieves tools.",
   "Two daggers, uncommon.",
   "A silver ring, very rare.",
+  "Strength eight. Dexterity fifteen. Constitution fourteen.",
+  "Intelligence thirteen. Wisdom twelve. Charisma ten.",
   "Your armor class, A C, is thirteen. You are level one.",
   "And this is why you are out here.",
   "Somebody took something of mine."
