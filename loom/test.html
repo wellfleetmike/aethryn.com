@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<!--
+  Loom -- character panel. Design study, step 4 as a keepsake.
+  ROUND 4: the Carmack pass. The plate is lit by fire and it assembles.
+
+  THE ONE MEMORABLE THING: THE LOOK FROM UNDER THE HOOD.
+  Tessa's face is a void and the only thing in it is two lit eyes, aimed
+  at whoever is holding the phone. Round 4 makes them earn it: they are
+  the LAST thing to arrive in the entrance, they are the only cool light
+  on a page otherwise all brass and fire, and they are the only thing on
+  the panel that ever moves on its own -- a slow blink, seconds apart.
+  She is the one nobody sees coming. The one thing you can see is that
+  she has already seen you.
+
+  WHAT ROUND 3'S RENDER TAUGHT ME (and what changed here):
+  - The figure was a symmetrical bell with a ragged hem: a ghost, not a
+    rogue. Redrawn with a weight shift, an open cloak in two swept
+    panels, a visible waist, both hands, and a boot planted. Silhouette
+    first: it has to read at thumbnail.
+  - The teal rim light was a wire floating off her shoulder. Removed.
+    The only cold light now is spill from her own eyes onto her collar.
+  - "Her kit" was labelling Tessa. The divider moved down onto the tiles.
+  - The rarity glows were invisible: 16px of blur at .22 on near-black is
+    nothing. They are brighter now and they breathe.
+
+  THE ENGINE. One canvas behind the tableau, one rAF loop:
+    - a flickering torch pool (one pre-rendered sprite, one blit)
+    - 18 embers on a phone / 30 on desktop (one 32px sprite, N blits)
+    - one CSS variable written per frame that drives every brass
+      highlight on the panel by opacity alone -- compositor work, not
+      layout, not paint.
+  Everything else is CSS keyframes that run once and stop.
+  prefers-reduced-motion: no class, no rAF, one static canvas frame, and
+  the settled panel is what the stylesheet already says. Hidden tab or
+  scrolled off screen: the loop stops.
+  Motion never touches the type. The type is opaque and above the canvas.
+
+  Strict ASCII. One file. No fetch, no font, no build. All art drawn here.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loom -- Tessa</title>
+<script>
+/* set before first paint so the entrance has no flash of settled panel */
+(function(){
+  var m = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
+  document.documentElement.className += (m && m.matches) ? " still" : " anim";
+})();
+</script>
+<style>
+:root{
+  /* contrast is measured against the panel field #1b1610 unless noted */
+  --ground:#0d0a07;
+  --field:#1b1610;        /* the panel                                  */
+  --well:#241d15;         /* tiles and badges, one step up from field   */
+  --brass:#96743a;        /* edges. 3.9:1 on the well, 4.5:1 on field   */
+  --brass-lo:#6b5230;     /* art only, never a load-bearing edge        */
+  --gold:#d9ae63;         /* ornament and headers. 9.0:1 on field       */
+  --gold-hi:#f2dcae;      /* the numbers that matter. 13.4:1            */
+  --cream:#ece4d4;        /* body copy. 14.1:1                          */
+  --cream-dim:#b6aa93;    /* labels. 8.1:1 -- still a reading colour    */
+  --amber:#e0a340;        /* the one control. 7.5:1                     */
+  --amber-dk:#8a6317;
+  --ink:#17110a;          /* on amber: 8.5:1                            */
+  --teal:#8fe8dd;         /* her eyes, and nothing else                 */
+  --green:#6fd489;        /* uncommon. 9.4:1 on the well                */
+  --green-tx:#8fd89f;
+  --violet:#bd93f0;       /* very rare. 7.3:1 on the well               */
+  --violet-tx:#cfaef5;
+
+  /* written once per frame by the loop. everything below reads them. */
+  --t:.72;   /* torch level 0..1  */
+  --b:.5;    /* breath level 0..1 */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  /* the vignette lives on the ground, never over the type -- an overlay
+     across the panel would quietly eat the contrast at the edges */
+  background:#0d0a07;
+  background:radial-gradient(ellipse 108% 74% at 50% 24%,#241c13 0%,#120d09 56%,#0b0805 100%);
+  background-repeat:no-repeat;
+  min-height:100vh;
+  color:var(--cream);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:19px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.serif{font-family:Georgia,'Times New Roman',serif}
+.stage{max-width:760px;margin:0 auto;padding:14px 10px 36px}
+
+/* ---- the frame ---------------------------------------------------- */
+.frame{
+  position:relative;
+  background:linear-gradient(180deg,#20190f 0%,var(--field) 30%,#150f0a 100%);
+  border:1px solid var(--brass);
+  box-shadow:
+    inset 0 0 0 4px #120d09,
+    inset 0 0 0 5px rgba(150,116,58,.62),
+    0 26px 64px rgba(0,0,0,.66);
+  padding:20px 14px 0;
+}
+/* the moving firelight on the frame rules. opacity only, on its own
+   layer -- the compositor handles it and nothing repaints. */
+.torch{
+  position:absolute;inset:0;pointer-events:none;z-index:2;
+  box-shadow:
+    inset 0 0 0 1px rgba(240,206,140,.85),
+    inset 0 0 26px rgba(224,163,64,.16),
+    inset 0 0 70px rgba(224,163,64,.07);
+  opacity:calc(.18 + var(--t) * .70);
+  will-change:opacity;
+}
+.cnr{position:absolute;width:52px;height:52px;pointer-events:none;z-index:4}
+.cnr.tl{left:-1px;top:-1px}
+.cnr.tr{right:-1px;top:-1px;transform:scaleX(-1)}
+.cnr.bl{left:-1px;bottom:-1px;transform:scaleY(-1)}
+.cnr.br{right:-1px;bottom:-1px;transform:scale(-1,-1)}
+.cnr.lit{opacity:calc(.10 + var(--t) * .90)}
+
+/* ---- the lit tableau: canvas behind, type in front ----------------- */
+.tableau{position:relative;z-index:1}
+.tableau > *{position:relative;z-index:1}
+#fx{position:absolute;left:0;top:0;z-index:0;pointer-events:none;
+    display:block;will-change:transform}
+/* every readable thing sits ABOVE the moving firelight. the torch layer
+   modulates the frame's inner edge and nothing else -- a flickering glow
+   drawn across body copy is exactly the kind of motion that touches the
+   type, and legibility wins every conflict. */
+.frame > *:not(.torch){position:relative;z-index:3}
+
+/* ---- level and the slim bar --------------------------------------- */
+.top{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
+.lvl{
+  flex:none;
+  border:1px solid var(--brass);border-radius:999px;
+  background:#251c12;
+  padding:5px 16px;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:17px;letter-spacing:.03em;color:var(--gold);
+  box-shadow:inset 0 1px 0 rgba(242,220,174,.14);
+}
+.xp{
+  flex:1;height:11px;
+  border:1px solid var(--brass);border-radius:6px;
+  background:#100b07;overflow:hidden;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.8);
+}
+.xp i{display:block;height:100%;width:16%;
+  background:linear-gradient(90deg,#7a5c2c,var(--amber));}
+
+/* ---- name --------------------------------------------------------- */
+.ident{text-align:center;margin:0 0 4px}
+.name{
+  margin:0;
+  font-family:Georgia,'Times New Roman',serif;
+  font-weight:400;
+  font-size:clamp(54px,15.5vw,78px);
+  line-height:1.02;
+  letter-spacing:.005em;
+  color:var(--gold-hi);
+  text-shadow:0 2px 0 #0b0805, 0 0 26px rgba(217,174,99,.22);
+}
+.kind{
+  margin:6px 0 0;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:19px;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--gold);
+}
+.kind svg{vertical-align:.06em;margin:0 10px}
+.role{
+  margin:10px auto 0;max-width:22ch;
+  font-size:21px;line-height:1.4;color:var(--cream);
+  text-wrap:balance;                 /* "coming" orphaned in round 1 */
+}
+
+/* ---- the one control ---------------------------------------------- */
+.controls{display:flex;justify-content:center;margin:18px 0 2px}
+.say{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--amber);color:var(--ink);
+  border:1px solid #f0c777;border-radius:4px;
+  padding:15px 26px;
+  font:inherit;font-size:19px;font-weight:700;cursor:pointer;
+  box-shadow:0 3px 0 var(--amber-dk), 0 0 30px rgba(224,163,64,.24);
+}
+.say:hover{background:#eeb457}
+.say:active{transform:translateY(2px);box-shadow:0 1px 0 var(--amber-dk)}
+.say.speaking{background:#2a2013;color:var(--amber);border-color:var(--amber);
+  box-shadow:0 3px 0 #120d09}
+.say svg{flex:none}
+
+/* ---- divider: rule, flourish, label, flourish, rule ---------------- */
+.div{display:flex;align-items:center;gap:8px;margin:24px 0 14px}
+.div::before,.div::after{
+  content:"";flex:1;height:4px;
+  border-top:1px solid var(--brass);
+  border-bottom:1px solid rgba(150,116,58,.55);
+  opacity:calc(.66 + var(--t) * .34);
+}
+.div span{
+  flex:none;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:19px;letter-spacing:.06em;color:var(--gold);white-space:nowrap;
+}
+.flr{flex:none;width:26px;height:14px;opacity:calc(.62 + var(--t) * .38)}
+.flr.r{transform:scaleX(-1)}
+
+/* ---- centre stage -------------------------------------------------- */
+.stagegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.figure{grid-column:1/-1;order:1;text-align:center;margin:0}
+.figure svg{width:100%;max-width:300px;height:auto;display:inline-block}
+.acwrap{grid-column:1/-1;order:2;text-align:center;margin:-16px 0 2px}
+.acwrap svg{width:140px;height:auto;
+  filter:drop-shadow(0 8px 14px rgba(0,0,0,.7))}
+.acwrap p{
+  margin:4px 0 0;font-size:17px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--cream-dim);
+}
+.div.kit{grid-column:1/-1;order:3;margin:14px 0 12px}
+
+/* ---- equipment tiles ----------------------------------------------- */
+.rail{display:contents;list-style:none;margin:0;padding:0}
+.tile{
+  position:relative;order:4;
+  background:var(--well);
+  border:1px solid var(--brass);border-radius:3px;
+  box-shadow:inset 0 0 0 1px #120d09, inset 0 0 0 2px rgba(150,116,58,.45);
+  padding:11px 6px 9px;text-align:center;
+}
+.tile svg{width:42px;height:42px;display:block;margin:0 auto}
+.tile b{
+  display:block;margin-top:7px;
+  font-size:16px;font-weight:600;line-height:1.25;color:var(--cream);
+}
+.tile i{display:block;margin-top:2px;font-size:16px;font-style:normal;line-height:1.25}
+/* the rarity halo is its own layer so it can breathe without repainting
+   the tile. round 3's glow was invisible: too small, too faint. */
+.tile.green,.tile.violet{border-width:2px}
+.tile.green{border-color:var(--green)}
+.tile.violet{border-color:var(--violet)}
+.tile.green i{color:var(--green-tx)}
+.tile.violet i{color:var(--violet-tx)}
+.tile.green::after,.tile.violet::after{
+  content:"";position:absolute;inset:-3px;border-radius:5px;
+  pointer-events:none;z-index:-1;
+  opacity:calc(.34 + var(--b) * .66);
+}
+.tile.green::after{box-shadow:0 0 22px 3px rgba(111,212,137,.42)}
+.tile.violet::after{box-shadow:0 0 22px 3px rgba(189,147,240,.46)}
+
+/* ---- what you can do ----------------------------------------------- */
+.can{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.can li{position:relative;padding-left:26px;font-size:19px;line-height:1.55;max-width:42ch}
+.can li::before{
+  content:"";position:absolute;left:4px;top:.60em;
+  width:9px;height:9px;background:var(--gold);transform:rotate(45deg);
+}
+
+/* ---- stats ---------------------------------------------------------- */
+.stats{list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.stats li{
+  background:var(--well);
+  border:1px solid var(--brass);border-radius:3px;
+  padding:10px 4px 8px;text-align:center;
+}
+.stats b{display:block;font-family:Georgia,'Times New Roman',serif;
+  font-size:30px;font-weight:400;line-height:1;color:var(--cream)}
+.stats span{display:block;margin-top:6px;font-size:16px;letter-spacing:.10em;
+  color:var(--cream-dim)}
+.stats .hi{border-color:#c8a05a;box-shadow:0 0 16px rgba(224,163,64,.20)}
+.stats .hi b{color:var(--gold-hi)}
+.stats .hi span{color:var(--gold)}
+
+/* ---- the drive, where BG3 puts the weight bar ----------------------- */
+.drive{
+  margin:24px -14px 0;
+  border-top:1px solid var(--brass);
+  background:linear-gradient(180deg,rgba(217,174,99,.07),rgba(0,0,0,.34));
+  padding:16px 18px 20px;text-align:center;
+}
+.drive p{
+  margin:0 auto;max-width:24ch;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:22px;line-height:1.4;color:var(--gold-hi);
+  text-wrap:balance;
+}
+.drive svg{display:block;margin:0 auto 8px}
+
+.legal{margin:18px 4px 0;font-size:16px;line-height:1.55;color:var(--cream-dim);
+  max-width:56ch}
+
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+
+/* ---- the entrance ---------------------------------------------------
+   Runs once, ends by 1.8s, leaves everything at its stylesheet value.
+   Gated on html.anim: with no JS, or reduced motion, none of it exists
+   and the settled panel is what you get.
+   ---------------------------------------------------------------------- */
+@keyframes riseIn  {from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none}}
+@keyframes frameIn {from{opacity:0;transform:scale(.988)}      to{opacity:1;transform:none}}
+@keyframes cornerIn{from{opacity:0;transform:scale(1.7)}       to{opacity:1;transform:none}}
+/* the name is wiped in, not faded or scaled -- clip-path leaves the
+   glyph edges exactly as crisp as they are at rest. the negative insets
+   keep the settled state from cropping the name's own glow. */
+@keyframes cutIn   {from{clip-path:inset(-30px 100% -30px 0)}   to{clip-path:inset(-30px -8% -30px 0)}}
+@keyframes fadeIn  {from{opacity:0} to{opacity:1}}
+/* the shield arrives with weight: overshoot, land hard, settle */
+@keyframes strike{
+  0%  {opacity:0;transform:translateY(-54px) scale(1.75)}
+  52% {opacity:1;transform:translateY(6px)  scale(.93)}
+  70% {opacity:1;transform:translateY(-4px) scale(1.04)}
+  86% {transform:translateY(1px) scale(.99)}
+  100%{opacity:1;transform:none}
+}
+@keyframes ringOut{
+  0%  {opacity:0;transform:scale(.35)}
+  18% {opacity:.9}
+  100%{opacity:0;transform:scale(2.4)}
+}
+@keyframes impact{0%,100%{opacity:0} 8%{opacity:.55} 60%{opacity:0}}
+/* the eyes are last: dark, then overbright, then their working level */
+@keyframes eyesLight{
+  0%  {opacity:0;filter:brightness(.2)}
+  38% {opacity:1;filter:brightness(2.6)}
+  100%{opacity:1;filter:none}
+}
+
+.anim .frame  {animation:frameIn .34s ease-out both}
+.anim .cnr.tl {animation:cornerIn .30s ease-out .18s both}
+.anim .cnr.tr {animation:cornerIn .30s ease-out .23s both}
+.anim .cnr.bl {animation:cornerIn .30s ease-out .28s both}
+.anim .cnr.br {animation:cornerIn .30s ease-out .33s both}
+.anim .torch  {animation:fadeIn .5s linear .20s both}
+.anim .top    {animation:riseIn .30s ease-out .36s both}
+.anim .figure {animation:riseIn .46s ease-out .26s both}
+.anim .acwrap svg{animation:strike .46s cubic-bezier(.2,.7,.3,1) .48s both}
+.anim .acwrap p  {animation:fadeIn .30s linear .86s both}
+.anim #shock  {animation:ringOut .52s ease-out .60s both}
+.anim #flash  {animation:impact .60s linear .58s both}
+.anim .name   {animation:cutIn .26s cubic-bezier(.3,.9,.2,1) .76s both}
+.anim .kind   {animation:riseIn .24s ease-out .88s both}
+.anim .role   {animation:riseIn .24s ease-out .94s both}
+.anim .controls{animation:riseIn .28s ease-out 1.00s both}
+.anim .div.kit{animation:fadeIn .26s linear 1.06s both}
+.anim .tile   {animation:riseIn .24s ease-out both}
+.anim .tile:nth-child(1){animation-delay:1.10s}
+.anim .tile:nth-child(2){animation-delay:1.15s}
+.anim .tile:nth-child(3){animation-delay:1.20s}
+.anim .rail.r .tile:nth-child(1){animation-delay:1.13s}
+.anim .rail.r .tile:nth-child(2){animation-delay:1.18s}
+.anim .rail.r .tile:nth-child(3){animation-delay:1.23s}
+.anim .div.can-d{animation:fadeIn .26s linear 1.24s both}
+.anim .can li:nth-child(1){animation:riseIn .24s ease-out 1.28s both}
+.anim .can li:nth-child(2){animation:riseIn .24s ease-out 1.34s both}
+.anim .can li:nth-child(3){animation:riseIn .24s ease-out 1.40s both}
+.anim .div.stat-d{animation:fadeIn .26s linear 1.38s both}
+.anim .stats li{animation:riseIn .22s ease-out both}
+.anim .stats li:nth-child(1){animation-delay:1.42s}
+.anim .stats li:nth-child(2){animation-delay:1.46s}
+.anim .stats li:nth-child(3){animation-delay:1.50s}
+.anim .stats li:nth-child(4){animation-delay:1.54s}
+.anim .stats li:nth-child(5){animation-delay:1.58s}
+.anim .stats li:nth-child(6){animation-delay:1.62s}
+.anim .drive  {animation:riseIn .30s ease-out 1.52s both}
+.anim #eyes   {animation:eyesLight .36s ease-out 1.46s both}
+.anim #eyespill{animation:eyesLight .36s ease-out 1.46s both}
+.still #shock,.still #flash{display:none}
+
+/* blink pivots about the eye line */
+#eyes{transform-box:fill-box;transform-origin:center}
+
+/* the shield's own quiet weight: no animation, just the settled state */
+#shock{transform-box:fill-box;transform-origin:center}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+  #shock,#flash{display:none}
+}
+
+/* ---- the rails stand up --------------------------------------------- */
+@media (min-width:700px){
+  .frame{padding:26px 24px 0}
+  .stagegrid{grid-template-columns:132px 1fr 132px;column-gap:20px;align-items:start}
+  .div.kit{grid-column:1/-1;grid-row:1;margin:0 0 14px}
+  .rail{display:grid;grid-auto-rows:min-content;gap:13px}
+  .rail.l{grid-column:1;grid-row:2}
+  .rail.r{grid-column:3;grid-row:2}
+  .figure{grid-column:2;grid-row:2}
+  .figure svg{max-width:330px}
+  .acwrap{grid-column:2;grid-row:3;margin-top:-40px}
+  .acwrap svg{width:158px}
+  .stats{grid-template-columns:repeat(6,1fr)}
+  .drive{margin:28px -24px 0}
+  .can{grid-template-columns:1fr 1fr;gap:14px 26px}
+}
+
+@media print{
+  body{background:#fff;color:#1a1208}
+  .stage{padding:0;max-width:none}
+  .frame{background:#fff;border-color:#4a3a12;box-shadow:inset 0 0 0 4px #fff,inset 0 0 0 5px #4a3a12;animation:none}
+  .torch,#fx,#shock,#flash{display:none}
+  *{animation:none!important}
+  .name,.kind,.div span,.stats .hi b,.stats .hi span,.drive p{color:#4a3a12}
+  .role,.can li,.stats b{color:#1a1208}
+  .stats span,.tile b,.acwrap p,.legal{color:#3d3325}
+  .tile.green::after,.tile.violet::after{display:none}
+  .xp i{background:#4a3a12}
+  .controls{display:none}
+  .drive{background:none;border-top-color:#4a3a12}
+}
+</style>
+</head>
+<body>
+
+<!-- reusable ornament -------------------------------------------------- -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <!-- corner scrollwork. round 3's 44px curl read as a squiggle on a
+       phone; fewer strokes, heavier, and 52px so the shape is legible -->
+  <symbol id="cnr" viewBox="0 0 60 60">
+    <path d="M3,58 L3,13 C3,7 7,3 13,3 L58,3" fill="none" stroke="#96743a" stroke-width="2"/>
+    <path d="M11,58 L11,18 C11,14 14,11 18,11 L58,11" fill="none" stroke="#96743a" stroke-width="1.1" opacity=".75"/>
+    <path d="M18,42 C18,28 30,22 38,26 C45,30 42,40 35,38 C30,36.5 30,29 35,28"
+          fill="none" stroke="#96743a" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M21,19 l4.5,-4.5 4.5,4.5 -4.5,4.5 z" fill="#96743a"/>
+  </symbol>
+  <symbol id="cnrLit" viewBox="0 0 60 60">
+    <path d="M3,58 L3,13 C3,7 7,3 13,3 L58,3" fill="none" stroke="#f2dcae" stroke-width="1.2"/>
+    <path d="M18,42 C18,28 30,22 38,26 C45,30 42,40 35,38 C30,36.5 30,29 35,28"
+          fill="none" stroke="#e6c286" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M21,19 l4.5,-4.5 4.5,4.5 -4.5,4.5 z" fill="#f2dcae"/>
+  </symbol>
+  <symbol id="flr" viewBox="0 0 26 14">
+    <path d="M0,7 C7,7 8,2 13,3 C17,3.8 16,10 12,9.6 C9.4,9.3 9,6.6 11.6,6"
+          fill="none" stroke="#b08b48" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M21,3.5 l3.5,3.5 -3.5,3.5 -3.5,-3.5 z" fill="#d9ae63"/>
+  </symbol>
+  <symbol id="dia" viewBox="0 0 12 12">
+    <path d="M6,1 l5,5 -5,5 -5,-5 z" fill="#d9ae63"/>
+  </symbol>
+</defs>
+</svg>
+
+<div class="stage">
+<div class="frame" id="frame">
+
+  <div class="torch" aria-hidden="true"></div>
+
+  <svg class="cnr tl" aria-hidden="true"><use href="#cnr"/></svg>
+  <svg class="cnr tr" aria-hidden="true"><use href="#cnr"/></svg>
+  <svg class="cnr bl" aria-hidden="true"><use href="#cnr"/></svg>
+  <svg class="cnr br" aria-hidden="true"><use href="#cnr"/></svg>
+  <svg class="cnr tl lit" aria-hidden="true"><use href="#cnrLit"/></svg>
+  <svg class="cnr tr lit" aria-hidden="true"><use href="#cnrLit"/></svg>
+  <svg class="cnr bl lit" aria-hidden="true"><use href="#cnrLit"/></svg>
+  <svg class="cnr br lit" aria-hidden="true"><use href="#cnrLit"/></svg>
+
+  <!-- everything inside .tableau sits above the fire canvas ------------ -->
+  <div class="tableau" id="tableau">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <div class="top">
+    <span class="lvl">Level 1</span>
+    <span class="xp" aria-hidden="true"><i></i></span>
+  </div>
+
+  <div class="ident">
+    <h1 class="name">Tessa</h1>
+    <p class="kind">Elf<svg width="10" height="10" aria-hidden="true"><use href="#dia"/></svg>Rogue</p>
+    <p class="role">The one nobody sees coming</p>
+  </div>
+
+  <div class="controls">
+    <button class="say" id="say" type="button">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>
+      </svg>
+      Read this aloud
+    </button>
+  </div>
+
+  <div class="stagegrid">
+
+    <!-- ============ THE FIGURE ==========================================
+         Round 3 drew a symmetrical bell with a ragged hem and it rendered
+         as a ghost. Rebuilt on a weight shift: she stands on her viewer-
+         right leg, hips carried over it, shoulders tilted the other way,
+         the other boot relaxed and forward. The cloak is OPEN, two swept
+         panels -- a long trailing one on the left, a short lifted one on
+         the right -- so the body between them has a waist, a belt, a
+         dagger, two hands and two boots. Silhouette first: it has to read
+         at 40px before it is allowed to read at 300.
+         The face is a void with two lit eyes. That is still the whole idea.
+         ================================================================== -->
+    <figure class="figure">
+      <svg viewBox="0 0 280 420" role="img"
+           aria-label="Tessa, a hooded elf rogue standing with her weight on one leg and a hand resting on her dagger, her face in shadow and her eyes lit.">
+        <defs>
+          <radialGradient id="glowbg" cx="50%" cy="46%" r="60%">
+            <stop offset="0%" stop-color="#41301a" stop-opacity=".92"/>
+            <stop offset="58%" stop-color="#241a0f" stop-opacity=".5"/>
+            <stop offset="100%" stop-color="#241a0f" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="cloakL" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1e1710"/>
+            <stop offset="60%" stop-color="#120d08"/>
+            <stop offset="100%" stop-color="#0a0705"/>
+          </linearGradient>
+          <linearGradient id="cloakR" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#241b11"/>
+            <stop offset="60%" stop-color="#180f09"/>
+            <stop offset="100%" stop-color="#0d0906"/>
+          </linearGradient>
+          <filter id="eyeglow" x="-160%" y="-160%" width="420%" height="420%">
+            <feGaussianBlur stdDeviation="2.8" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <ellipse cx="140" cy="196" rx="122" ry="160" fill="url(#glowbg)"/>
+        <ellipse cx="140" cy="382" rx="96" ry="13" fill="#080605"/>
+        <path d="M46,378 C78,394 202,394 234,378" fill="none" stroke="#6b5230"
+              stroke-width="1.4" opacity=".6"/>
+
+        <!-- cloak, left panel: the long sweep and the trailing point ---- -->
+        <path d="M116,106 C96,116 82,146 72,190 C60,244 56,300 62,340
+                 L44,376 C68,382 92,376 108,362
+                 C104,300 106,200 116,106 Z"
+              fill="url(#cloakL)" stroke="#5c4527" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M96,150 C86,206 82,286 88,346" fill="none" stroke="#0a0705"
+              stroke-width="2.6" opacity=".8"/>
+
+        <!-- cloak, right panel: shorter, lifted corner ------------------ -->
+        <path d="M164,106 C186,116 198,146 206,190 C214,236 214,278 208,312
+                 L218,332 C200,346 180,346 168,336
+                 C170,280 168,190 164,106 Z"
+              fill="url(#cloakR)" stroke="#6b5230" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M188,152 C198,204 200,272 194,320" fill="none" stroke="#0a0705"
+              stroke-width="2.6" opacity=".8"/>
+
+        <!-- legs: weight on the viewer-right, the other relaxed --------- -->
+        <path d="M142,232 L162,232 L164,306 L144,306 Z" fill="#191207"/>
+        <path d="M116,232 L136,232 L134,306 L114,306 Z" fill="#140f07"/>
+        <rect x="141" y="266" width="24" height="9" rx="2" fill="#2b2013"
+              stroke="#8a6a34" stroke-width="1"/>
+
+        <!-- boots -->
+        <path d="M142,300 L140,352 C139,364 148,370 163,367 L167,356 L165,300 Z"
+              fill="#15100a" stroke="#5c4527" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M116,300 L108,346 C105,358 113,364 128,361 L133,350 L131,300 Z"
+              fill="#120d08" stroke="#4e3a21" stroke-width="1.4" stroke-linejoin="round"/>
+        <path d="M141,309 L165,309" stroke="#6b5230" stroke-width="1.6"/>
+        <path d="M116,309 L131,309" stroke="#5c4527" stroke-width="1.6"/>
+
+        <!-- the body between the panels: jerkin, strap, belt ------------- -->
+        <path d="M118,112 C114,152 121,182 124,208 L122,238 L158,238 L156,208
+                 C160,182 166,152 162,112 C150,121 130,121 118,112 Z"
+              fill="#201810"/>
+        <path d="M124,132 L156,194" stroke="#2e2415" stroke-width="9" stroke-linecap="round"/>
+        <circle cx="140" cy="162" r="3.4" fill="#b98f45"/>
+        <path d="M133,120 C133,160 131,196 129,222" fill="none" stroke="#0d0906"
+              stroke-width="2.2" opacity=".7"/>
+
+        <!-- her dagger, and the second sheath on the far hip ------------- -->
+        <path d="M116,190 L124,192 L121,214 L113,212 Z" fill="#2b2013"
+              stroke="#8a6a34" stroke-width="1.2" stroke-linejoin="round"/>
+        <circle cx="119" cy="187" r="3.6" fill="#d9ae63"/>
+        <path d="M124,224 L112,260 L120,263 L131,228 Z" fill="#1d1610"
+              stroke="#6b5230" stroke-width="1.2" stroke-linejoin="round"/>
+        <path d="M158,226 L172,258 L164,262 L152,230 Z" fill="#1d1610"
+              stroke="#6b5230" stroke-width="1.2" stroke-linejoin="round"/>
+
+        <rect x="117" y="212" width="46" height="14" rx="3" fill="#2b2013"
+              stroke="#8a6a34" stroke-width="1.3"/>
+        <circle cx="140" cy="219" r="4.6" fill="#d9ae63"/>
+
+        <!-- arms. her left (viewer right) is the lit one ---------------- -->
+        <path d="M158,126 C174,154 176,190 166,214" fill="none" stroke="#2f2416"
+              stroke-width="15" stroke-linecap="round"/>
+        <path d="M160,128 C176,156 178,190 168,212" fill="none" stroke="#a67c3c"
+              stroke-width="1.6" stroke-linecap="round" opacity=".75"/>
+        <circle cx="165" cy="218" r="7.5" fill="#33281a"/>
+        <path d="M160,220 L170,220 M161,225 L169,225" stroke="#0f0b07" stroke-width="1.6"
+              stroke-linecap="round"/>
+
+        <path d="M122,126 C110,152 106,180 113,205" fill="none" stroke="#1e1710"
+              stroke-width="15" stroke-linecap="round"/>
+        <circle cx="115" cy="209" r="7.5" fill="#241c12"/>
+        <path d="M110,211 L120,211 M111,216 L119,216" stroke="#0a0705" stroke-width="1.6"
+              stroke-linecap="round"/>
+
+        <!-- shoulder mantle over the top of both panels ------------------ -->
+        <path d="M108,110 C118,95 162,95 172,110 C179,123 181,138 179,148
+                 C160,138 120,138 101,148 C99,138 101,123 108,110 Z"
+              fill="#241b11" stroke="#6b5230" stroke-width="1.5" stroke-linejoin="round"/>
+        <circle cx="112" cy="133" r="6.4" fill="#2b2013" stroke="#b98f45" stroke-width="1.7"/>
+
+        <!-- the ear, pushed out past the hood ---------------------------- -->
+        <path d="M104,74 C94,64 88,47 90,37 C99,47 108,62 112,72 Z"
+              fill="#191209" stroke="#6b5230" stroke-width="1.3" stroke-linejoin="round"/>
+
+        <!-- hood, with a forward-flopping tip ---------------------------- -->
+        <path d="M140,26 C161,26 176,45 176,68 C176,89 170,105 161,116
+                 C149,122 131,122 119,116 C110,105 104,89 104,68
+                 C104,45 119,26 140,26 Z"
+              fill="#241b11" stroke="#6b5230" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M137,28 C141,17 152,14 158,19 C152,25 145,28 140,29 Z"
+              fill="#2b2013" stroke="#6b5230" stroke-width="1.3" stroke-linejoin="round"/>
+        <path d="M110,58 C118,40 162,40 170,58" fill="none" stroke="#8a6a34"
+              stroke-width="1.8" opacity=".85"/>
+
+        <!-- THE LOOK: the void, then the two lit marks in it ------------- -->
+        <path d="M112,62 C112,44 168,44 168,62 C168,85 158,103 140,109
+                 C122,103 112,85 112,62 Z" fill="#060505"/>
+        <path d="M110,80 C122,96 158,96 170,80" fill="none" stroke="#3b2d1a" stroke-width="2.4"/>
+
+        <!-- cold spill: the only cool light on the panel, and it comes
+             from her own eyes onto her own collar -->
+        <g id="eyespill">
+          <path d="M121,105 C129,114 151,114 159,105" fill="none" stroke="#2f7d78"
+                stroke-width="2.4" opacity=".5" stroke-linecap="round"/>
+          <circle cx="112" cy="133" r="6.4" fill="none" stroke="#2f7d78"
+                  stroke-width="1.2" opacity=".45"/>
+        </g>
+
+        <g id="eyes">
+          <g filter="url(#eyeglow)">
+            <path d="M118,76 C122,70 131,70 135,76 C131,82 122,82 118,76 Z" fill="#8fe8dd"/>
+            <path d="M143,76 C147,70.5 155,70.5 159,76 C155,81.5 147,81.5 143,76 Z" fill="#8fe8dd"/>
+          </g>
+          <circle cx="126.5" cy="76" r="1.9" fill="#f2fffd"/>
+          <circle cx="151" cy="76" r="1.9" fill="#f2fffd"/>
+        </g>
+
+        <!-- warm rim: one continuous light down the viewer-right side ---- -->
+        <path d="M172,52 C178,66 178,92 168,110" fill="none" stroke="#c39a52"
+              stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+        <path d="M174,113 C180,125 182,138 180,148" fill="none" stroke="#a67c3c"
+              stroke-width="2" stroke-linecap="round" opacity=".85"/>
+        <path d="M168,110 C188,120 200,150 208,192 C216,238 216,280 210,314"
+              fill="none" stroke="#a67c3c" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
+        <path d="M212,320 L219,333" fill="none" stroke="#c39a52" stroke-width="2"
+              stroke-linecap="round" opacity=".8"/>
+      </svg>
+    </figure>
+
+    <!-- ============ THE SHIELD ========================================== -->
+    <div class="acwrap">
+      <svg viewBox="0 0 160 182" role="img" aria-label="Armor 13">
+        <defs>
+          <linearGradient id="shieldface" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2a2114"/>
+            <stop offset="100%" stop-color="#120d08"/>
+          </linearGradient>
+        </defs>
+        <!-- the impact, drawn once on arrival and then gone -->
+        <circle id="shock" cx="80" cy="96" r="52" fill="none"
+                stroke="#f2dcae" stroke-width="3" opacity="0"/>
+        <ellipse id="flash" cx="80" cy="96" rx="78" ry="86" fill="#e0a340" opacity="0"/>
+        <path d="M80,4 L153,25 C153,92 132,146 80,178 C28,146 7,92 7,25 Z"
+              fill="url(#shieldface)" stroke="#d9ae63" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M80,15 L144,33 C144,92 125,139 80,167 C35,139 16,92 16,33 Z"
+              fill="none" stroke="#96743a" stroke-width="1.4" stroke-linejoin="round"/>
+        <path d="M52,40 C64,52 96,52 108,40" fill="none" stroke="#96743a" stroke-width="1.4"/>
+        <circle cx="80" cy="30" r="3.4" fill="#d9ae63"/>
+        <text x="80" y="122" text-anchor="middle"
+              font-family="Georgia,'Times New Roman',serif" font-size="62" fill="#f2dcae">13</text>
+      </svg>
+      <p>Armor</p>
+    </div>
+
+    <!-- the divider names the KIT, not Tessa. Round 3 had it above her. -->
+    <div class="div kit"><svg class="flr" aria-hidden="true"><use href="#flr"/></svg><span>Her kit</span><svg class="flr r" aria-hidden="true"><use href="#flr"/></svg></div>
+
+    <!-- ============ THE RAILS =========================================== -->
+    <ul class="rail l">
+      <li class="tile">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#d9ae63" stroke-width="2.2"
+             stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+          <path d="M24,6 C14,6 8,15 8,26 C8,34 12,40 18,43 C20,36 22,32 24,30
+                   C26,32 28,36 30,43 C36,40 40,34 40,26 C40,15 34,6 24,6 Z"/>
+          <path d="M15,21 C18,15 30,15 33,21"/>
+        </svg>
+        <b>Hood</b>
+      </li>
+      <li class="tile">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#d9ae63" stroke-width="2.2"
+             stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+          <path d="M24,7 L14,12 C9,20 7,31 8,38 l4,5 4,-5 4,5 4,-5 4,5 4,-5 4,5
+                   c1,-7 -1,-18 -6,-26 Z"/>
+          <path d="M18,10 C21,15 27,15 30,10"/>
+        </svg>
+        <b>Cloak</b>
+      </li>
+      <li class="tile green">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#8fd89f" stroke-linecap="round" aria-hidden="true">
+          <g stroke-width="4"><path d="M37,9 L22,29"/><path d="M11,9 L26,29"/></g>
+          <g stroke-width="3"><path d="M17,27 L27,35"/><path d="M31,27 L21,35"/></g>
+          <g stroke-width="5"><path d="M21,32 L15,40"/><path d="M27,32 L33,40"/></g>
+        </svg>
+        <b>Two daggers</b>
+        <i>Uncommon</i>
+      </li>
+    </ul>
+
+    <ul class="rail r">
+      <li class="tile">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#d9ae63" stroke-width="2.2"
+             stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+          <path d="M16,7 L27,7 L28,29 C28,34 33,36 39,38 C42,39 42,42 39,42 L16,42 Z"/>
+          <path d="M16,14 L27,14"/>
+        </svg>
+        <b>Boots</b>
+      </li>
+      <li class="tile">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#d9ae63" stroke-width="2.2"
+             stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+          <circle cx="16" cy="13" r="6"/>
+          <path d="M20,17 L33,31 C35,33 34,36 31,36"/>
+          <path d="M18,19 L25,37 C26,40 23,41 22,39"/>
+          <path d="M12,19 L10,37"/>
+        </svg>
+        <b>Thieves tools</b>
+      </li>
+      <li class="tile violet">
+        <svg viewBox="0 0 48 48" fill="none" stroke="#cfaef5" stroke-width="3"
+             stroke-linejoin="round" aria-hidden="true">
+          <circle cx="24" cy="30" r="11"/>
+          <path d="M24,5 L31,13 L24,21 L17,13 Z" fill="#bd93f0" stroke="none"/>
+          <path d="M24,5 L31,13 L24,21 L17,13 Z" stroke-width="2"/>
+        </svg>
+        <b>Silver ring</b>
+        <i>Very rare</i>
+      </li>
+    </ul>
+
+  </div>
+  </div><!-- /tableau -->
+
+  <div class="div can-d"><svg class="flr" aria-hidden="true"><use href="#flr"/></svg><span>What you can do</span><svg class="flr r" aria-hidden="true"><use href="#flr"/></svg></div>
+
+  <ul class="can">
+    <li>You get into rooms that are locked, and out of them again.</li>
+    <li>You notice the trap before anyone steps on it.</li>
+    <li>When you catch someone off guard, you hurt them badly.</li>
+  </ul>
+
+  <div class="div stat-d"><svg class="flr" aria-hidden="true"><use href="#flr"/></svg><span>Stats</span><svg class="flr r" aria-hidden="true"><use href="#flr"/></svg></div>
+
+  <ul class="stats">
+    <li><b>8</b><span>STR</span></li>
+    <li class="hi"><b>15</b><span>DEX</span></li>
+    <li class="hi"><b>14</b><span>CON</span></li>
+    <li><b>13</b><span>INT</span></li>
+    <li><b>12</b><span>WIS</span></li>
+    <li><b>10</b><span>CHA</span></li>
+  </ul>
+
+  <div class="drive">
+    <svg width="26" height="14" aria-hidden="true"><use href="#flr"/></svg>
+    <p>Somebody took something of mine.</p>
+  </div>
+
+</div>
+
+<p class="legal">Rules content is from the System Reference Document 5.2 by Wizards
+  of the Coast LLC, CC-BY-4.0. Design study only -- example character.</p>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------------------------------
+   READ-ALOUD -- one control for the whole panel.
+   window.LOOM_SPEAK is checked FIRST so the box can route this
+   through piper. Browser speech is the fallback, so the file still
+   talks with nothing installed and the network off.
+   --------------------------------------------------------------- */
+var ALOUD = [
+  "Tessa. Elf. Rogue.",
+  "The one nobody sees coming.",
+  "Here is what you can do.",
+  "You get into rooms that are locked, and out of them again.",
+  "You notice the trap before anyone steps on it.",
+  "When you catch someone off guard, you hurt them badly.",
+  "Your kit: a hood, a cloak, two daggers, boots, thieves tools,",
+  "and a silver ring.",
+  "Your armor is thirteen. You are level one.",
+  "And this is why you are out here.",
+  "Somebody took something of mine."
+].join(" ");
+
+var sayBtn = document.getElementById("say");
+
+function speak(text, btn){
+  if (typeof window.LOOM_SPEAK === "function"){ window.LOOM_SPEAK(text); return; }
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.95; u.pitch = 1.0;
+  if (btn){
+    btn.classList.add("speaking");
+    u.onend = function(){ btn.classList.remove("speaking"); };
+    u.onerror = function(){ btn.classList.remove("speaking"); };
+  }
+  window.speechSynthesis.speak(u);
+}
+
+sayBtn.addEventListener("click", function(){
+  /* a second press stops it. A kid who starts it by accident needs a
+     way out that is the same button they already found. */
+  if (sayBtn.classList.contains("speaking") && "speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+    sayBtn.classList.remove("speaking");
+    return;
+  }
+  speak(ALOUD, sayBtn);
+});
+
+
+/* ===============================================================
+   THE FIRE. One canvas, one rAF loop.
+
+   PER FRAME, ALL OF IT:
+     1 clearRect
+     3 sines  -> the torch level
+     1 drawImage of a pre-rendered 256px light pool
+     N particles, N = 18 on a phone / 30 on desktop, each:
+       2 mul-adds for position, 1 sine for drift, 1 sine for the
+       fade curve, 1 drawImage of a pre-rendered 32px sprite
+     up to 2 CSS custom-property writes on ONE element, and only
+       when the value actually moved by more than a hundredth
+
+   No gradient is created after startup. No canvas path is ever
+   built. No element is measured inside the loop -- geometry is read
+   once on resize. The two custom properties feed nothing but
+   opacity, so the browser composites and never lays out or repaints.
+   That is the whole budget: roughly 30 blits and 40 sines a frame,
+   which a phone from ten years ago would not notice.
+   =============================================================== */
+(function(){
+  var reduce = document.documentElement.className.indexOf("still") >= 0;
+
+  var frameEl  = document.getElementById("frame");
+  var host     = document.getElementById("tableau");
+  var cv       = document.getElementById("fx");
+  var eyes     = document.getElementById("eyes");
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext("2d");
+
+  /* --- pre-rendered sprites. built once, blitted forever. --------- */
+  function sprite(size, r, g, b){
+    var c = document.createElement("canvas");
+    c.width = c.height = size;
+    var x = c.getContext("2d");
+    var h = size / 2;
+    var gr = x.createRadialGradient(h, h, 0, h, h, h);
+    gr.addColorStop(0,    "rgba(" + r + "," + g + "," + b + ",1)");
+    gr.addColorStop(0.30, "rgba(" + r + "," + g + "," + b + ",0.55)");
+    gr.addColorStop(1,    "rgba(" + r + "," + g + "," + b + ",0)");
+    x.fillStyle = gr;
+    x.fillRect(0, 0, size, size);
+    return c;
+  }
+  var EMBER = sprite(32, 255, 186, 104);
+  var POOL  = sprite(256, 226, 150, 58);
+
+  var W = 0, H = 0, N = 0;
+  var P = [];
+
+  function place(p, first){
+    p.x   = Math.random() * W;
+    p.y   = first ? Math.random() * H : H * (0.70 + Math.random() * 0.34);
+    p.vy  = 7 + Math.random() * 20;          /* px per second, upward   */
+    p.ph  = Math.random() * 6.283;
+    p.sw  = 0.35 + Math.random() * 0.85;     /* sway rate               */
+    p.amp = 3 + Math.random() * 11;          /* sway px per second      */
+    p.sz  = 2.0 + Math.random() * 4.0;
+    p.ttl = 5 + Math.random() * 7;
+    p.age = first ? Math.random() * p.ttl : 0;
+  }
+
+  function measure(){
+    /* the only geometry read in the whole file, and it is not in the
+       loop. .tableau gives the canvas its box in CSS; we just match. */
+    W = host.clientWidth;
+    H = host.clientHeight;
+    if (W < 2 || H < 2) return false;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.style.width  = W + "px";
+    cv.style.height = H + "px";
+    cv.width  = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = "lighter";
+    var want = W < 520 ? 18 : 30;
+    if (want !== N){
+      N = want;
+      P.length = 0;
+      for (var i = 0; i < N; i++){ P.push({}); place(P[i], true); }
+    }
+    return true;
+  }
+
+  /* torch level: two slow sines and one fast small one. A fire is not
+     a sine wave and it is not noise either -- it is a couple of lazy
+     swells with a flutter riding on top. */
+  function torch(t){
+    var f = 0.5
+          + 0.30 * Math.sin(t * 1.7)
+          + 0.13 * Math.sin(t * 4.3 + 1.1)
+          + 0.06 * Math.sin(t * 11.0 + 2.2);
+    return f < 0 ? 0 : (f > 1 ? 1 : f);
+  }
+
+  var lastT = 0, lastVar = -1, lastB = -1;
+  var nextBlink = 4.0, blinking = false;
+  var raf = 0, visible = true, onscreen = true;
+
+  function frame(ms){
+    raf = 0;
+    var t = ms / 1000;
+    var dt = lastT ? t - lastT : 0.016;
+    lastT = t;
+    if (dt > 0.05) dt = 0.05;          /* a tab that woke up does not jump */
+
+    var f = torch(t);
+
+    /* --- the fire ------------------------------------------------- */
+    ctx.clearRect(0, 0, W, H);
+
+    var R = H * (0.44 + f * 0.045);
+    ctx.globalAlpha = 0.09 + f * 0.06;
+    ctx.drawImage(POOL, W * 0.5 - R, H * 0.66 - R, R * 2, R * 2);
+
+    for (var i = 0; i < N; i++){
+      var p = P[i];
+      p.age += dt;
+      if (p.age >= p.ttl){ place(p, false); }
+      p.y -= p.vy * dt;
+      p.x += Math.sin(p.ph + t * p.sw) * p.amp * dt;
+      if (p.y < -20) { place(p, false); }
+      var a = Math.sin(Math.PI * (p.age / p.ttl));
+      ctx.globalAlpha = a * a * (0.30 + f * 0.24);
+      var s = p.sz * 2.6;
+      ctx.drawImage(EMBER, p.x - s, p.y - s, s * 2, s * 2);
+    }
+    ctx.globalAlpha = 1;
+
+    /* --- the light on the brass ----------------------------------- */
+    var tv = 0.30 + f * 0.70;
+    if (Math.abs(tv - lastVar) > 0.01){
+      frameEl.style.setProperty("--t", tv.toFixed(3));
+      lastVar = tv;
+    }
+    var bv = 0.5 + 0.5 * Math.sin(t * 1.05);
+    if (Math.abs(bv - lastB) > 0.012){
+      frameEl.style.setProperty("--b", bv.toFixed(3));
+      lastB = bv;
+    }
+
+    /* --- the blink. Two attribute writes, a few times a minute. ---- */
+    if (eyes){
+      if (!blinking && t > nextBlink){ blinking = true; }
+      if (blinking){
+        var k = (t - nextBlink) / 0.14;
+        if (k >= 1){
+          blinking = false;
+          nextBlink = t + 3.5 + Math.random() * 6.0;
+          eyes.style.transform = "";
+        } else {
+          var lid = 1 - Math.sin(Math.PI * k) * 0.94;
+          eyes.style.transform = "scaleY(" + lid.toFixed(3) + ")";
+        }
+      }
+    }
+
+    pump();
+  }
+
+  function pump(){
+    if (!raf && visible && onscreen && !reduce) raf = requestAnimationFrame(frame);
+  }
+  function halt(){
+    if (raf){ cancelAnimationFrame(raf); raf = 0; }
+    lastT = 0;
+  }
+
+  /* battery: nothing runs while the tab is hidden or the panel has
+     been scrolled past. */
+  document.addEventListener("visibilitychange", function(){
+    visible = !document.hidden;
+    if (visible) pump(); else halt();
+  });
+  if (window.IntersectionObserver){
+    new IntersectionObserver(function(e){
+      onscreen = e[0].isIntersecting;
+      if (onscreen) pump(); else halt();
+    }, {rootMargin: "80px"}).observe(host);
+  }
+
+  var rt = 0;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){
+      if (measure() && reduce) still();
+    }, 150);
+  });
+
+  /* reduced motion still gets a lit room -- it just does not move. */
+  function still(){
+    ctx.clearRect(0, 0, W, H);
+    var R = H * 0.46;
+    ctx.globalAlpha = 0.13;
+    ctx.drawImage(POOL, W * 0.5 - R, H * 0.66 - R, R * 2, R * 2);
+    for (var i = 0; i < N; i++){
+      var p = P[i];
+      ctx.globalAlpha = 0.22;
+      var s = p.sz * 2.6;
+      ctx.drawImage(EMBER, p.x - s, p.y - s, s * 2, s * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function boot(){
+    if (!measure()) { setTimeout(boot, 60); return; }
+    if (reduce){ frameEl.style.setProperty("--t", "0.72"); still(); return; }
+    pump();
+  }
+  if (document.readyState === "complete") boot();
+  else window.addEventListener("load", boot);
+})();
+</script>
+</body>
+</html>
