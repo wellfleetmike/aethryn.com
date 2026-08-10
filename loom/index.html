@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loom -- Character Picker</title>
+<style>
+:root{
+  --chassis:#1d2a2b;
+  --chassis-hi:#26383a;
+  --plate:#e9e5da;
+  --plate-edge:#c9c3b4;
+  --ink:#17201f;
+  --ink-soft:#4b5754;
+  --amber:#e0a340;
+  --teal:#2f7d78;
+  --rule:#3a4f50;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--chassis);
+  color:var(--plate);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:19px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 120px}
+
+/* instrument panel header */
+header{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  border-bottom:2px solid var(--rule);padding-bottom:16px;margin-bottom:32px;
+}
+.mark{
+  font-size:13px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;
+  color:var(--amber);
+}
+.mark span{color:var(--plate);opacity:.55}
+.lamps{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+.lamp{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
+  color:#7d8f8c;
+}
+.lamp i{
+  width:9px;height:9px;border-radius:50%;background:#3a4f50;display:block;
+  border:1px solid #46605f;
+}
+.lamp.on{color:var(--plate)}
+.lamp.on i{background:var(--amber);border-color:var(--amber);box-shadow:0 0 10px rgba(224,163,64,.7)}
+.lamp.done i{background:var(--teal);border-color:var(--teal);box-shadow:none}
+
+h1{
+  font-size:clamp(30px,5vw,46px);line-height:1.18;margin:0 0 10px;
+  font-weight:800;letter-spacing:-.01em;max-width:20ch;
+}
+.sub{color:#9fb0ad;margin:0 0 8px;max-width:46ch}
+
+/* speak button */
+.speak{
+  background:none;border:1px solid var(--rule);color:#9fb0ad;
+  width:44px;height:44px;border-radius:6px;cursor:pointer;flex:none;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.speak:hover{border-color:var(--amber);color:var(--amber)}
+.speak.speaking{border-color:var(--amber);color:var(--amber);background:rgba(224,163,64,.12)}
+.plate .speak{border-color:var(--plate-edge);color:var(--ink-soft)}
+.plate .speak:hover{border-color:var(--ink);color:var(--ink)}
+
+/* faceplate cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:16px;margin-top:24px}
+.plate{
+  background:var(--plate);color:var(--ink);
+  border:1px solid var(--plate-edge);border-radius:4px;
+  padding:20px;text-align:left;cursor:pointer;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:0 2px 0 rgba(0,0,0,.35);
+  transition:transform .12s ease, box-shadow .12s ease;
+  font:inherit;
+}
+.plate:hover{transform:translateY(-2px);box-shadow:0 8px 0 rgba(0,0,0,.35)}
+.plate:focus-visible,.speak:focus-visible,button:focus-visible,input:focus-visible{
+  outline:3px solid var(--amber);outline-offset:3px;
+}
+.plate.picked{
+  box-shadow:0 0 0 3px var(--amber),0 2px 0 rgba(0,0,0,.35);
+}
+.plate .top{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.plate .top svg{margin:2px 0 0 2px}
+.plate svg{flex:none}
+.plate .title{
+  font-size:21px;font-weight:800;line-height:1.25;margin:0;letter-spacing:-.01em;
+}
+.plate .line{margin:0;font-size:18px;line-height:1.62;color:var(--ink)}
+.plate .foot{
+  margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border-top:1px solid var(--plate-edge);padding-top:12px;
+}
+.tag{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--ink-soft);
+}
+.plate.picked .tag{color:#8a5a12}
+
+/* name step */
+.field{margin-top:26px;max-width:640px}
+label.big{display:block;font-size:22px;font-weight:700;margin-bottom:10px}
+input[type=text]{
+  width:100%;background:var(--plate);color:var(--ink);
+  border:1px solid var(--plate-edge);border-radius:4px;
+  padding:16px 18px;font:inherit;font-size:26px;font-weight:700;
+}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.chip{
+  background:transparent;color:var(--plate);border:1px solid var(--rule);
+  border-radius:4px;padding:12px 16px;font:inherit;font-size:17px;cursor:pointer;text-align:left;
+}
+.chip:hover{border-color:var(--amber)}
+.chip.on{background:var(--plate);color:var(--ink);border-color:var(--plate)}
+
+/* nav bar */
+.bar{
+  position:fixed;left:0;right:0;bottom:0;background:var(--chassis-hi);
+  border-top:2px solid var(--rule);padding:14px 20px;
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+}
+.bar .inner{max-width:1080px;margin:0 auto;width:100%;display:flex;gap:12px;align-items:center}
+.btn{
+  font:inherit;font-weight:800;font-size:18px;cursor:pointer;
+  padding:14px 26px;border-radius:4px;border:1px solid var(--rule);
+  background:transparent;color:var(--plate);
+}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#20160a}
+.btn.go[disabled]{background:#3a4f50;border-color:#3a4f50;color:#7d8f8c;cursor:not-allowed}
+.btn.ghost:hover{border-color:var(--plate)}
+.why{color:#9fb0ad;font-size:16px;margin-left:auto;text-align:right;max-width:34ch}
+
+/* sheet */
+.sheet{background:var(--plate);color:var(--ink);border-radius:4px;padding:30px;margin-top:22px}
+.sheet h2{font-size:clamp(28px,5vw,42px);margin:0;line-height:1.15;letter-spacing:-.02em}
+.sheet .role{font-size:23px;font-weight:700;margin:14px 0 0;max-width:34ch}
+.sheet .drive{font-size:20px;margin:16px 0 0;max-width:44ch}
+.sheet h3{
+  font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);
+  margin:30px 0 12px;border-top:1px solid var(--plate-edge);padding-top:14px;
+}
+.can{margin:0;padding:0;list-style:none;display:grid;gap:14px}
+.can li{font-size:19px;line-height:1.6;max-width:52ch;padding-left:18px;border-left:3px solid var(--amber)}
+.rowbtns{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.rowbtns .btn{border-color:var(--plate-edge);color:var(--ink)}
+.rowbtns .btn.go{color:#20160a}
+details{margin-top:26px;border-top:1px solid var(--plate-edge);padding-top:14px}
+summary{cursor:pointer;font-weight:800;font-size:17px}
+.nums{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;line-height:1.85;white-space:pre-wrap;margin-top:12px}
+.draft{
+  margin-top:14px;font-size:15px;color:var(--ink-soft);border-left:3px solid var(--teal);
+  padding-left:14px;max-width:56ch;
+}
+.hidden{display:none}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+@media (max-width:560px){
+  body{font-size:18px}
+  .bar .inner{flex-wrap:wrap}
+  .why{width:100%;text-align:left;margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="mark">LOOM <span>/ character picker</span></div>
+  <div class="lamps" id="lamps"></div>
+</header>
+
+<!-- STEP 1: NAME -->
+<section id="s1">
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div>
+      <h1>Who are you?</h1>
+      <p class="sub">A name first. It does not have to mean anything.</p>
+    </div>
+    <button class="speak" data-say="Who are you? A name first. It does not have to mean anything." aria-label="Read this aloud">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+  </div>
+
+  <div class="field">
+    <label class="big" for="cname">Name</label>
+    <input type="text" id="cname" autocomplete="off" spellcheck="false" placeholder="">
+  </div>
+
+  <div class="field">
+    <label class="big" id="drivelabel">And one thing you cannot let go of</label>
+    <div class="chips" id="chips" role="group" aria-labelledby="drivelabel"></div>
+    <input type="text" id="cdrive" autocomplete="off" placeholder="or type your own" style="margin-top:14px;font-size:20px">
+  </div>
+</section>
+
+<!-- STEP 2: ROLE -->
+<section id="s2" class="hidden">
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div>
+      <h1 id="s2h">What do you do when it goes wrong?</h1>
+      <p class="sub">Pick the one that sounds like you. You can change it later.</p>
+    </div>
+    <button class="speak" data-say="What do you do when it goes wrong? Pick the one that sounds like you." aria-label="Read this aloud">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+  </div>
+  <div class="grid" id="rolegrid"></div>
+</section>
+
+<!-- STEP 3: LOOK -->
+<section id="s3" class="hidden">
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div>
+      <h1>What do people see first?</h1>
+      <p class="sub">This is only how you look. It does not decide what you can do.</p>
+    </div>
+    <button class="speak" data-say="What do people see first? This is only how you look. It does not decide what you can do." aria-label="Read this aloud">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+  </div>
+  <div class="grid" id="lookgrid"></div>
+</section>
+
+<!-- STEP 4: SHEET -->
+<section id="s4" class="hidden">
+  <div style="display:flex;gap:14px;align-items:flex-start">
+    <div>
+      <h1>This is you.</h1>
+      <p class="sub">Loom has the rest. You do not need to hold any of it.</p>
+    </div>
+  </div>
+  <div class="sheet" id="sheet"></div>
+</section>
+
+</div>
+
+<div class="bar">
+  <div class="inner">
+    <button class="btn ghost" id="back">Back</button>
+    <button class="btn go" id="next">Next</button>
+    <div class="why" id="why"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------------------------------
+   READ-ALOUD
+   Browser speech by default so this file works with no install.
+   To route through piper on the box, define window.LOOM_SPEAK
+   before this script runs. That is the only swap point.
+   --------------------------------------------------------------- */
+function speak(text, btn){
+  if (typeof window.LOOM_SPEAK === "function"){ window.LOOM_SPEAK(text); return; }
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.95; u.pitch = 1.0;
+  if (btn){
+    document.querySelectorAll(".speak.speaking").forEach(function(b){ b.classList.remove("speaking"); });
+    btn.classList.add("speaking");
+    u.onend = function(){ btn.classList.remove("speaking"); };
+    u.onerror = function(){ btn.classList.remove("speaking"); };
+  }
+  window.speechSynthesis.speak(u);
+}
+document.addEventListener("click", function(e){
+  var b = e.target.closest(".speak");
+  if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  speak(b.getAttribute("data-say"), b);
+});
+
+/* ---------------------------------------------------------------
+   ART -- silkscreen emblems, drawn not imported, so the file
+   stays one file and works with the network off.
+   --------------------------------------------------------------- */
+var S = 'width="86" height="86" viewBox="0 0 48 48" fill="none" stroke="#17201f" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"';
+var ART = {
+  front:  '<svg '+S+'><path d="M24 3 5 9v14c0 12 8.5 19.5 19 22.5C33.5 42.5 43 35 43 23V9z"/><path d="M24 13v20"/><path d="M15 22h18"/></svg>',
+  knows:  '<svg '+S+'><path d="M4 8h14a6 6 0 0 1 6 6v28a5 5 0 0 0-5-4H4z"/><path d="M44 8H30a6 6 0 0 0-6 6v28a5 5 0 0 1 5-4h15z"/><path d="M31 19h7"/><path d="M31 25h7"/><path d="M10 19h7"/><path d="M10 25h7"/></svg>',
+  talks:  '<svg '+S+'><path d="M3 21a13 10 0 0 1 26 0 13 10 0 0 1-13 10l-9 7v-8A11 9 0 0 1 3 21z"/><path d="M36 13a12 12 0 0 1 0 18"/><path d="M42 8a19 19 0 0 1 0 28"/></svg>',
+  unseen: '<svg '+S+'><path d="M4 20c5-5 12-7 20-7s15 2 20 7c-2 8-7 12-12 12-4 0-6-2-8-5-2 3-4 5-8 5-5 0-10-4-12-12z"/><path d="M15 20c2.5 0 4 1.5 4 3.5S17.5 27 15 27s-4-1.5-4-3.5S12.5 20 15 20z" fill="#17201f"/><path d="M33 20c2.5 0 4 1.5 4 3.5S35.5 27 33 27s-4-1.5-4-3.5S30.5 20 33 20z" fill="#17201f"/><path d="M24 13V5"/></svg>',
+  keeps:  '<svg '+S+'><circle cx="24" cy="18" r="7"/><path d="M24 4v4"/><path d="M40 18h4"/><path d="M4 18h4"/><path d="M35 7l-3 3"/><path d="M13 7l3 3"/><path d="M6 30c0 8 8 14 18 14s18-6 18-14"/><path d="M6 30l6-4"/><path d="M42 30l-6-4"/></svg>',
+  out:    '<svg '+S+'><path d="M14 6 4 34h20z"/><path d="M14 14v26"/><path d="M34 14 25 34h18z"/><path d="M34 20v20"/><path d="M3 44h42"/></svg>',
+  human:  '<svg '+S+'><circle cx="24" cy="15" r="8"/><path d="M7 45c0-10 7.5-15 17-15s17 5 17 15"/></svg>',
+  elf:    '<svg '+S+'><circle cx="24" cy="18" r="8"/><path d="M16 16 8 4l8 4"/><path d="M32 16 40 4l-8 4"/><path d="M8 45c0-9 7.5-14 16-14s16 5 16 14"/></svg>',
+  dwarf:  '<svg '+S+'><path d="M11 17a13 13 0 0 1 26 0"/><path d="M13 17h22v6c0 12-5 21-11 21S13 35 13 23z"/><path d="M19 21h3"/><path d="M26 21h3"/><path d="M20 32c2 2 6 2 8 0"/></svg>',
+  small:  '<svg '+S+'><circle cx="24" cy="21" r="7"/><path d="M11 45c0-8 5-12 13-12s13 4 13 12"/><path d="M11 19c3-7 8-10 13-10s10 3 13 10"/><path d="M11 19h26"/></svg>',
+  orc:    '<svg '+S+'><path d="M10 20a14 14 0 0 1 28 0v5c0 10-6 17-14 17s-14-7-14-17z"/><path d="M17 29l-3 8"/><path d="M31 29l3 8"/><path d="M18 20h4"/><path d="M26 20h4"/></svg>',
+  drake:  '<svg '+S+'><path d="M8 27c0-10 8-17 18-17 9 0 13 5 13 5l-5 4 7 4-9 11c-3 4-8 7-12 7-7 0-12-6-12-14z"/><path d="M21 23h3"/><path d="M12 11l5 7"/><path d="M21 6l3 8"/></svg>',
+  other:  '<svg '+S+'><path d="M24 4v40"/><path d="M4 24h40"/><path d="M10 10l28 28"/><path d="M38 10 10 38"/></svg>'
+};
+
+/* ---------------------------------------------------------------
+   CONTENT
+   --------------------------------------------------------------- */
+var DRIVES = [
+  "Somebody took something of mine.",
+  "I want to know what is out past the water.",
+  "I was lied to and I know who did it.",
+  "I am looking for a person.",
+  "I want to see how it works.",
+  "I owe somebody, and I pay what I owe."
+];
+
+var ROLES = [
+  { id:"front", art:ART.front, title:"The one who stands in front",
+    line:"You get hit so nobody behind you does. You are very hard to move.",
+    cls:"Fighter",
+    can:["You stand where the trouble is, and you are still standing after.",
+         "You hit hard enough that people stop what they were doing.",
+         "Twice between rests, you shake off damage and keep going."],
+    nums:{ str:15,dex:13,con:14,int:8,wis:12,cha:10, hp:12, ac:"16 (chain mail)",
+           kit:"Chain mail, greatsword, flail, 8 javelins, dungeoneers pack, 4 GP",
+           saves:"Strong: raw strength, staying on your feet",
+           note:"Fighting Style, Second Wind (2 uses), Weapon Mastery" } },
+
+  { id:"knows", art:ART.knows, title:"The one who knows things",
+    line:"You read what nobody else can read. Then you take the room apart with it.",
+    cls:"Wizard",
+    can:["You know what a thing is when everyone else is guessing.",
+         "You can set something on fire from across the room, or freeze it in place.",
+         "You carry a book, and the book gets bigger every session."],
+    nums:{ str:8,dex:14,con:13,int:15,wis:12,cha:10, hp:7, ac:"12 (no armor, just quick)",
+           kit:"Spellbook, quarterstaff, 2 daggers, robe, scholars pack, 5 GP",
+           saves:"Strong: knowing, concentrating",
+           note:"Spellcasting (3 cantrips, 4 prepared), Ritual Adept, Arcane Recovery" } },
+
+  { id:"talks", art:ART.talks, title:"The one who talks their way out",
+    line:"You get people to do things. Usually without them noticing you did it.",
+    cls:"Bard",
+    can:["You talk your way past a guard who was not going to let anybody past.",
+         "You make the person next to you better at what they are about to try.",
+         "You know a little of everything, and it is usually the right little."],
+    nums:{ str:8,dex:14,con:13,int:12,wis:10,cha:15, hp:9, ac:"13 (leather armor)",
+           kit:"Leather armor, 2 daggers, an instrument you choose, entertainers pack, 19 GP",
+           saves:"Strong: nerve, quick hands",
+           note:"Bardic Inspiration (d6), Spellcasting" } },
+
+  { id:"unseen", art:ART.unseen, title:"The one nobody sees coming",
+    line:"You are already inside. You hit once, in the right place, and leave.",
+    cls:"Rogue",
+    can:["You get into rooms that are locked, and out of them again.",
+         "You notice the trap before anyone steps on it.",
+         "When you catch someone off guard, you hurt them badly."],
+    nums:{ str:8,dex:15,con:14,int:13,wis:12,cha:10, hp:10, ac:"13 (leather armor)",
+           kit:"Leather armor, 2 daggers, shortsword, shortbow, thieves tools, 8 GP",
+           saves:"Strong: reflexes, thinking fast",
+           note:"Expertise, Sneak Attack (1d6), Thieves Cant, Weapon Mastery" } },
+
+  { id:"keeps", art:ART.keeps, title:"The one who keeps everyone standing",
+    line:"You put people back together. Something bigger than you is backing you up.",
+    cls:"Cleric",
+    can:["You bring somebody back up who just went down.",
+         "You can burn through something that should not be walking around.",
+         "People listen to you when it has gone quiet and bad."],
+    nums:{ str:13,dex:12,con:14,int:8,wis:15,cha:10, hp:10, ac:"16 (chain shirt and a shield)",
+           kit:"Chain shirt, shield, mace, holy symbol, priests pack, 7 GP",
+           saves:"Strong: judgment, force of will",
+           note:"Spellcasting (3 cantrips, 4 prepared), Divine Order" } },
+
+  { id:"out", art:ART.out, title:"The one who belongs outside",
+    line:"You find the way. You read the ground. You shoot from a long way off.",
+    cls:"Ranger",
+    can:["You know where you are, and you know what walked through here.",
+         "You hit things from farther away than they can hit you.",
+         "Cold, dark, and rough country do not slow you down."],
+    nums:{ str:12,dex:15,con:13,int:10,wis:14,cha:8, hp:11, ac:"14 (studded leather)",
+           kit:"Studded leather, scimitar, shortsword, longbow, explorers pack, 7 GP",
+           saves:"Strong: reflexes, raw strength",
+           note:"Spellcasting (2 prepared), Favored Enemy (Hunters Mark), Weapon Mastery" } }
+];
+
+var LOOKS = [
+  { id:"human", art:ART.human, title:"Human",     line:"You look like anybody. That is useful more often than you would think." },
+  { id:"elf",   art:ART.elf,   title:"Elf",       line:"Tall, sharp-eared, and you see fine in the dark." },
+  { id:"dwarf", art:ART.dwarf, title:"Dwarf",     line:"Short and solid. You feel it in the stone when something moves." },
+  { id:"small", art:ART.small, title:"Halfling",  line:"Small and quick, and you are hard to frighten." },
+  { id:"orc",   art:ART.orc,   title:"Orc",       line:"Big, tusked, and you keep going after other people quit." },
+  { id:"drake", art:ART.drake, title:"Dragonborn",line:"Scales, and you can breathe something that hurts." },
+  { id:"other", art:ART.other, title:"Something else", line:"Say out loud what you look like. Loom will write it down." }
+];
+
+/* ---------------------------------------------------------------
+   STATE + RENDER
+   --------------------------------------------------------------- */
+var state = { step:1, name:"", drive:"", role:null, look:null };
+var STEPS = ["Name","Role","Look","Sheet"];
+
+function renderLamps(){
+  document.getElementById("lamps").innerHTML = STEPS.map(function(s,i){
+    var n = i+1;
+    var c = n === state.step ? "lamp on" : (n < state.step ? "lamp done" : "lamp");
+    return '<span class="'+c+'"><i></i>'+s+'</span>';
+  }).join("");
+}
+
+function card(item, picked){
+  return '<button class="plate'+(picked?" picked":"")+'" data-id="'+item.id+'">'
+    + '<div class="top">'+item.art+'<p class="title">'+item.title+'</p></div>'
+    + '<p class="line">'+item.line+'</p>'
+    + '<div class="foot"><span class="tag">'+(picked?"Chosen":"Choose")+'</span>'
+    + '<span class="speak" role="button" tabindex="0" aria-label="Read this card aloud" data-say="'
+    + item.title+". "+item.line+'">'
+    + '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>'
+    + '</span></div></button>';
+}
+
+function renderChips(){
+  document.getElementById("chips").innerHTML = DRIVES.map(function(d){
+    return '<button class="chip'+(state.drive===d?" on":"")+'" data-drive="'+d+'">'+d+'</button>';
+  }).join("");
+}
+
+function renderGrids(){
+  document.getElementById("rolegrid").innerHTML = ROLES.map(function(r){
+    return card(r, state.role && state.role.id === r.id);
+  }).join("");
+  document.getElementById("lookgrid").innerHTML = LOOKS.map(function(l){
+    return card(l, state.look && state.look.id === l.id);
+  }).join("");
+}
+
+function ready(){
+  if (state.step === 1) return state.name.trim().length > 0 && state.drive.trim().length > 0;
+  if (state.step === 2) return !!state.role;
+  if (state.step === 3) return !!state.look;
+  return false;
+}
+function whyNot(){
+  if (state.step === 1){
+    if (!state.name.trim()) return "Give your character a name first.";
+    if (!state.drive.trim()) return "Pick one, or write your own.";
+    return "";
+  }
+  if (state.step === 2 && !state.role) return "Pick a card.";
+  if (state.step === 3 && !state.look) return "Pick a card.";
+  return "";
+}
+
+function show(){
+  for (var i=1;i<=4;i++){
+    document.getElementById("s"+i).classList.toggle("hidden", i !== state.step);
+  }
+  document.getElementById("back").style.visibility = state.step === 1 ? "hidden" : "visible";
+  var next = document.getElementById("next");
+  next.textContent = state.step === 3 ? "Make my sheet" : (state.step === 4 ? "Start over" : "Next");
+  next.disabled = state.step !== 4 && !ready();
+  document.getElementById("why").textContent = whyNot();
+  renderLamps();
+  window.scrollTo(0,0);
+}
+
+/* ---------------------------------------------------------------
+   SHEET
+   --------------------------------------------------------------- */
+function sheetText(){
+  var r = state.role, n = r.nums;
+  var L = [];
+  L.push("LOOM -- CHARACTER SHEET");
+  L.push("");
+  L.push("NAME    " + state.name.trim());
+  L.push("ROLE    " + r.title);
+  L.push("LOOK    " + state.look.title);
+  L.push("DRIVE   " + state.drive.trim());
+  L.push("");
+  L.push("WHAT YOU CAN DO");
+  r.can.forEach(function(c){ L.push("  - " + c); });
+  L.push("");
+  L.push("NUMBERS -- checked against SRD 5.2 (2024 rules), CC-BY-4.0");
+  L.push("  class      " + r.cls + ", level 1");
+  L.push("  hit points " + n.hp);
+  L.push("  armor      " + n.ac);
+  L.push("  scores     STR " + n.str + "  DEX " + n.dex + "  CON " + n.con +
+                     "  INT " + n.int + "  WIS " + n.wis + "  CHA " + n.cha);
+  L.push("  " + n.saves.toLowerCase());
+  L.push("  gear       " + n.kit);
+  L.push("  features   " + n.note);
+  L.push("");
+  L.push("Rules content is from the System Reference Document 5.2 by Wizards of");
+  L.push("the Coast LLC, CC-BY-4.0.");
+  return L.join("\n");
+}
+
+function renderSheet(){
+  var r = state.role, n = r.nums;
+  var aloud = state.name.trim() + ". " + r.title + ". " + state.look.title + ". "
+    + state.drive.trim() + " Here is what you can do. " + r.can.join(" ");
+  var h = "";
+  h += '<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">'
+     + state.look.art + '<h2>' + esc(state.name.trim()) + '</h2></div>';
+  h += '<p class="role">' + esc(r.title) + '. ' + esc(state.look.title) + '.</p>';
+  h += '<p class="drive">' + esc(state.drive.trim()) + '</p>';
+  h += '<h3>What you can do</h3><ul class="can">'
+     + r.can.map(function(c){ return "<li>" + esc(c) + "</li>"; }).join("") + '</ul>';
+  h += '<div class="rowbtns">';
+  h += '<button class="btn go" id="readsheet">Read this aloud</button>';
+  h += '<button class="btn" id="copysheet">Copy sheet</button>';
+  h += '<button class="btn" id="savesheet">Save sheet</button>';
+  h += '<button class="btn" id="linksheet">Copy my link</button>';
+  h += '</div>';
+  h += '<details><summary>Show the numbers</summary><div class="nums">'
+     + esc("class      " + r.cls + ", level 1\n"
+         + "hit points " + n.hp + "\n"
+         + "armor      " + n.ac + "\n"
+         + "scores     STR " + n.str + "  DEX " + n.dex + "  CON " + n.con
+                   + "  INT " + n.int + "  WIS " + n.wis + "  CHA " + n.cha + "\n"
+         + n.saves + "\n"
+         + "gear       " + n.kit + "\n"
+         + "features   " + n.note)
+     + '</div><p class="draft">Checked line by line against SRD 5.2. Your skills, '
+     + 'background, and cantrips get chosen at the table, with Loom. You do not have '
+     + 'to remember any of this.</p></details>';
+  document.getElementById("sheet").innerHTML = h;
+
+  document.getElementById("readsheet").onclick = function(){ speak(aloud, null); };
+  document.getElementById("linksheet").onclick = function(){
+    var b = this, url = shareLink();
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){
+        b.textContent = "Link copied"; setTimeout(function(){ b.textContent = "Copy my link"; }, 1800);
+      });
+    }
+  };
+  document.getElementById("copysheet").onclick = function(){
+    var t = sheetText(), b = this;
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){
+        b.textContent = "Copied"; setTimeout(function(){ b.textContent = "Copy sheet"; }, 1600);
+      });
+    }
+  };
+  document.getElementById("savesheet").onclick = function(){
+    var safe = state.name.trim().replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"") || "character";
+    var blob = new Blob([sheetText()], {type:"text/plain;charset=us-ascii"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = safe + "_sheet.txt";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  };
+}
+
+/* ---------------------------------------------------------------
+   SHARE LINK -- the whole character rides in the URL fragment.
+   No server, no storage, nothing about the player leaves the page
+   unless the player sends the link themselves.
+   --------------------------------------------------------------- */
+function b64url(str){
+  return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function unb64url(str){
+  str = str.replace(/-/g,"+").replace(/_/g,"/");
+  while (str.length % 4) str += "=";
+  return decodeURIComponent(escape(atob(str)));
+}
+function shareLink(){
+  var packed = JSON.stringify({
+    n: state.name.trim(), d: state.drive.trim(),
+    r: state.role.id, l: state.look.id, v: 1
+  });
+  return location.origin + location.pathname + "#c=" + b64url(packed);
+}
+function restoreFromHash(){
+  var m = /[#&]c=([A-Za-z0-9\-_]+)/.exec(location.hash);
+  if (!m) return false;
+  try {
+    var o = JSON.parse(unb64url(m[1]));
+    var r = ROLES.filter(function(x){ return x.id === o.r; })[0];
+    var l = LOOKS.filter(function(x){ return x.id === o.l; })[0];
+    if (!r || !l || !o.n) return false;
+    state.name = String(o.n).slice(0,40);
+    state.drive = String(o.d || "").slice(0,140);
+    state.role = r; state.look = l; state.step = 4;
+    document.getElementById("cname").value = state.name;
+    document.getElementById("cdrive").value = state.drive;
+    document.getElementById("s4").querySelector("h1").textContent = "Welcome back, " + state.name + ".";
+    document.getElementById("s4").querySelector(".sub").textContent =
+      "Loom still has you. Nothing was lost.";
+    return true;
+  } catch(e){ return false; }
+}
+
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ---------------------------------------------------------------
+   EVENTS
+   --------------------------------------------------------------- */
+document.getElementById("cname").addEventListener("input", function(e){
+  state.name = e.target.value; show();
+});
+document.getElementById("cdrive").addEventListener("input", function(e){
+  state.drive = e.target.value;
+  document.querySelectorAll(".chip.on").forEach(function(c){ c.classList.remove("on"); });
+  show();
+});
+document.getElementById("chips").addEventListener("click", function(e){
+  var c = e.target.closest(".chip"); if (!c) return;
+  state.drive = c.getAttribute("data-drive");
+  document.getElementById("cdrive").value = "";
+  renderChips(); show();
+});
+document.getElementById("rolegrid").addEventListener("click", function(e){
+  /* REPAIR 2026-08-09 (Steward): a tap on a card's speaker must not also
+     choose the card. The grid handler runs before the document-level
+     speak handler can stop propagation, so filter speak clicks here. */
+  if (e.target.closest(".speak")) return;
+  var p = e.target.closest(".plate"); if (!p) return;
+  state.role = ROLES.filter(function(r){ return r.id === p.getAttribute("data-id"); })[0];
+  renderGrids(); show();
+});
+document.getElementById("lookgrid").addEventListener("click", function(e){
+  if (e.target.closest(".speak")) return; /* REPAIR 2026-08-09, same as above */
+  var p = e.target.closest(".plate"); if (!p) return;
+  state.look = LOOKS.filter(function(l){ return l.id === p.getAttribute("data-id"); })[0];
+  renderGrids(); show();
+});
+document.addEventListener("keydown", function(e){
+  if (e.key !== "Enter" && e.key !== " ") return;
+  var s = e.target.closest(".speak[role=button]");
+  if (s){ e.preventDefault(); speak(s.getAttribute("data-say"), s); }
+});
+document.getElementById("back").onclick = function(){
+  if (state.step > 1){ state.step--; show(); }
+};
+document.getElementById("next").onclick = function(){
+  if (state.step === 4){
+    state = { step:1, name:"", drive:"", role:null, look:null };
+    document.getElementById("cname").value = "";
+    document.getElementById("cdrive").value = "";
+    /* REPAIR 2026-08-09 (Steward): Start over must clear the share-link
+       fragment, or restoreFromHash() instantly rebuilds the same
+       character and Start over never starts over. */
+    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+    renderChips(); renderGrids();
+    show(); return;
+  }
+  if (!ready()) return;
+  state.step++;
+  if (state.step === 4) renderSheet();
+  show();
+};
+
+renderChips(); renderGrids();
+if (restoreFromHash()) renderSheet();
+show();
+</script>
+</body>
+</html>
