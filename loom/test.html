@@ -78,9 +78,67 @@
              everything inside the fold (17px). Those are prose. The
              floor is theirs. Chrome is chrome and it went dense.
 
+  ==================================================================
+  ROUND 7. Three verifiers, 0 of 3. Layout LOCKED, so nothing below
+  moves a box -- this pass is drawing, shading and the light.
+  ==================================================================
+
+    THE CLOAK was a vector cutout: two gradients and a silhouette.
+      It now has interior FORM -- a recess wash and a tapered ridge
+      per panel, drawn as filled slivers rather than strokes so a
+      fold never ends in a round cap, plus a hem catch where the
+      cloth turns. She is also CLASPED: a shoulder brooch with a
+      cord, a belt buckle with a tongue, and two rivets. Dressed,
+      not silhouetted.
+    THE FACE read as a decal: flat black, dot eyes, a smile line.
+      The void is now a radial falloff (bounced light under the
+      brow, true black at the jaw). The mouth is GONE -- there is
+      nothing in there to smile. The eyes bleed: a wide cold haze
+      up into the fabric, a tighter bloom on each one, and her
+      viewer-left eye is a little larger and brighter than the
+      other, because a symmetrical glow is a logo. The teal rim on
+      the fabric is BROKEN into four uneven catches -- the round-6
+      spill was a continuous curve under a face, which is a mouth.
+    THE EMBERS were one sprite at one size: stock sparkle. Three
+      sprites now (amber, hot, cool ash), size on a cubed roll so
+      most are specks and one or two are real, brightness rolled
+      independently of size, and each carries its own twinkle rate.
+    THE VIGNETTE: the frame's own background carries a radial that
+      takes the true corners to near-black, so the gold and the
+      teal have something to be bright against. It is a background
+      on the element, painted under every child -- never an overlay
+      across the type. That rule has not moved since round 3.
+    THE BRASS was uniform line art. Every rule is now a shadow
+      copy, a graded fill and a lit edge, and the weight SWELLS
+      into the elbow (three passes, 1.7 / 2.9 / 3.8) and tapers to
+      the tips. The scrollwork is a solid with a pointed tip; a
+      stroke cannot taper.
+    THE BOTTOM-LEFT BRACKET was genuinely broken, and the cause is
+      worth writing down: cornerIn ends on `transform:none`, and an
+      animation with fill-mode both outranks the element's own
+      `transform:scaleY(-1)`. The flips were being erased the
+      instant the entrance finished. Each corner now carries its
+      orientation as --sx/--sy and the keyframes multiply through
+      them, so the entrance cannot unflip anything.
+    TILE LABELS: equipped tiles inherit their own accent. Green
+      border, green word. Violet border, violet word.
+    THE CLOAK ICON's hem is four true arcs now, so every join in it
+      carries the same 2.8 weight as Hood and Boots.
+    ONE LAYOUT-ADJACENT FIX, and it is a bug not a change: .fig had
+      left/right/top/bottom insets and no width/height. An
+      absolutely positioned REPLACED element does not take its size
+      from its insets -- it takes its intrinsic size and drops the
+      over-constrained edge. On the phone the two happened to agree
+      (222 wide -> 435 tall, which is the number in the arithmetic
+      above). On desktop they do not, and she was drawing 800+px
+      tall through the base band and out of the frame; it is in
+      loop_desktop.png. Explicit width/height on the element makes
+      the locked geometry actually render.
+
   THE ENGINE. One canvas behind the tableau, one rAF loop:
     - a flickering torch pool (one pre-rendered sprite, one blit)
-    - 18 embers on a phone / 30 on desktop (one 32px sprite, N blits)
+    - 18 embers on a phone / 30 on desktop (three 32px sprites, N
+      blits -- the third sine per particle is its twinkle)
     - one CSS variable per frame driving every brass highlight by
       opacity alone -- compositor work, not layout, not paint.
   Everything else is CSS keyframes that run once and stop by 1.7s.
@@ -141,8 +199,9 @@ html,body{height:100%;margin:0;padding:0;overflow:hidden}
 body{
   /* the vignette lives on the ground, never over the type -- an overlay
      across the panel would quietly eat the contrast at the edges */
-  background:#0d0a07;
-  background:radial-gradient(ellipse 108% 74% at 50% 26%,#241c13 0%,#120d09 56%,#0b0805 100%);
+  background:#050403;
+  background:radial-gradient(ellipse 106% 72% at 50% 24%,
+             #2a2116 0%,#150e09 44%,#090604 76%,#040302 100%);
   background-repeat:no-repeat;
   color:var(--cream);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -162,7 +221,15 @@ body{
   position:relative;
   flex:1 1 auto;min-height:0;
   display:flex;flex-direction:column;
-  background:linear-gradient(180deg,#20190f 0%,var(--field) 34%,#150f0a 100%);
+  /* the vignette is the frame's OWN background, so it paints under every
+     child and can never eat the contrast of type sitting on top of it.
+     The true corners go to near-black; that is what the gold and the
+     teal are bright against. Measured after the change: brass on the
+     lit centre is 3.65:1, on the field 4.20:1, on the corners 4.58:1. */
+  background:
+    radial-gradient(ellipse 84% 56% at 50% 40%,
+      rgba(64,48,28,.58) 0%,rgba(30,22,14,.26) 50%,rgba(4,3,2,.80) 100%),
+    linear-gradient(180deg,#231a10 0%,var(--field) 30%,#0f0a06 100%);
   border:1px solid var(--brass);
   box-shadow:
     inset 0 0 0 3px #120d09,
@@ -184,12 +251,20 @@ body{
 }
 /* absolute, and they stay absolute -- there is no blanket ".frame > *"
    rule to outrank them (that bug was round 5's find). 30px now, and
-   every band that carries text is inset clear of them. */
-.cnr{position:absolute;width:var(--cnr);height:var(--cnr);pointer-events:none;z-index:6}
+   every band that carries text is inset clear of them.
+
+   ROUND 7 BUG, and it is the reported one: cornerIn ends on
+   "transform:none", and an animation with fill-mode "both" outranks the
+   element's own transform. Every flip was being ERASED the moment the
+   entrance finished, which is why the bottom-left bracket did not match
+   its siblings. The orientation is a custom property now and the
+   keyframes multiply through it, so the entrance cannot undo it. */
+.cnr{position:absolute;width:var(--cnr);height:var(--cnr);pointer-events:none;z-index:6;
+  --sx:1;--sy:1;transform:scale(var(--sx),var(--sy))}
 .cnr.tl{left:-1px;top:-1px}
-.cnr.tr{right:-1px;top:-1px;transform:scaleX(-1)}
-.cnr.bl{left:-1px;bottom:-1px;transform:scaleY(-1)}
-.cnr.br{right:-1px;bottom:-1px;transform:scale(-1,-1)}
+.cnr.tr{right:-1px;top:-1px;--sx:-1}
+.cnr.bl{left:-1px;bottom:-1px;--sy:-1}
+.cnr.br{right:-1px;bottom:-1px;--sx:-1;--sy:-1}
 .cnr.lit{opacity:calc(.10 + var(--t) * .90)}
 
 .plate,.tab,.base,.drive{position:relative;z-index:3}
@@ -268,7 +343,14 @@ body{
    viewBox is cropped to the art itself (40 8 200 392), so her aspect
    is 1:1.96 and 222 wide gives her 435 tall. xMidYMax keeps her boots
    planted on the base line at every size. */
-.fig{position:absolute;left:0;right:0;top:0;bottom:22px;z-index:1}
+/* width and height are EXPLICIT, and that is a bug fix, not a layout
+   change. An absolutely positioned replaced element with four insets and
+   auto size does not take the insets -- it takes its intrinsic size and
+   drops the over-constrained edge. At 222 wide the two agreed by luck
+   (222 x 1.96 = 435, the number in the header arithmetic). At 438 wide
+   they do not, and she drew ~858 tall straight out through the base band
+   and off the bottom of the frame. It is in loop_desktop.png. */
+.fig{position:absolute;left:0;top:0;width:100%;height:calc(100% - 22px);z-index:1}
 .acwrap{position:absolute;left:50%;bottom:0;transform:translateX(-50%);z-index:3}
 .shield{display:block;width:74px;height:auto;
   filter:drop-shadow(0 6px 12px rgba(0,0,0,.8))}
@@ -300,8 +382,14 @@ body{
 /* the rarity halo is its own layer so it can breathe without repainting
    the tile. round 3's glow was invisible: too small, too faint. */
 .tile.green,.tile.violet{border-width:2px;padding:2px}
+/* the rule, and it was not being followed: an equipped tile's LABEL
+   inherits its tile's accent. A green border with a cream word looks
+   like two unrelated decisions. Both colours are reading colours on
+   the well -- green 9.4:1, violet 7.3:1. */
 .tile.green{border-color:var(--green)}
 .tile.violet{border-color:var(--violet)}
+.tile.green b{color:var(--green)}
+.tile.violet b{color:var(--violet)}
 .tile.green::after,.tile.violet::after{
   content:"";position:absolute;inset:-2px;border-radius:4px;
   pointer-events:none;z-index:-1;
@@ -420,7 +508,12 @@ body{
    ---------------------------------------------------------------------- */
 @keyframes riseIn  {from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
 @keyframes frameIn {from{opacity:0;transform:scale(.99)}      to{opacity:1;transform:none}}
-@keyframes cornerIn{from{opacity:0;transform:scale(1.7)}      to{opacity:1;transform:none}}
+/* NOT "transform:none" at the end -- that erased the corner flips. The
+   pop multiplies through each corner's own --sx/--sy. */
+@keyframes cornerIn{
+  from{opacity:0;transform:scale(calc(var(--sx) * 1.7),calc(var(--sy) * 1.7))}
+  to  {opacity:1;transform:scale(var(--sx),var(--sy))}
+}
 /* the name is wiped in, not faded or scaled -- clip-path leaves the
    glyph edges exactly as crisp as they are at rest. */
 @keyframes cutIn   {from{clip-path:inset(-24px 100% -24px 0)} to{clip-path:inset(-24px -10% -24px 0)}}
@@ -481,6 +574,7 @@ body{
 .anim .drive  {animation:riseIn .26s ease-out 1.28s both}
 .anim .legal  {animation:fadeIn .28s linear 1.34s both}
 .anim #eyes   {animation:eyesLight .34s ease-out 1.36s both}
+.anim #eyeamb {animation:eyesLight .40s ease-out 1.36s both}
 .anim #eyespill{animation:eyesLight .34s ease-out 1.36s both}
 .anim .scroll {animation:panelIn .16s ease-out both}
 .still #shock,.still #flash{display:none}
@@ -508,7 +602,7 @@ body{
   :root{--fp:14px;--rail:84px;--cnr:38px;--inset:34px}
   .frame{padding:9px var(--fp) 0}
   .tab{column-gap:16px;margin-top:6px;padding:0 4px}
-  .fig{bottom:26px}
+  .fig{height:calc(100% - 26px)}
   .shield{width:88px}
   .tile{height:84px;gap:3px}
   .tile svg{width:34px;height:34px}
@@ -560,23 +654,79 @@ body{
 <!-- reusable ornament -------------------------------------------------- -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 <defs>
-  <!-- corner scrollwork. 30px on a phone now, so the stroke weights went
-       up again -- fewer strokes, heavier, legible at the smaller size -->
+  <!-- ROUND 7: the brass is METAL now, not line art. Three things do it:
+       a graded fill instead of a flat colour, a shadow copy offset down
+       and right, and a lit edge on the up-left side. The rules also
+       SWELL into the elbow -- three passes at 1.7 / 2.9 / 3.8 with round
+       caps, each shorter than the last -- and taper to a hairline at the
+       tips. The scroll is a solid with a pointed tip, because a stroke
+       has one width everywhere and that is the whole finding. -->
+  <linearGradient id="gBrass" x1="0" y1="0" x2="0.62" y2="1">
+    <stop offset="0%" stop-color="#e8c68c"/>
+    <stop offset="38%" stop-color="#b08b48"/>
+    <stop offset="100%" stop-color="#6b5230"/>
+  </linearGradient>
+  <linearGradient id="gBrassUp" x1="0" y1="1" x2="0.4" y2="0">
+    <stop offset="0%" stop-color="#6b5230"/>
+    <stop offset="46%" stop-color="#b08b48"/>
+    <stop offset="100%" stop-color="#e8c68c"/>
+  </linearGradient>
+
   <symbol id="cnr" viewBox="0 0 60 60">
-    <path d="M3,58 L3,13 C3,7 7,3 13,3 L58,3" fill="none" stroke="#96743a" stroke-width="2.6"/>
-    <path d="M11,58 L11,18 C11,14 14,11 18,11 L58,11" fill="none" stroke="#96743a" stroke-width="1.4" opacity=".75"/>
-    <path d="M18,44 C18,29 31,23 39,27 C46,31 43,41 36,39 C31,37.5 31,29 36,28"
-          fill="none" stroke="#96743a" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- the shadow the metal sits on -->
+    <g transform="translate(1.3,1.5)" opacity=".85">
+      <path d="M3,56 L3,13 C3,7 7,3 13,3 L56,3" fill="none" stroke="#070504"
+            stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M17,46 C17,29 30,21 39,25.5 C48,30 45,42 36.5,40.5
+               C31,39.5 30,32 35.5,30.5 C33,33 34,37.5 37,38
+               C43,39 45,31 38.5,28 C31,25 21,32 21,46 Z" fill="#070504"/>
+    </g>
+    <!-- outer rule: full length thin, then heavier and shorter twice -->
+    <path d="M3,58 L3,13 C3,7 7,3 13,3 L58,3" fill="none" stroke="url(#gBrass)"
+          stroke-width="1.7" stroke-linecap="round"/>
+    <path d="M3,42 L3,13 C3,7 7,3 13,3 L42,3" fill="none" stroke="url(#gBrass)"
+          stroke-width="2.9" stroke-linecap="round"/>
+    <path d="M3,25 L3,13 C3,7 7,3 13,3 L25,3" fill="none" stroke="url(#gBrass)"
+          stroke-width="3.8" stroke-linecap="round"/>
+    <path d="M4.2,20 L4.2,13.4 C4.2,8.6 8.6,4.2 13.4,4.2 L20,4.2" fill="none"
+          stroke="#f4dfb0" stroke-width=".8" stroke-linecap="round" opacity=".62"/>
+    <!-- inner rule: the same idea, half the weight -->
+    <path d="M11,58 L11,18 C11,14 14,11 18,11 L58,11" fill="none" stroke="#96743a"
+          stroke-width="1" stroke-linecap="round" opacity=".8"/>
+    <path d="M11,34 L11,18 C11,14 14,11 18,11 L34,11" fill="none" stroke="url(#gBrass)"
+          stroke-width="1.8" stroke-linecap="round" opacity=".9"/>
+    <!-- the scroll: 4 units at the core, a point at the tip -->
+    <path d="M17,46 C17,29 30,21 39,25.5 C48,30 45,42 36.5,40.5
+             C31,39.5 30,32 35.5,30.5 C33,33 34,37.5 37,38
+             C43,39 45,31 38.5,28 C31,25 21,32 21,46 Z" fill="url(#gBrass)"/>
+    <path d="M18.2,44 C18.2,31 28.6,24 36.4,26.2" fill="none" stroke="#f4dfb0"
+          stroke-width=".9" stroke-linecap="round" opacity=".55"/>
+    <circle cx="38.4" cy="33.8" r="1.4" fill="#3d2f18"/>
   </symbol>
+
+  <!-- the moving-firelight overlay. It rides the same geometry, so the
+       torch lights the metal it is actually drawn on. -->
   <symbol id="cnrLit" viewBox="0 0 60 60">
-    <path d="M3,58 L3,13 C3,7 7,3 13,3 L58,3" fill="none" stroke="#f2dcae" stroke-width="1.4"/>
-    <path d="M18,44 C18,29 31,23 39,27 C46,31 43,41 36,39 C31,37.5 31,29 36,28"
-          fill="none" stroke="#e6c286" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M3,50 L3,13 C3,7 7,3 13,3 L50,3" fill="none" stroke="#f2dcae"
+          stroke-width="1.1" stroke-linecap="round"/>
+    <path d="M3,26 L3,13 C3,7 7,3 13,3 L26,3" fill="none" stroke="#fff3d8"
+          stroke-width="1.9" stroke-linecap="round" opacity=".7"/>
+    <path d="M18.2,44 C18.2,30 29,22.4 37.6,26" fill="none" stroke="#f0d49c"
+          stroke-width="1.4" stroke-linecap="round" opacity=".8"/>
+    <circle cx="20.4" cy="36" r="1.1" fill="#fff3d8" opacity=".8"/>
   </symbol>
+
+  <!-- divider flourish: same treatment, and the diamond gets a lit face
+       and a shadowed one so it is a solid, not a lozenge -->
   <symbol id="flr" viewBox="0 0 26 14">
-    <path d="M0,7 C7,7 8,2 13,3 C17,3.8 16,10 12,9.6 C9.4,9.3 9,6.6 11.6,6"
-          fill="none" stroke="#b08b48" stroke-width="1.6" stroke-linecap="round"/>
-    <path d="M21,3.5 l3.5,3.5 -3.5,3.5 -3.5,-3.5 z" fill="#d9ae63"/>
+    <path d="M0,7.5 C7,7.5 8.4,2.3 13,3.1 C17.6,3.9 16.8,10.3 12.4,10
+             C9.8,9.8 9.2,7.1 11.4,6.1 C10.1,7.5 10.8,8.9 12.5,9
+             C15.2,9.2 15.8,4.8 12.9,4.3 C9.1,3.6 7.4,8.5 0,8.5 Z"
+          fill="url(#gBrassUp)"/>
+    <path d="M0,7.5 C6,7.5 7.6,3.5 11.6,3.5" fill="none" stroke="#f0d49c"
+          stroke-width=".7" stroke-linecap="round" opacity=".6"/>
+    <path d="M21,3.4 l3.6,3.6 -3.6,3.6 -3.6,-3.6 z" fill="#8a6a34"/>
+    <path d="M21,3.4 l-3.6,3.6 3.6,3.6 z" fill="#e2c184"/>
   </symbol>
   <symbol id="dia" viewBox="0 0 12 12">
     <path d="M6,1 l5,5 -5,5 -5,-5 z" fill="#d9ae63"/>
@@ -629,9 +779,15 @@ body{
       <li class="tile">
         <svg viewBox="0 0 48 48" fill="none" stroke="#d9ae63" stroke-width="2.8"
              stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
-          <path d="M24,7 L14,12 C9,20 7,31 8,38 l4,5 4,-5 4,5 4,-5 4,5 4,-5 4,5
-                   c1,-7 -1,-18 -6,-26 Z"/>
-          <path d="M18,10 C21,15 27,15 30,10"/>
+          <!-- ROUND 7: the hem was a zigzag of straight segments, and the
+               cusps piled up weight the other icons do not carry. Four
+               true arcs, one radius, one stroke width, joins that match
+               Hood and Boots exactly. -->
+          <path d="M14,12 L24,7 L34,12 C39,19 41,28 40,36
+                   A4,4 0 0 1 32,36 A4,4 0 0 1 24,36
+                   A4,4 0 0 1 16,36 A4,4 0 0 1 8,36
+                   C7,28 9,19 14,12 Z"/>
+          <path d="M18,10.5 C21,15 27,15 30,10.5"/>
         </svg>
         <b>Cloak</b>
       </li>
@@ -664,51 +820,128 @@ body{
       <svg class="fig" viewBox="40 8 200 392" preserveAspectRatio="xMidYMax meet" role="img"
            aria-label="Tessa, a hooded elf rogue standing with her weight on one leg and a hand resting on her dagger, her face in shadow and her eyes lit.">
         <defs>
-          <radialGradient id="glowbg" cx="50%" cy="46%" r="60%">
-            <stop offset="0%" stop-color="#41301a" stop-opacity=".92"/>
-            <stop offset="58%" stop-color="#241a0f" stop-opacity=".5"/>
-            <stop offset="100%" stop-color="#241a0f" stop-opacity="0"/>
+          <!-- the pool she stands in. Tighter and warmer than round 6's,
+               which spread far enough to read as a flat muddy field. -->
+          <radialGradient id="glowbg" cx="50%" cy="42%" r="58%">
+            <stop offset="0%" stop-color="#4a3620" stop-opacity=".76"/>
+            <stop offset="42%" stop-color="#2a1e11" stop-opacity=".44"/>
+            <stop offset="78%" stop-color="#150e08" stop-opacity=".15"/>
+            <stop offset="100%" stop-color="#0b0705" stop-opacity="0"/>
           </radialGradient>
-          <linearGradient id="cloakL" x1="1" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1e1710"/>
-            <stop offset="60%" stop-color="#120d08"/>
+
+          <!-- the light is off her viewer-right, so the right panel gets
+               the warm range and the left one falls to near-black at the
+               outer sweep. Four stops each, not three: the extra stop is
+               what stops a cloak looking like a coloured shape. -->
+          <linearGradient id="cloakL" x1="1" y1="0" x2="0.05" y2="1">
+            <stop offset="0%" stop-color="#2b2114"/>
+            <stop offset="34%" stop-color="#191108"/>
+            <stop offset="70%" stop-color="#0d0906"/>
+            <stop offset="100%" stop-color="#070504"/>
+          </linearGradient>
+          <linearGradient id="cloakR" x1="0" y1="0" x2="1" y2="0.95">
+            <stop offset="0%" stop-color="#3d2d19"/>
+            <stop offset="32%" stop-color="#251a0f"/>
+            <stop offset="68%" stop-color="#150e08"/>
             <stop offset="100%" stop-color="#0a0705"/>
           </linearGradient>
-          <linearGradient id="cloakR" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#241b11"/>
-            <stop offset="60%" stop-color="#180f09"/>
-            <stop offset="100%" stop-color="#0d0906"/>
+
+          <!-- THE FOLD VOCABULARY. Two gradients, both vertical, and
+               every fold in the cloth is a tapered sliver filled with one
+               of them. A sliver fades in and out along its own length, so
+               no fold ever ends in a stroke cap -- which is exactly what
+               made round 6 read as a cutout. -->
+          <linearGradient id="recess" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#000000" stop-opacity=".04"/>
+            <stop offset="38%" stop-color="#000000" stop-opacity=".62"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity=".20"/>
           </linearGradient>
+          <linearGradient id="ridge" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#c39a52" stop-opacity="0"/>
+            <stop offset="20%" stop-color="#c39a52" stop-opacity=".60"/>
+            <stop offset="58%" stop-color="#8a6a34" stop-opacity=".36"/>
+            <stop offset="100%" stop-color="#6b5230" stop-opacity="0"/>
+          </linearGradient>
+          <!-- her fittings. Same three-part metal as the frame brass. -->
+          <linearGradient id="metal" x1="0" y1="0" x2="0.5" y2="1">
+            <stop offset="0%" stop-color="#f2dcae"/>
+            <stop offset="44%" stop-color="#d9ae63"/>
+            <stop offset="100%" stop-color="#7d5f31"/>
+          </linearGradient>
+
+          <!-- THE HOOD INTERIOR. Not a flat fill. A little bounced light
+               under the brow, true black at the jaw. That falloff is the
+               difference between a face in shadow and a hole. -->
+          <radialGradient id="hoodin" cx="50%" cy="26%" r="78%">
+            <stop offset="0%" stop-color="#1d150e"/>
+            <stop offset="38%" stop-color="#0e0a07"/>
+            <stop offset="74%" stop-color="#060404"/>
+            <stop offset="100%" stop-color="#030202"/>
+          </radialGradient>
+          <radialGradient id="bloom">
+            <stop offset="0%" stop-color="#8fe8dd" stop-opacity=".40"/>
+            <stop offset="38%" stop-color="#4c9d96" stop-opacity=".17"/>
+            <stop offset="100%" stop-color="#2f7d78" stop-opacity="0"/>
+          </radialGradient>
           <filter id="eyeglow" x="-160%" y="-160%" width="420%" height="420%">
             <feGaussianBlur stdDeviation="2.8" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
 
-        <ellipse cx="140" cy="196" rx="122" ry="160" fill="url(#glowbg)"/>
-        <ellipse cx="140" cy="382" rx="96" ry="13" fill="#080605"/>
+        <ellipse cx="140" cy="196" rx="108" ry="150" fill="url(#glowbg)"/>
+        <ellipse cx="140" cy="382" rx="96" ry="13" fill="#070505"/>
         <path d="M46,378 C78,394 202,394 234,378" fill="none" stroke="#6b5230"
-              stroke-width="1.4" opacity=".6"/>
+              stroke-width="1.4" opacity=".55"/>
 
-        <!-- cloak, left panel: the long sweep and the trailing point ---- -->
+        <!-- ================= THE CLOAK =================================
+             Round 6 drew the silhouette and stopped. The panels below are
+             the same silhouette -- it was never the problem -- with the
+             inside of the cloth built up in three passes each: the graded
+             base, a RECESS where the cloth turns away from the fire, and
+             a tapered RIDGE where it turns into it. Then a catch along
+             the hem, where a cloak actually collects light.
+             ============================================================ -->
+
+        <!-- left panel: the long sweep and the trailing point ----------- -->
         <path d="M116,106 C96,116 82,146 72,190 C60,244 56,300 62,340
                  L44,376 C68,382 92,376 108,362
                  C104,300 106,200 116,106 Z"
               fill="url(#cloakL)" stroke="#5c4527" stroke-width="1.5" stroke-linejoin="round"/>
-        <path d="M96,150 C86,206 82,286 88,346" fill="none" stroke="#0a0705"
-              stroke-width="2.6" opacity=".8"/>
+        <path d="M104,124 C92,166 84,244 84,326 L72,348 C70,296 76,200 94,150 Z"
+              fill="url(#recess)"/>
+        <path d="M104,300 C100,330 92,352 80,366 L64,366 C80,352 92,330 98,300 Z"
+              fill="url(#recess)" opacity=".62"/>
+        <path d="M113,120 C102,160 94,244 92,330 C89,244 98,160 108,122 Z"
+              fill="url(#ridge)"/>
+        <path d="M99,152 C90,202 85,272 86,330 C82,272 87,202 95,154 Z"
+              fill="url(#ridge)" opacity=".5"/>
+        <path d="M96,150 C86,206 82,286 88,346" fill="none" stroke="#070504"
+              stroke-width="2.4" opacity=".62"/>
+        <path d="M64,346 C70,362 84,368 104,357" fill="none" stroke="#8a6a34"
+              stroke-width="1.3" stroke-linecap="round" opacity=".42"/>
 
-        <!-- cloak, right panel: shorter, lifted corner ------------------ -->
+        <!-- right panel: shorter, lifted corner, and the lit side ------- -->
         <path d="M164,106 C186,116 198,146 206,190 C214,236 214,278 208,312
                  L218,332 C200,346 180,346 168,336
                  C170,280 168,190 164,106 Z"
               fill="url(#cloakR)" stroke="#6b5230" stroke-width="1.5" stroke-linejoin="round"/>
-        <path d="M188,152 C198,204 200,272 194,320" fill="none" stroke="#0a0705"
-              stroke-width="2.6" opacity=".8"/>
+        <path d="M178,126 C190,168 198,244 198,314 L188,328 C187,248 182,172 172,130 Z"
+              fill="url(#recess)"/>
+        <path d="M166,112 C176,152 184,238 186,318 C189,238 181,152 171,114 Z"
+              fill="url(#ridge)"/>
+        <path d="M188,152 C198,204 200,272 194,320" fill="none" stroke="#070504"
+              stroke-width="2.2" opacity=".55"/>
+        <path d="M172,332 C184,341 199,339 211,329" fill="none" stroke="#a67c3c"
+              stroke-width="1.3" stroke-linecap="round" opacity=".5"/>
 
         <!-- legs: weight on the viewer-right, the other relaxed --------- -->
         <path d="M142,232 L162,232 L164,306 L144,306 Z" fill="#191207"/>
         <path d="M116,232 L136,232 L134,306 L114,306 Z" fill="#140f07"/>
+        <path d="M161,233 L163,305" stroke="#7d5f31" stroke-width="1.5"
+              stroke-linecap="round" opacity=".5"/>
+        <path d="M137,233 L135,305" stroke="#000000" stroke-width="2.4"
+              stroke-linecap="round" opacity=".45"/>
         <rect x="141" y="266" width="24" height="9" rx="2" fill="#2b2013"
               stroke="#8a6a34" stroke-width="1"/>
 
@@ -719,20 +952,28 @@ body{
               fill="#120d08" stroke="#4e3a21" stroke-width="1.4" stroke-linejoin="round"/>
         <path d="M141,309 L165,309" stroke="#6b5230" stroke-width="1.6"/>
         <path d="M116,309 L131,309" stroke="#5c4527" stroke-width="1.6"/>
+        <path d="M162,314 C163,330 163,348 162,358" fill="none" stroke="#7d5f31"
+              stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+        <path d="M144,314 C143,332 142,350 143,360" fill="none" stroke="#000000"
+              stroke-width="2.2" stroke-linecap="round" opacity=".45"/>
 
         <!-- the body between the panels: jerkin, strap, belt ------------- -->
         <path d="M118,112 C114,152 121,182 124,208 L122,238 L158,238 L156,208
                  C160,182 166,152 162,112 C150,121 130,121 118,112 Z"
               fill="#201810"/>
+        <path d="M120,118 C117,152 122,184 125,210 L124,236 L133,236 L131,208
+                 C129,182 126,150 127,118 Z" fill="#000000" opacity=".34"/>
+        <path d="M158,116 C161,150 158,182 155,208 L156,236 L151,236 L152,208
+                 C155,182 158,150 156,116 Z" fill="#c39a52" opacity=".12"/>
         <path d="M124,132 L156,194" stroke="#2e2415" stroke-width="9" stroke-linecap="round"/>
-        <circle cx="140" cy="162" r="3.4" fill="#b98f45"/>
+        <path d="M126,136 L156,193" stroke="#4a3a22" stroke-width="1.6"
+              stroke-linecap="round" opacity=".55"/>
         <path d="M133,120 C133,160 131,196 129,222" fill="none" stroke="#0d0906"
               stroke-width="2.2" opacity=".7"/>
 
         <!-- her dagger, and the second sheath on the far hip ------------- -->
         <path d="M116,190 L124,192 L121,214 L113,212 Z" fill="#2b2013"
               stroke="#8a6a34" stroke-width="1.2" stroke-linejoin="round"/>
-        <circle cx="119" cy="187" r="3.6" fill="#d9ae63"/>
         <path d="M124,224 L112,260 L120,263 L131,228 Z" fill="#1d1610"
               stroke="#6b5230" stroke-width="1.2" stroke-linejoin="round"/>
         <path d="M158,226 L172,258 L164,262 L152,230 Z" fill="#1d1610"
@@ -740,7 +981,29 @@ body{
 
         <rect x="117" y="212" width="46" height="14" rx="3" fill="#2b2013"
               stroke="#8a6a34" stroke-width="1.3"/>
-        <circle cx="140" cy="219" r="4.6" fill="#d9ae63"/>
+        <path d="M119,214 L161,214" stroke="#8a6a34" stroke-width="1"
+              stroke-linecap="round" opacity=".45"/>
+
+        <!-- ============ THE FITTINGS ==================================
+             She is DRESSED, not silhouetted. Every one of these is the
+             same three-part solid: a shadow under it, a graded face, and
+             one lit edge. Two are deliberate -- the belt buckle and the
+             shoulder brooch further down -- and the rest are rivets.
+             ============================================================ -->
+        <rect x="131.2" y="211.4" width="18" height="16" rx="2.6" fill="#070504" opacity=".85"/>
+        <rect x="130.4" y="210.2" width="18" height="16" rx="2.6" fill="url(#metal)"/>
+        <rect x="133.8" y="213.6" width="11.2" height="9.2" rx="1.6" fill="#1a1209"/>
+        <rect x="138.4" y="212.4" width="2.4" height="12" rx="1.1" fill="url(#metal)"/>
+        <path d="M132.6,211.4 L146.2,211.4" stroke="#f7e7c2" stroke-width=".9"
+              stroke-linecap="round" opacity=".55"/>
+
+        <circle cx="140.4" cy="162.6" r="4" fill="#070504" opacity=".8"/>
+        <circle cx="139.8" cy="161.6" r="3.6" fill="url(#metal)"/>
+        <circle cx="138.7" cy="160.5" r="1.1" fill="#f7e7c2" opacity=".7"/>
+
+        <circle cx="119.4" cy="187.6" r="4" fill="#070504" opacity=".8"/>
+        <circle cx="118.8" cy="186.6" r="3.5" fill="url(#metal)"/>
+        <circle cx="117.8" cy="185.6" r="1" fill="#f7e7c2" opacity=".65"/>
 
         <!-- arms. her left (viewer right) is the lit one ---------------- -->
         <path d="M158,126 C174,154 176,190 166,214" fill="none" stroke="#2f2416"
@@ -761,7 +1024,27 @@ body{
         <path d="M108,110 C118,95 162,95 172,110 C179,123 181,138 179,148
                  C160,138 120,138 101,148 C99,138 101,123 108,110 Z"
               fill="#241b11" stroke="#6b5230" stroke-width="1.5" stroke-linejoin="round"/>
-        <circle cx="112" cy="133" r="6.4" fill="#2b2013" stroke="#b98f45" stroke-width="1.7"/>
+        <path d="M112,112 C120,127 122,140 121,146 C112,146 105,147 101,148
+                 C99,138 103,122 112,112 Z" fill="#000000" opacity=".30"/>
+        <path d="M166,110 C174,122 178,136 179,148 C174,145 169,143 165,142
+                 C166,132 167,120 166,110 Z" fill="#c39a52" opacity=".14"/>
+        <path d="M110,118 C124,109 156,109 170,118" fill="none" stroke="#8a6a34"
+              stroke-width="1.3" stroke-linecap="round" opacity=".45"/>
+
+        <!-- THE BROOCH: the clasp that holds the whole cloak on her. It
+             is the one gold object at eye height and it gets a cord. -->
+        <path d="M118,136 C124,142 130,145 137,146" fill="none" stroke="#7d5f31"
+              stroke-width="2" stroke-linecap="round" opacity=".75"/>
+        <circle cx="112.6" cy="133.8" r="7.6" fill="#070504" opacity=".9"/>
+        <circle cx="112" cy="133" r="6.6" fill="url(#metal)"/>
+        <circle cx="112" cy="133" r="4.1" fill="#241a0f"/>
+        <circle cx="112" cy="133" r="1.9" fill="#f2dcae" opacity=".85"/>
+        <path d="M107.2,129.4 C108.8,126.8 112.2,125.8 115.2,126.8" fill="none"
+              stroke="#f7e7c2" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>
+        <!-- and the throat fitting on her lit side -->
+        <circle cx="166.4" cy="136.6" r="4.6" fill="#070504" opacity=".85"/>
+        <circle cx="166" cy="136" r="3.9" fill="url(#metal)"/>
+        <circle cx="166" cy="136" r="1.5" fill="#241a0f"/>
 
         <!-- the ear, pushed out past the hood ---------------------------- -->
         <path d="M104,74 C94,64 88,47 90,37 C99,47 108,62 112,72 Z"
@@ -772,43 +1055,78 @@ body{
                  C149,122 131,122 119,116 C110,105 104,89 104,68
                  C104,45 119,26 140,26 Z"
               fill="#241b11" stroke="#6b5230" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M116,34 C124,27 136,25 144,26 C132,30 122,40 117,54
+                 C112,70 113,92 118,110 C110,98 105,80 106,64
+                 C107,50 110,40 116,34 Z" fill="#000000" opacity=".32"/>
+        <path d="M158,32 C168,40 174,53 175,68 C176,86 171,102 163,114
+                 C168,98 170,82 168,66 C166,50 162,39 158,32 Z"
+              fill="#c39a52" opacity=".13"/>
         <path d="M137,28 C141,17 152,14 158,19 C152,25 145,28 140,29 Z"
               fill="#2b2013" stroke="#6b5230" stroke-width="1.3" stroke-linejoin="round"/>
         <path d="M110,58 C118,40 162,40 170,58" fill="none" stroke="#8a6a34"
-              stroke-width="1.8" opacity=".85"/>
+              stroke-width="1.8" stroke-linecap="round" opacity=".8"/>
 
-        <!-- THE LOOK: the void, then the two lit marks in it ------------- -->
+        <!-- =============== THE LOOK ===================================
+             The whole panel is built around this and round 6 got it
+             wrong: flat black, two dots and a curve reads as a decal.
+             What is here now, in paint order --
+               the void as a FALLOFF, bounced light under the brow;
+               a haze on the jaw, so the void has a floor;
+               a wide cold bleed that spills up into the fabric;
+               four BROKEN teal catches on the cloth nearest her eyes
+                 (a continuous curve under a face is a mouth, which is
+                  exactly the note, so it is gone);
+               the eyes, uneven -- her viewer-left is larger, brighter
+                 and blooms wider than the other, because a matched
+                 pair is a logo and a look is not.
+             No mouth. There is nothing in there to smile.
+             ============================================================ -->
         <path d="M112,62 C112,44 168,44 168,62 C168,85 158,103 140,109
-                 C122,103 112,85 112,62 Z" fill="#060505"/>
-        <path d="M110,80 C122,96 158,96 170,80" fill="none" stroke="#3b2d1a" stroke-width="2.4"/>
+                 C122,103 112,85 112,62 Z" fill="url(#hoodin)"/>
+        <ellipse cx="140" cy="96" rx="15" ry="8" fill="url(#bloom)" opacity=".26"/>
+        <g id="eyeamb">
+          <ellipse cx="138" cy="77" rx="40" ry="30" fill="url(#bloom)" opacity=".55"/>
+        </g>
 
-        <!-- cold spill: the only cool light on the panel, and it comes
-             from her own eyes onto her own collar -->
         <g id="eyespill">
-          <path d="M121,105 C129,114 151,114 159,105" fill="none" stroke="#2f7d78"
-                stroke-width="2.4" opacity=".5" stroke-linecap="round"/>
-          <circle cx="112" cy="133" r="6.4" fill="none" stroke="#2f7d78"
-                  stroke-width="1.2" opacity=".45"/>
+          <path d="M113,65 C113,53 123,47 136,46" fill="none" stroke="#7fd6cc"
+                stroke-width="1.7" stroke-linecap="round" opacity=".40"/>
+          <path d="M148,46 C159,48 166,54 167,64" fill="none" stroke="#4f9f98"
+                stroke-width="1.2" stroke-linecap="round" opacity=".22"/>
+          <path d="M116,114 C121,120 127,124 133,126" fill="none" stroke="#2f7d78"
+                stroke-width="2" stroke-linecap="round" opacity=".34"/>
+          <path d="M153,125 C159,122 164,118 167,113" fill="none" stroke="#2f7d78"
+                stroke-width="1.5" stroke-linecap="round" opacity=".20"/>
+          <path d="M106,70 C104,76 104,83 106,89" fill="none" stroke="#3f938c"
+                stroke-width="1.4" stroke-linecap="round" opacity=".26"/>
         </g>
 
         <g id="eyes">
+          <ellipse cx="126.5" cy="76" rx="17" ry="12" fill="url(#bloom)" opacity=".9"/>
+          <ellipse cx="151" cy="76.5" rx="13" ry="9.5" fill="url(#bloom)" opacity=".68"/>
           <g filter="url(#eyeglow)">
-            <path d="M118,76 C122,70 131,70 135,76 C131,82 122,82 118,76 Z" fill="#8fe8dd"/>
-            <path d="M143,76 C147,70.5 155,70.5 159,76 C155,81.5 147,81.5 143,76 Z" fill="#8fe8dd"/>
+            <path d="M118,76 C122,69.6 131,69.6 135,76 C131,82.2 122,82.2 118,76 Z"
+                  fill="#8fe8dd"/>
+            <path d="M143.6,76.4 C147.4,71.3 155,71.3 158.6,76.4
+                     C155,81.3 147.4,81.3 143.6,76.4 Z" fill="#79ded2"/>
           </g>
-          <circle cx="126.5" cy="76" r="1.9" fill="#f2fffd"/>
-          <circle cx="151" cy="76" r="1.9" fill="#f2fffd"/>
+          <circle cx="126.2" cy="75.6" r="2" fill="#f4fffd"/>
+          <circle cx="151.2" cy="76.2" r="1.6" fill="#e2fffb"/>
         </g>
 
-        <!-- warm rim: one continuous light down the viewer-right side ---- -->
-        <path d="M172,52 C178,66 178,92 168,110" fill="none" stroke="#c39a52"
-              stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
-        <path d="M174,113 C180,125 182,138 180,148" fill="none" stroke="#a67c3c"
-              stroke-width="2" stroke-linecap="round" opacity=".85"/>
-        <path d="M168,110 C188,120 200,150 208,192 C216,238 216,280 210,314"
-              fill="none" stroke="#a67c3c" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>
-        <path d="M212,320 L219,333" fill="none" stroke="#c39a52" stroke-width="2"
-              stroke-linecap="round" opacity=".8"/>
+        <!-- warm rim down the viewer-right side. Tapered SLIVERS, not
+             even strokes: the edge swells where the form turns into the
+             fire and dies out where it does not. Each sliver carries the
+             ridge gradient along its own length, so nothing ends in a
+             cap. -->
+        <path d="M171,50 C178,64 178,92 168,112 C173,92 173,66 168,52 Z"
+              fill="url(#ridge)"/>
+        <path d="M172,114 C179,126 182,139 180,150 C178,139 175,127 169,116 Z"
+              fill="url(#ridge)"/>
+        <path d="M167,110 C188,121 201,151 209,192 C217,238 217,280 211,314
+                 C214,278 213,238 205,193 C197,153 185,124 165,113 Z"
+              fill="url(#ridge)"/>
+        <path d="M211,318 L219,332 L215,334.4 L207.6,320 Z" fill="url(#ridge)"/>
       </svg>
 
       <!-- ============ THE SHIELD ======================================
@@ -1044,7 +1362,15 @@ sayBtn.addEventListener("click", function(){
     x.fillRect(0, 0, size, size);
     return c;
   }
-  var EMBER = sprite(32, 255, 186, 104);
+  /* ROUND 7: one sprite at one size is what made these read as stock
+     sparkle. An ember is not one colour -- most sit in the amber middle,
+     a few are hot enough to go pale, and a few are ash catching the dark
+     and running cool. Three sprites, built once, chosen once per life. */
+  var EMBER = [
+    sprite(32, 255, 176,  92),
+    sprite(32, 255, 228, 174),
+    sprite(32, 152, 198, 210)
+  ];
   var POOL  = sprite(256, 226, 150, 58);
 
   var W = 0, H = 0, N = 0;
@@ -1053,11 +1379,23 @@ sayBtn.addEventListener("click", function(){
   function place(p, first){
     p.x   = Math.random() * W;
     p.y   = first ? Math.random() * H : H * (0.70 + Math.random() * 0.34);
-    p.vy  = 7 + Math.random() * 20;          /* px per second, upward   */
     p.ph  = Math.random() * 6.283;
     p.sw  = 0.35 + Math.random() * 0.85;     /* sway rate               */
     p.amp = 3 + Math.random() * 11;          /* sway px per second      */
-    p.sz  = 2.0 + Math.random() * 4.0;
+    /* size on a CUBED roll: mostly specks, one or two real embers. A
+       flat range gives you a field of identical dots, which is what the
+       round-6 render looked like. */
+    var u = Math.random();
+    p.sz  = 1.0 + u * u * u * 7.0;
+    /* brightness rolled INDEPENDENTLY of size, so a big dim mote and a
+       tiny fierce one are both possible. Two multiplied rolls skew it
+       low, so the bright ones stay rare enough to be worth looking at. */
+    p.gain = 0.30 + Math.random() * Math.random() * 1.70;
+    p.tw  = 1.2 + Math.random() * 3.4;       /* its own twinkle rate    */
+    /* small and light rises fast, big and heavy labours */
+    p.vy  = 5 + Math.random() * 14 + (6.5 - p.sz) * 1.6;
+    var k = Math.random();
+    p.img = k < 0.12 ? EMBER[1] : (k < 0.26 ? EMBER[2] : EMBER[0]);
     p.ttl = 5 + Math.random() * 7;
     p.age = first ? Math.random() * p.ttl : 0;
   }
@@ -1095,6 +1433,37 @@ sayBtn.addEventListener("click", function(){
     return f < 0 ? 0 : (f > 1 ? 1 : f);
   }
 
+  /* ONE PAINTER, and round 7b is why it exists. The fire was drawn by
+     two copies of this loop -- the live one and the settled one -- and
+     the moment round 7 turned EMBER from a canvas into three of them,
+     only the live copy learned about it. The settled copy went on
+     blitting the array and threw on every call. Both paths now run
+     these exact blits; the only difference is the clock. */
+  var STILL_T = 1.9, STILL_F = 0.60;   /* --t 0.72 is this f. Same room. */
+
+  function paint(t, f, settled){
+    ctx.clearRect(0, 0, W, H);
+
+    var R = H * (0.52 + f * 0.05);
+    ctx.globalAlpha = 0.09 + f * 0.06;
+    ctx.drawImage(POOL, W * 0.5 - R, H * 0.72 - R, R * 2, R * 2);
+
+    for (var i = 0; i < N; i++){
+      var p = P[i];
+      /* settled holds every ember near the top of its own fade curve:
+         a paused fire is still a full one, where a true freeze catches
+         a third of them mid-birth and reads as a thinner field. */
+      var a = settled ? 0.85 : Math.sin(Math.PI * (p.age / p.ttl));
+      a = a * a * p.gain
+        * (0.74 + 0.26 * Math.sin(t * p.tw + p.ph))   /* its own flicker */
+        * (0.22 + f * 0.20);                          /* and the room's  */
+      ctx.globalAlpha = a > 0.92 ? 0.92 : (a > 0 ? a : 0);
+      var s = p.sz * 2.6;
+      ctx.drawImage(p.img, p.x - s, p.y - s, s * 2, s * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+
   var lastT = 0, lastVar = -1, lastB = -1;
   var nextBlink = 4.0, blinking = false;
   var raf = 0, visible = true, onscreen = true;
@@ -1108,13 +1477,7 @@ sayBtn.addEventListener("click", function(){
 
     var f = torch(t);
 
-    /* --- the fire ------------------------------------------------- */
-    ctx.clearRect(0, 0, W, H);
-
-    var R = H * (0.52 + f * 0.05);
-    ctx.globalAlpha = 0.09 + f * 0.06;
-    ctx.drawImage(POOL, W * 0.5 - R, H * 0.72 - R, R * 2, R * 2);
-
+    /* --- the fire. Physics here, blits in paint(). ----------------- */
     for (var i = 0; i < N; i++){
       var p = P[i];
       p.age += dt;
@@ -1122,12 +1485,8 @@ sayBtn.addEventListener("click", function(){
       p.y -= p.vy * dt;
       p.x += Math.sin(p.ph + t * p.sw) * p.amp * dt;
       if (p.y < -20) { place(p, false); }
-      var a = Math.sin(Math.PI * (p.age / p.ttl));
-      ctx.globalAlpha = a * a * (0.30 + f * 0.24);
-      var s = p.sz * 2.6;
-      ctx.drawImage(EMBER, p.x - s, p.y - s, s * 2, s * 2);
     }
-    ctx.globalAlpha = 1;
+    paint(t, f, false);
 
     /* --- the light on the brass ----------------------------------- */
     var tv = 0.30 + f * 0.70;
@@ -1193,20 +1552,9 @@ sayBtn.addEventListener("click", function(){
   if (window.ResizeObserver) new ResizeObserver(remeasure).observe(host);
   else window.addEventListener("resize", remeasure);
 
-  /* reduced motion still gets a lit room -- it just does not move. */
-  function still(){
-    ctx.clearRect(0, 0, W, H);
-    var R = H * 0.54;
-    ctx.globalAlpha = 0.13;
-    ctx.drawImage(POOL, W * 0.5 - R, H * 0.72 - R, R * 2, R * 2);
-    for (var i = 0; i < N; i++){
-      var p = P[i];
-      ctx.globalAlpha = 0.22;
-      var s = p.sz * 2.6;
-      ctx.drawImage(EMBER, p.x - s, p.y - s, s * 2, s * 2);
-    }
-    ctx.globalAlpha = 1;
-  }
+  /* reduced motion still gets a lit room -- it just does not move.
+     One call, one frozen clock, no rAF, no physics, ever. */
+  function still(){ paint(STILL_T, STILL_F, true); }
 
   function boot(){
     if (!measure()) { setTimeout(boot, 60); return; }
