@@ -617,7 +617,11 @@ body{
   margin:0 auto;
   font-family:Georgia,'Times New Roman',serif;
   font-size:16px;line-height:1.32;color:var(--cream);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  /* STEWARD REPAIR 2026-08-10: was nowrap+ellipsis, which truncated her
+     one spoken line mid-word on Mike's actual device even though it fit
+     in headless. A cut word is a read-twice. Wrapping is the fallback;
+     the band grows a line and the one-screen gate still holds. */
+  white-space:normal;overflow-wrap:break-word;
 }
 /* ORNAMENT, not a control: no box, no border, no shelf, dim, and it
    cannot be pressed. It marks the line as spoken; the amber button is
