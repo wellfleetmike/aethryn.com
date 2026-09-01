@@ -17,7 +17,7 @@
     "winning_bid": 2100000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 192
   },
   {
     "auction_number": 4,
@@ -27,7 +27,7 @@
     "winning_bid": 1700000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 347
   },
   {
     "auction_number": 4,
@@ -37,7 +37,7 @@
     "winning_bid": 1100000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 301
   },
   {
     "auction_number": 4,
@@ -117,7 +117,7 @@
     "winning_bid": 2400000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 257
+    "v3_entity_id": 168
   },
   {
     "auction_number": 35,
@@ -127,17 +127,17 @@
     "winning_bid": 1400000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 347
   },
   {
     "auction_number": 66,
     "license_name": "Nationwide",
     "winner_name": "T-Mobile USA",
-    "winner_frn": "0027627728",
+    "winner_frn": "0001565449",
     "winning_bid": 4200000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 512
+    "v3_entity_id": 145
   },
   {
     "auction_number": 66,
@@ -167,7 +167,7 @@
     "winning_bid": 1400000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 151
+    "v3_entity_id": 222
   },
   {
     "auction_number": 66,
@@ -177,7 +177,7 @@
     "winning_bid": 535000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 149
   },
   {
     "auction_number": 66,
@@ -187,7 +187,7 @@
     "winning_bid": 470000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 163
   },
   {
     "auction_number": 66,
@@ -243,21 +243,21 @@
     "auction_number": 73,
     "license_name": "Various",
     "winner_name": "Cox Communications",
-    "winner_frn": null,
+    "winner_frn": "0001834696",
     "winning_bid": 316000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 375
+    "v3_entity_id": 15
   },
   {
     "auction_number": 73,
     "license_name": "Various",
     "winner_name": "Cavalier Wireless",
-    "winner_frn": null,
+    "winner_frn": "0015024631",
     "winning_bid": 214000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 118
   },
   {
     "auction_number": 73,
@@ -333,31 +333,31 @@
     "auction_number": 97,
     "license_name": "Various",
     "winner_name": "Northstar Wireless LLC",
-    "winner_frn": null,
+    "winner_frn": "0023917453",
     "winning_bid": 7565000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 226
+    "v3_entity_id": 86
   },
   {
     "auction_number": 97,
     "license_name": "Various",
     "winner_name": "SNR Wireless LicenseCo LLC",
-    "winner_frn": null,
+    "winner_frn": "0023907074",
     "winning_bid": 5735000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 227
+    "v3_entity_id": 102
   },
   {
     "auction_number": 97,
     "license_name": "Various",
     "winner_name": "T-Mobile USA",
-    "winner_frn": "0027627728",
+    "winner_frn": "0001565449",
     "winning_bid": 1774000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 512
+    "v3_entity_id": 145
   },
   {
     "auction_number": 97,
@@ -387,17 +387,17 @@
     "winning_bid": 505700000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 216
   },
   {
     "auction_number": 101,
     "license_name": "Various",
     "winner_name": "US Cellular Corporation",
-    "winner_frn": null,
+    "winner_frn": "0004372322",
     "winning_bid": 129400000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 50
   },
   {
     "auction_number": 101,
@@ -417,7 +417,7 @@
     "winning_bid": 13200000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 191
+    "v3_entity_id": 218
   },
   {
     "auction_number": 102,
@@ -453,11 +453,11 @@
     "auction_number": 102,
     "license_name": "Various",
     "winner_name": "US Cellular Corporation",
-    "winner_frn": null,
+    "winner_frn": "0004372322",
     "winning_bid": 46700000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 50
   },
   {
     "auction_number": 103,
@@ -467,7 +467,7 @@
     "winning_bid": 1600000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 191
   },
   {
     "auction_number": 103,
@@ -477,7 +477,7 @@
     "winning_bid": 1200000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 220
+    "v3_entity_id": 193
   },
   {
     "auction_number": 103,
@@ -503,11 +503,11 @@
     "auction_number": 103,
     "license_name": "Various",
     "winner_name": "US Cellular Corporation",
-    "winner_frn": null,
+    "winner_frn": "0004372322",
     "winning_bid": 270000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 50
   },
   {
     "auction_number": 103,
@@ -527,7 +527,7 @@
     "winning_bid": 1890000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 216
   },
   {
     "auction_number": 105,
@@ -563,11 +563,11 @@
     "auction_number": 105,
     "license_name": "Various",
     "winner_name": "Cox Communications",
-    "winner_frn": null,
+    "winner_frn": "0001834696",
     "winning_bid": 192000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 375
+    "v3_entity_id": 15
   },
   {
     "auction_number": 105,
@@ -607,7 +607,7 @@
     "winning_bid": 45450000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 216
   },
   {
     "auction_number": 107,
@@ -633,11 +633,11 @@
     "auction_number": 107,
     "license_name": "Various",
     "winner_name": "US Cellular Corporation",
-    "winner_frn": null,
+    "winner_frn": "0004372322",
     "winning_bid": 1283000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 50
   },
   {
     "auction_number": 107,
@@ -673,11 +673,11 @@
     "auction_number": 108,
     "license_name": "Guam",
     "winner_name": "TeleGuam Holdings LLC",
-    "winner_frn": null,
+    "winner_frn": "0011458999",
     "winning_bid": 17000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 205
   },
   {
     "auction_number": 108,
@@ -737,7 +737,7 @@
     "winning_bid": 7300000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": 194
+    "v3_entity_id": 208
   },
   {
     "auction_number": 110,
@@ -763,11 +763,11 @@
     "auction_number": 110,
     "license_name": "Various",
     "winner_name": "US Cellular Corporation",
-    "winner_frn": null,
+    "winner_frn": "0004372322",
     "winning_bid": 579000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 50
   },
   {
     "auction_number": 110,
@@ -833,11 +833,11 @@
     "auction_number": 1000,
     "license_name": "Various",
     "winner_name": "US Cellular Corporation",
-    "winner_frn": null,
+    "winner_frn": "0004372322",
     "winning_bid": 328000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 50
   },
   {
     "auction_number": 1000,
@@ -853,11 +853,11 @@
     "auction_number": 1000,
     "license_name": "Various",
     "winner_name": "Bluewater Wireless LP",
-    "winner_frn": null,
+    "winner_frn": "0017173204",
     "winning_bid": 131000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 67
   },
   {
     "auction_number": 1000,
@@ -867,6 +867,6 @@
     "winning_bid": 95000000,
     "is_winner": true,
     "source": "v1_auction_results",
-    "v3_entity_id": null
+    "v3_entity_id": 181
   }
 ]
