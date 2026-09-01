@@ -1,0 +1,138 @@
+[
+  {
+    "gap_id": "G001",
+    "category": "source_blocked",
+    "auction_number": null,
+    "description": "FCC auction pages blocked by egress proxy",
+    "blocked_urls": [
+      "https://www.fcc.gov",
+      "https://auctiondata.fcc.gov",
+      "https://docs.fcc.gov"
+    ],
+    "impact": "Cannot download official public notices, qualified bidder lists, or raw auction data files. Affects all 98 auctions.",
+    "workaround": "Used v3 bids.json entities as proxy for qualified bidders; winner data from search snippets and v1 auction_results.json",
+    "severity": "high"
+  },
+  {
+    "gap_id": "G002",
+    "category": "source_blocked",
+    "auction_number": null,
+    "description": "Third-party telecom research sites blocked by egress proxy",
+    "blocked_urls": [
+      "https://en.wikipedia.org",
+      "https://www.lightreading.com",
+      "https://dgtlinfra.com",
+      "https://telecompetitor.com",
+      "https://www.rbr.com"
+    ],
+    "impact": "Limits cross-reference verification of auction details and company histories",
+    "workaround": "Relied on v1 and v3 data stores plus available search engine snippets for verification",
+    "severity": "medium"
+  },
+  {
+    "gap_id": "G003",
+    "category": "data_quality",
+    "auction_number": null,
+    "description": "v3 bids.json stores 170 losing bids with bid_amount=0; actual amounts are not public",
+    "blocked_urls": [],
+    "impact": "Zero values misrepresent bid amounts. These are NOT zero-dollar bids; the actual losing bid amounts were not disclosed.",
+    "workaround": "Corrected in auction-field/bids.json: bid_amount set to null with amount_public=false for all 170 affected rows",
+    "severity": "medium"
+  },
+  {
+    "gap_id": "G004",
+    "category": "data_quality",
+    "auction_number": null,
+    "description": "v3 auctions.json has source_url stripped from all 98 auctions (field present but empty or null)",
+    "blocked_urls": [],
+    "impact": "No provenance link to original FCC auction pages in v3 data",
+    "workaround": "Reconstructed source_url values from v1 data in auction-field/auctions.json",
+    "severity": "low"
+  },
+  {
+    "gap_id": "G005",
+    "category": "data_quality",
+    "auction_number": null,
+    "description": "v3 relationships.json has 784 edges but zero have source_url populated",
+    "blocked_urls": [],
+    "impact": "Cannot verify provenance of any relationship claim in the v3 graph. No way to trace edges back to original source documents.",
+    "workaround": "None. Relationship claims carried forward without independent verification.",
+    "severity": "high"
+  },
+  {
+    "gap_id": "G006",
+    "category": "data_quality",
+    "auction_number": null,
+    "description": "v1 auction_results.json has company_id=null on all 87 winner rows",
+    "blocked_urls": [],
+    "impact": "Requires name-matching to identify companies; no stable identifier linking winners to entity records",
+    "workaround": "Resolved via identity_map.json cross-reference using legal_name and company_name matching",
+    "severity": "low"
+  },
+  {
+    "gap_id": "G007",
+    "category": "coverage",
+    "auction_number": null,
+    "description": "Qualified bidder data only available for 71 of 98 auctions (those with entries in v3 bids.json). 27 auctions have no bidder-level data in either v1 or v3.",
+    "blocked_urls": [],
+    "impact": "No bidder-level participation data for 27 auctions. Cannot analyze competitive dynamics or losing bidder behavior for these auctions.",
+    "workaround": "None for the missing 27. Analysis limited to the 71 auctions with v3 bid records.",
+    "missing_auction_numbers": [68, 69, 70, 71, 72, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100, 109, 1001],
+    "severity": "high"
+  },
+  {
+    "gap_id": "G008",
+    "category": "coverage",
+    "auction_number": null,
+    "description": "License-grain results only available for 15 of 98 auctions (those in v1 auction_results.json)",
+    "blocked_urls": [],
+    "impact": "Cannot analyze license-level outcomes, geographic distribution of wins, or per-license pricing for 83 auctions",
+    "workaround": "Auction-level aggregates available for all 98 auctions in auctions.json; license-level detail limited to the 15 covered auctions",
+    "covered_auction_numbers": [4, 5, 35, 66, 73, 96, 97, 101, 102, 103, 105, 107, 108, 110, 1000],
+    "severity": "high"
+  },
+  {
+    "gap_id": "G009",
+    "category": "coverage",
+    "auction_number": null,
+    "description": "276 of 652 v3 entities have no FRN (FCC Registration Number)",
+    "blocked_urls": [],
+    "impact": "Cannot be definitively cross-referenced to FCC records. Identity relies on name matching alone for these entities.",
+    "workaround": "Name-based matching used where possible; entities without FRN flagged in identity_map.json",
+    "severity": "medium"
+  },
+  {
+    "gap_id": "G010",
+    "category": "coverage",
+    "auction_number": null,
+    "description": "13 duplicate legal_name values in v3 entities (different entity_ids, same name)",
+    "blocked_urls": [],
+    "impact": "Risk of false matches when joining on legal_name. Same company name may map to multiple entity records.",
+    "workaround": "Flagged in identity_map.json. Consumers should use entity_id as primary key, not legal_name.",
+    "severity": "low"
+  },
+  {
+    "gap_id": "G011",
+    "category": "coverage",
+    "auction_number": null,
+    "description": "214 v3 entities have no FRN and no v1 company match (match_rule=null in identity_map)",
+    "blocked_urls": [],
+    "impact": "These entities exist only in v3 with no external anchor. Cannot verify their identity or link them to any FCC filing.",
+    "workaround": "Entities carried forward as-is from v3. Flagged in identity_map.json with match_rule=null.",
+    "severity": "medium"
+  },
+  {
+    "gap_id": "G012",
+    "category": "methodology",
+    "auction_number": null,
+    "description": "This package was built without direct FCC source access. All field data derives from existing v1/v3 data stores plus search engine snippets.",
+    "blocked_urls": [
+      "https://www.fcc.gov",
+      "https://auctiondata.fcc.gov",
+      "https://docs.fcc.gov"
+    ],
+    "impact": "A proper field package would download and parse raw FCC CSV/TSV files directly from auctiondata.fcc.gov. This package is a best-effort reconstruction from secondary sources, not a primary-source compilation.",
+    "workaround": "Package clearly labeled as derived data. All source provenance documented. Gaps.json (this file) serves as the transparency record.",
+    "severity": "high"
+  }
+]

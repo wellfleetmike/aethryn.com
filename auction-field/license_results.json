@@ -1,0 +1,872 @@
+[
+  {
+    "auction_number": 4,
+    "license_name": "California",
+    "winner_name": "Pacific Bell Mobile Services",
+    "winner_frn": null,
+    "winning_bid": 700000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 303
+  },
+  {
+    "auction_number": 4,
+    "license_name": "Nationwide",
+    "winner_name": "Sprint PCS (now T-Mobile)",
+    "winner_frn": null,
+    "winning_bid": 2100000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 4,
+    "license_name": "Nationwide",
+    "winner_name": "AT&T Wireless (now AT&T)",
+    "winner_frn": null,
+    "winning_bid": 1700000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 4,
+    "license_name": "Various",
+    "winner_name": "PrimeCo Personal Communications",
+    "winner_frn": null,
+    "winning_bid": 1100000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 4,
+    "license_name": "Various",
+    "winner_name": "WirelessCo LP",
+    "winner_frn": null,
+    "winning_bid": 600000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 302
+  },
+  {
+    "auction_number": 5,
+    "license_name": "Various",
+    "winner_name": "NextWave Telecom",
+    "winner_frn": null,
+    "winning_bid": 4200000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 255
+  },
+  {
+    "auction_number": 5,
+    "license_name": "Various",
+    "winner_name": "BDPCS Inc.",
+    "winner_frn": null,
+    "winning_bid": 860000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 312
+  },
+  {
+    "auction_number": 5,
+    "license_name": "Various",
+    "winner_name": "DCR PCS Inc.",
+    "winner_frn": null,
+    "winning_bid": 742000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 316
+  },
+  {
+    "auction_number": 5,
+    "license_name": "Various",
+    "winner_name": "GTE Mobilnet",
+    "winner_frn": null,
+    "winning_bid": 563000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 306
+  },
+  {
+    "auction_number": 35,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Wireless",
+    "winner_frn": null,
+    "winning_bid": 8800000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 346
+  },
+  {
+    "auction_number": 35,
+    "license_name": "Various",
+    "winner_name": "Alaska Native Wireless",
+    "winner_frn": null,
+    "winning_bid": 2900000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 256
+  },
+  {
+    "auction_number": 35,
+    "license_name": "Various",
+    "winner_name": "Salmon PCS LLC",
+    "winner_frn": null,
+    "winning_bid": 2400000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 257
+  },
+  {
+    "auction_number": 35,
+    "license_name": "Various",
+    "winner_name": "AT&T Wireless",
+    "winner_frn": null,
+    "winning_bid": 1400000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Nationwide",
+    "winner_name": "T-Mobile USA",
+    "winner_frn": "0027627728",
+    "winning_bid": 4200000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 512
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Wireless",
+    "winner_frn": null,
+    "winning_bid": 2800000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 346
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Various",
+    "winner_name": "SpectrumCo LLC",
+    "winner_frn": "0016855530",
+    "winning_bid": 2378000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 146
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Various",
+    "winner_name": "MetroPCS Communications",
+    "winner_frn": null,
+    "winning_bid": 1400000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 151
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Various",
+    "winner_name": "Barat Wireless LP",
+    "winner_frn": null,
+    "winning_bid": 535000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Various",
+    "winner_name": "Cricket Communications (Leap Wireless)",
+    "winner_frn": null,
+    "winning_bid": 470000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 66,
+    "license_name": "Various",
+    "winner_name": "AT&T Inc.",
+    "winner_frn": "0027840180",
+    "winning_bid": 389000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 203
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Nationwide (B Block)",
+    "winner_name": "AT&T Mobility Spectrum LLC",
+    "winner_frn": null,
+    "winning_bid": 6600000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 178
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Nationwide (C Block)",
+    "winner_name": "Verizon Wireless",
+    "winner_frn": null,
+    "winning_bid": 9900000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 346
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Nationwide (E Block)",
+    "winner_name": "Frontier Wireless LLC",
+    "winner_frn": "0017068800",
+    "winning_bid": 712000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 122
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various",
+    "winner_name": "Qualcomm Incorporated",
+    "winner_frn": null,
+    "winning_bid": 558000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 141
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various",
+    "winner_name": "Cox Communications",
+    "winner_frn": null,
+    "winning_bid": 316000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 375
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various",
+    "winner_name": "Cavalier Wireless",
+    "winner_frn": null,
+    "winning_bid": 214000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various",
+    "winner_name": "Triad 700 LLC",
+    "winner_frn": "0017182742",
+    "winning_bid": 157000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 129
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various",
+    "winner_name": "Vulcan Spectrum LLC",
+    "winner_frn": "0017130824",
+    "winning_bid": 129000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 138
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various",
+    "winner_name": "CenturyTel Broadband",
+    "winner_frn": "0015006471",
+    "winning_bid": 79000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 119
+  },
+  {
+    "auction_number": 73,
+    "license_name": "Various (A Block)",
+    "winner_name": "King Street Wireless",
+    "winner_frn": "0017169327",
+    "winning_bid": 286000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 117
+  },
+  {
+    "auction_number": 96,
+    "license_name": "Nationwide",
+    "winner_name": "Dish Network Corporation",
+    "winner_frn": null,
+    "winning_bid": 1564000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 194
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Nationwide",
+    "winner_name": "AT&T Inc.",
+    "winner_frn": "0027840180",
+    "winning_bid": 18189000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 203
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Wireless",
+    "winner_frn": null,
+    "winning_bid": 10430000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 346
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Various",
+    "winner_name": "Northstar Wireless LLC",
+    "winner_frn": null,
+    "winning_bid": 7565000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 226
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Various",
+    "winner_name": "SNR Wireless LicenseCo LLC",
+    "winner_frn": null,
+    "winning_bid": 5735000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 227
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Various",
+    "winner_name": "T-Mobile USA",
+    "winner_frn": "0027627728",
+    "winning_bid": 1774000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 512
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Various",
+    "winner_name": "Channel 51 License Co LLC",
+    "winner_frn": null,
+    "winning_bid": 437000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 179
+  },
+  {
+    "auction_number": 97,
+    "license_name": "Various",
+    "winner_name": "Grain Spectrum LLC",
+    "winner_frn": null,
+    "winning_bid": 90000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 101,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Communications",
+    "winner_frn": null,
+    "winning_bid": 505700000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 101,
+    "license_name": "Various",
+    "winner_name": "US Cellular Corporation",
+    "winner_frn": null,
+    "winning_bid": 129400000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 101,
+    "license_name": "Various",
+    "winner_name": "Windstream Holdings",
+    "winner_frn": null,
+    "winning_bid": 17400000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 185
+  },
+  {
+    "auction_number": 101,
+    "license_name": "Various",
+    "winner_name": "Straight Path Communications",
+    "winner_frn": null,
+    "winning_bid": 13200000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 191
+  },
+  {
+    "auction_number": 102,
+    "license_name": "Nationwide",
+    "winner_name": "AT&T Inc.",
+    "winner_frn": "0027840180",
+    "winning_bid": 982500000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 203
+  },
+  {
+    "auction_number": 102,
+    "license_name": "Nationwide",
+    "winner_name": "T-Mobile US Inc.",
+    "winner_frn": null,
+    "winning_bid": 803200000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 221
+  },
+  {
+    "auction_number": 102,
+    "license_name": "Various",
+    "winner_name": "Windstream Holdings",
+    "winner_frn": null,
+    "winning_bid": 48200000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 185
+  },
+  {
+    "auction_number": 102,
+    "license_name": "Various",
+    "winner_name": "US Cellular Corporation",
+    "winner_frn": null,
+    "winning_bid": 46700000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 103,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Communications (Straight Path Spectrum)",
+    "winner_frn": null,
+    "winning_bid": 1600000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 103,
+    "license_name": "Nationwide",
+    "winner_name": "AT&T Inc. (FiberTower Spectrum Holdings)",
+    "winner_frn": null,
+    "winning_bid": 1200000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 220
+  },
+  {
+    "auction_number": 103,
+    "license_name": "Nationwide",
+    "winner_name": "T-Mobile US Inc.",
+    "winner_frn": null,
+    "winning_bid": 873000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 221
+  },
+  {
+    "auction_number": 103,
+    "license_name": "Various",
+    "winner_name": "Dish Network Corporation",
+    "winner_frn": null,
+    "winning_bid": 428000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 194
+  },
+  {
+    "auction_number": 103,
+    "license_name": "Various",
+    "winner_name": "US Cellular Corporation",
+    "winner_frn": null,
+    "winning_bid": 270000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 103,
+    "license_name": "Various",
+    "winner_name": "Starry Group Holdings",
+    "winner_frn": null,
+    "winning_bid": 85000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 190
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Communications",
+    "winner_frn": null,
+    "winning_bid": 1890000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "Dish Network Corporation",
+    "winner_frn": null,
+    "winning_bid": 913000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 194
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "Charter Communications",
+    "winner_frn": null,
+    "winning_bid": 464000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 196
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "Comcast Corporation",
+    "winner_frn": null,
+    "winning_bid": 459000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 195
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "Cox Communications",
+    "winner_frn": null,
+    "winning_bid": 192000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 375
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "Windstream Holdings",
+    "winner_frn": null,
+    "winning_bid": 68000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 185
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "GeoVerse Inc.",
+    "winner_frn": null,
+    "winning_bid": 48000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 105,
+    "license_name": "Various",
+    "winner_name": "Anterix Inc.",
+    "winner_frn": null,
+    "winning_bid": 21000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 201
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Nationwide",
+    "winner_name": "Verizon Communications",
+    "winner_frn": null,
+    "winning_bid": 45450000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Nationwide",
+    "winner_name": "AT&T Inc.",
+    "winner_frn": "0027840180",
+    "winning_bid": 23407000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 203
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Various",
+    "winner_name": "T-Mobile US Inc.",
+    "winner_frn": null,
+    "winning_bid": 9339000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 221
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Various",
+    "winner_name": "US Cellular Corporation",
+    "winner_frn": null,
+    "winning_bid": 1283000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Various",
+    "winner_name": "NewLevel II LLC",
+    "winner_frn": "0029984747",
+    "winning_bid": 422000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 32
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Various",
+    "winner_name": "Columbia Capital (Radiate Holdings)",
+    "winner_frn": null,
+    "winning_bid": 165000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 209
+  },
+  {
+    "auction_number": 107,
+    "license_name": "Various",
+    "winner_name": "Midcontinent Communications",
+    "winner_frn": null,
+    "winning_bid": 42000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 188
+  },
+  {
+    "auction_number": 108,
+    "license_name": "Guam",
+    "winner_name": "TeleGuam Holdings LLC",
+    "winner_frn": null,
+    "winning_bid": 17000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 108,
+    "license_name": "Kansas",
+    "winner_name": "Evergy Kansas Central Inc.",
+    "winner_frn": null,
+    "winning_bid": 13000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 206
+  },
+  {
+    "auction_number": 108,
+    "license_name": "Nationwide",
+    "winner_name": "T-Mobile US Inc.",
+    "winner_frn": null,
+    "winning_bid": 304000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 221
+  },
+  {
+    "auction_number": 108,
+    "license_name": "North Carolina",
+    "winner_name": "Carolina West Wireless",
+    "winner_frn": "0001940022",
+    "winning_bid": 8500000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 11
+  },
+  {
+    "auction_number": 108,
+    "license_name": "Pacific Islands",
+    "winner_name": "PTI Pacifica Inc.",
+    "winner_frn": null,
+    "winning_bid": 18000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 204
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Nationwide",
+    "winner_name": "AT&T Inc.",
+    "winner_frn": "0027840180",
+    "winning_bid": 9100000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 203
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Nationwide",
+    "winner_name": "Dish Network (Weminuche LLC)",
+    "winner_frn": null,
+    "winning_bid": 7300000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 194
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Various",
+    "winner_name": "T-Mobile US Inc.",
+    "winner_frn": null,
+    "winning_bid": 2900000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 221
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Various",
+    "winner_name": "Three Forty-Five Spectrum LLC",
+    "winner_frn": null,
+    "winning_bid": 1300000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 254
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Various",
+    "winner_name": "US Cellular Corporation",
+    "winner_frn": null,
+    "winning_bid": 579000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Various",
+    "winner_name": "Columbia Capital",
+    "winner_frn": null,
+    "winning_bid": 425000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 209
+  },
+  {
+    "auction_number": 110,
+    "license_name": "Various",
+    "winner_name": "Grain Management LLC",
+    "winner_frn": null,
+    "winning_bid": 195000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 250
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Nationwide",
+    "winner_name": "T-Mobile US Inc.",
+    "winner_frn": null,
+    "winning_bid": 7990000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 221
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "Dish Network Corporation",
+    "winner_frn": null,
+    "winning_bid": 6200000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 194
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "Comcast Corporation",
+    "winner_frn": null,
+    "winning_bid": 1700000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 195
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "AT&T Inc.",
+    "winner_frn": "0027840180",
+    "winning_bid": 910000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 203
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "US Cellular Corporation",
+    "winner_frn": null,
+    "winning_bid": 328000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "Channel 51 License Co LLC",
+    "winner_frn": null,
+    "winning_bid": 285000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": 179
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "Bluewater Wireless LP",
+    "winner_frn": null,
+    "winning_bid": 131000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  },
+  {
+    "auction_number": 1000,
+    "license_name": "Various",
+    "winner_name": "Omega Wireless LLC",
+    "winner_frn": null,
+    "winning_bid": 95000000,
+    "is_winner": true,
+    "source": "v1_auction_results",
+    "v3_entity_id": null
+  }
+]

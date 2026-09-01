@@ -1,0 +1,17 @@
+# MANIFEST.txt -- auction-field research package
+# Generated: 2026-09-01
+# SHA256 hashes for all package files
+#
+# No raw FCC downloads -- sources/ contains only README.md
+# because all FCC domains were blocked during the build.
+# See gaps.json G001, G012 and RUNBOOK.md for details.
+
+772f9994abaa0512df480245823ab305a7be6cd43f044e3b5dc069d59d56d525  INVENTORY.md
+65eaa353e0edfbd0bdd8f56114dccd835288e82d5e8205c8be2029c74a915314  RUNBOOK.md
+88913a580a237fde7cf493a85c7d15131c4547636b4ee8d4c48d333ceae3f5ee  auctions.json
+4ddc7230ece729cb236a581b4463c86d09c8bc135325ea63f2cb1e6b6378dfa2  bids.json
+debb5dfc1f947f919e637ad9183b9770b4561e592d21c93da6e26989a7394aa9  gaps.json
+59adbe9afab535c59f8e0d1e8d3cccdc10112b114ec69e1c6f7f3bef14d25cbe  identity_map.json
+64fbe1eea5fd9b70d8522604d53a106f6e4871d9f0dd811cfd16d58310c70466  license_results.json
+3a3e00364ad29b9e87f579ead258262463445d7b6f6b31a3729d669271b99e4b  qualified_bidders.json
+6b8a0e86e9c4147cf95c95313d87a4b23d3cf3292559993469d67bb1fd50e1ae  sources/README.md
