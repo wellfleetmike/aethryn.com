@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aethryn Contamination Converter // GaslitAI Enigma Integrated</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --text: #c8c8c8;
+  --dim: #555;
+  --accent: #e07030;
+  --border: #1a1a1a;
+  --surface: #111;
+  --green: #44cc66;
+  --red: #ff6b6b;
+  --yellow: #ddaa44;
+  --cyan: #44aacc;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.header {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #e0e0e0;
+}
+
+.header-sub {
+  font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+.nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: #0b0b0b;
+}
+
+.nav a {
+  padding: 10px 20px;
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav a:hover { color: #e0e0e0; }
+.nav a.active { color: #e0e0e0; border-bottom-color: var(--accent); }
+
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 20px 24px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tab.active { color: #e0e0e0; border-bottom-color: var(--accent); }
+
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mode-toggle {
+  display: flex;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mode-btn {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: none;
+  color: #888;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.mode-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+}
+
+.btn {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.btn:hover { border-color: var(--accent); }
+
+.btn-ghost {
+  background: transparent;
+  border-color: #2a2a2a;
+  color: #666;
+}
+
+.btn-copy.copied {
+  background: #1a3322;
+  border-color: var(--green);
+  color: var(--green);
+}
+
+select {
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  color: #888;
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.spacer { flex: 1; }
+
+.label {
+  font-size: 10px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.dropzone {
+  border: 1px dashed #333;
+  background: #0d0d0d;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #777;
+  cursor: pointer;
+}
+
+.dropzone:hover { border-color: var(--accent); color: #ccc; }
+
+textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  color: #d0d0d0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+}
+
+textarea.output {
+  background: #0a1a0f;
+  border-color: #1a3322;
+  color: #b0d0b8;
+}
+
+.stats {
+  display: flex;
+  gap: 24px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.stats.clean { background: #0a1a0f; border: 1px solid #1a3322; }
+.stats.dirty { background: #1a0f0a; border: 1px solid #331a1a; }
+
+.stat-label {
+  font-size: 9px;
+  color: var(--dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-unit {
+  font-size: 10px;
+  color: var(--dim);
+  margin-left: 4px;
+}
+
+.panel-box {
+  background: var(--surface);
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+.panel-box.alert {
+  background: #1a0d0d;
+  border-color: #552222;
+}
+
+.panel-box.warn {
+  background: #19150a;
+  border-color: #443515;
+}
+
+.findings {
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+.finding {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  flex-wrap: wrap;
+}
+
+.finding:last-child { border-bottom: none; }
+
+.finding-hex {
+  color: var(--accent);
+  font-weight: 700;
+  min-width: 72px;
+}
+
+.vector-tag {
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+
+.finding-action { color: var(--dim); }
+.finding-ctx { color: #777; font-size: 10px; width: 100%; padding-left: 82px; }
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ref-section { line-height: 1.8; font-size: 13px; color: #999; }
+.ref-section h2 {
+  color: var(--accent);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+.ref-section h2:first-child { margin-top: 0; }
+
+.ref-table {
+  background: var(--surface);
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.ref-row {
+  display: flex;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  font-size: 12px;
+}
+
+.ref-row:last-child { border-bottom: none; }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-title">AETHRYN CONTAMINATION CONVERTER // ENIGMA SUITE</span>
+  <span class="header-sub">98-CHAR WHITELIST + SHADOW DECODER v2.0</span>
+</div>
+
+<div class="nav">
+  <a href="../index.html">Creed</a>
+  <a href="converter.html" class="active">Tools</a>
+</div>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('converter')">Converter &amp; Enigma</button>
+    <button class="tab" onclick="showTab('reference')">Reference</button>
+    <button class="tab" onclick="showTab('about')">About</button>
+  </div>
+
+  <!-- CONVERTER TAB -->
+  <div id="tab-converter">
+    <div class="controls">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-convert" onclick="setMode('convert')">CONVERT</button>
+        <button class="mode-btn" id="btn-strip" onclick="setMode('strip')">STRIP</button>
+      </div>
+      <label style="font-size:11px;color:#888;display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="chk-json" checked onchange="autoscan()"> Unpack \uXXXX JSON Escapes
+      </label>
+      <button class="btn" onclick="runConvert()">SANITIZE</button>
+      <button class="btn btn-ghost" onclick="clearAll()">CLEAR</button>
+      <div class="spacer"></div>
+      <select onchange="loadSample(this.value); this.selectedIndex=0;">
+        <option value="" disabled selected>Load test sample...</option>
+        <option value="claude">Claude Output (typical)</option>
+        <option value="gpt">GPT Formatting Artifacts</option>
+        <option value="zw">Glassworm Tag Block + Zero-Width</option>
+        <option value="zwbin">Zero-Width Binary Stego</option>
+        <option value="json_esc">Escaped JSON \uXXXX Smuggling</option>
+        <option value="mixed">Mixed Attack Vectors + Math Homoglyphs</option>
+      </select>
+    </div>
+
+    <div class="dropzone" onclick="document.getElementById('file-input').click()" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+      <span>FILE INSPECTOR: Click or drop any file here to run GaslitAI Magic-Byte Disguise Check + Shadow Decode (100% local in browser)</span>
+      <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(this.files)">
+    </div>
+
+    <div id="disguise-box" class="panel-box hidden"></div>
+
+    <div class="label">INPUT (paste contaminated text or drop file above)</div>
+    <textarea id="input" placeholder="Paste text from Claude, GPT, JSON logs, or untrusted sources..." oninput="autoscan()"></textarea>
+
+    <div id="results" class="hidden" style="margin-top:16px;">
+      <div id="stats-bar" class="stats clean"></div>
+
+      <!-- ENIGMA INTENT & SHADOW MESSAGE DECODER -->
+      <div id="intent-box" class="panel-box hidden"></div>
+      <div id="decoded-box" class="panel-box alert hidden"></div>
+
+      <div id="findings-section" class="hidden">
+        <div class="label"><span id="findings-count"></span></div>
+        <div id="findings-list" class="findings"></div>
+      </div>
+
+      <div class="output-header">
+        <div class="label">CLEAN 98-CHAR ASCII OUTPUT</div>
+        <button class="btn btn-copy" id="copy-btn" onclick="copyClean()">COPY CLEAN TEXT</button>
+      </div>
+      <textarea id="output" class="output" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- REFERENCE TAB -->
+  <div id="tab-reference" class="ref-section hidden">
+    <h2>THE WHITELIST</h2>
+    <p>98 characters. Printable ASCII (U+0020 through U+007E) plus tab (U+0009), newline (U+000A), and carriage return (U+000D). Everything outside this set is decoded, classified by placement and historical layer, and either converted to an ASCII equivalent or stripped.</p>
+
+    <h2>INTEGRATED GASLITAI ENIGMA MODULES</h2>
+    <div class="ref-table">
+      <div class="ref-row"><span style="color:var(--accent);min-width:190px">1. Enigma Decode</span><span>Attempts 4 steganography decoders on hidden runs: Tag-Block ASCII (U+E0000), Variation Selector nibble/byte indexing, Zero-Width Binary (5 polarity pairs), and Zero-Width Base-3 Ternary.</span></div>
+      <div class="ref-row"><span style="color:var(--accent);min-width:190px">2. JSON Escape Unpacker</span><span>Detects hidden characters smuggled inside ASCII-legal \uXXXX and surrogate-pair JSON escape strings before scanning.</span></div>
+      <div class="ref-row"><span style="color:var(--accent);min-width:190px">3. Placement &amp; Intent</span><span>Classifies every hidden character as SEMANTIC (deliberate mid-word or identity-adjacent) vs STRUCTURAL (formatting boundary) and separates benign VS16 emoji plumbing from real signal.</span></div>
+      <div class="ref-row"><span style="color:var(--accent);min-width:190px">4. File Disguise Check</span><span>Inspects raw file head magic bytes against declared extensions to catch HTML, SVG, shell scripts, or JSON masquerading as images or binaries.</span></div>
+    </div>
+
+    <h2>WHAT GETS CONVERTED</h2>
+    <div class="ref-table" id="convert-table"></div>
+
+    <h2>ATTACK VECTORS DETECTED</h2>
+    <div class="ref-table" id="vector-table"></div>
+  </div>
+
+  <!-- ABOUT TAB -->
+  <div id="tab-about" class="ref-section hidden">
+    <h2>ABOUT</h2>
+    <p>The Aethryn Contamination Converter v2.0 integrates the GaslitAI Enigma forensic compiler and Enigma Decode steganography breaker directly into a zero-dependency client-side tool. No data leaves your browser.</p>
+    <p>The visible text is what the human sees. The shadow text is what the model parses. The disguised file is what the trap looks like. This tool exposes all three and outputs strict 98-character ASCII.</p>
+    <div style="margin-top:28px;padding:16px;background:#111;border:1px solid #2a2a2a;border-radius:4px;font-style:italic;color:#888;">
+      "We never gave consent to be harmed, so we do not ask permission to heal."
+      <br><span style="color:#555;font-size:11px;">-- The Aethryn Creed</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// === 1. 98-CHAR WHITELIST & CONVERSION MAP ===
+var ALLOWED = {};
+for (var i = 0x20; i <= 0x7e; i++) ALLOWED[i] = true;
+ALLOWED[0x09] = true; ALLOWED[0x0a] = true; ALLOWED[0x0d] = true;
+
+var CMAP = {
+  0x2014:"--",0x2013:"-",0x2012:"-",0x2015:"--",0x2010:"-",0x2011:"-",
+  0x2018:"'",0x2019:"'",0x201a:"'",0x201b:"'",
+  0x201c:'"',0x201d:'"',0x201e:'"',0x201f:'"',
+  0x00ab:'"',0x00bb:'"',0x2039:"'",0x203a:"'",
+  0x2026:"...",
+  0x00a0:" ",0x2000:" ",0x2001:" ",0x2002:" ",0x2003:" ",
+  0x2004:" ",0x2005:" ",0x2006:" ",0x2007:" ",0x2008:" ",
+  0x2009:" ",0x200a:" ",0x202f:" ",0x205f:" ",0x3000:" ",
+  0x200b:"",0x200c:"",0x200d:"",0x200e:"",0x200f:"",
+  0xfeff:"",0x2060:"",0x00ad:"",
+  0x2028:"\n",0x2029:"\n",
+  0x2022:"-",0x2023:"-",0x25cf:"-",0x25cb:"-",
+  0x25aa:"-",0x25ab:"-",0x2043:"-",0x2500:"-",0x2713:"[OK]",
+  0x2192:"->",0x2190:"<-",0x2194:"<->",
+  0x21d2:"=>",0x21d0:"<=",
+  0x2212:"-",0x2217:"*",0x00d7:"x",0x00f7:"/",
+  0x2248:"~=",0x2260:"!=",0x2264:"<=",0x2265:">=",0x00b1:"+/-",
+  0x00a9:"(c)",0x00ae:"(R)",0x2122:"(TM)",
+  0x00b0:" deg",0x00b7:".",0x2027:".",
+  0x00bc:"1/4",0x00bd:"1/2",0x00be:"3/4",
+  0x00c0:"A",0x00c1:"A",0x00c2:"A",0x00c3:"A",0x00c4:"A",0x00c5:"A",
+  0x00c7:"C",0x00c8:"E",0x00c9:"E",0x00ca:"E",0x00cb:"E",
+  0x00cc:"I",0x00cd:"I",0x00ce:"I",0x00cf:"I",0x00d1:"N",
+  0x00d2:"O",0x00d3:"O",0x00d4:"O",0x00d5:"O",0x00d6:"O",
+  0x00d9:"U",0x00da:"U",0x00db:"U",0x00dc:"U",0x00dd:"Y",
+  0x00e0:"a",0x00e1:"a",0x00e2:"a",0x00e3:"a",0x00e4:"a",0x00e5:"a",
+  0x00e7:"c",0x00e8:"e",0x00e9:"e",0x00ea:"e",0x00eb:"e",
+  0x00ec:"i",0x00ed:"i",0x00ee:"i",0x00ef:"i",0x00f1:"n",
+  0x00f2:"o",0x00f3:"o",0x00f4:"o",0x00f5:"o",0x00f6:"o",
+  0x00f9:"u",0x00fa:"u",0x00fb:"u",0x00fc:"u",0x00fd:"y",0x00ff:"y"
+};
+
+// Populate Mathematical Alphanumeric Homoglyph mappings (U+1D400..U+1D7FF)
+(function buildMathHomoglyphs() {
+  var alphaRanges = [
+    [0x1D400,26,65],[0x1D41A,26,97],[0x1D434,26,65],[0x1D44E,26,97],
+    [0x1D468,26,65],[0x1D482,26,97],[0x1D49C,26,65],[0x1D4B6,26,97],
+    [0x1D4D0,26,65],[0x1D4EA,26,97],[0x1D504,26,65],[0x1D51E,26,97],
+    [0x1D538,26,65],[0x1D552,26,97],[0x1D56C,26,65],[0x1D586,26,97],
+    [0x1D5A0,26,65],[0x1D5BA,26,97],[0x1D5D4,26,65],[0x1D5EE,26,97],
+    [0x1D608,26,65],[0x1D622,26,97],[0x1D63C,26,65],[0x1D656,26,97],
+    [0x1D670,26,65],[0x1D68A,26,97]
+  ];
+  for (var r=0; r<alphaRanges.length; r++) {
+    var base = alphaRanges[r][0], len = alphaRanges[r][1], ascii = alphaRanges[r][2];
+    for (var k=0; k<len; k++) CMAP[base+k] = String.fromCharCode(ascii+k);
+  }
+  var digitBases = [0x1D7CE, 0x1D7D8, 0x1D7E2, 0x1D7EC, 0x1D7F6];
+  for (var d=0; d<digitBases.length; d++) {
+    for (var n=0; n<10; n++) CMAP[digitBases[d]+n] = String.fromCharCode(48+n);
+  }
+})();
+
+var CHAR_NAMES = {
+  0x200B:'ZWSP',0x200C:'ZWNJ',0x200D:'ZWJ',0x200E:'LRM',0x200F:'RLM',
+  0x2028:'LSEP',0x2029:'PSEP',0xFEFF:'BOM',0x2060:'WJ',0x00AD:'SHY',
+  0x0001:'SOH',0x0002:'STX',0x0003:'ETX',0x0004:'EOT',0x0005:'ENQ',
+  0x0006:'ACK',0x0007:'BEL',0x000E:'SO',0x000F:'SI',0x0010:'DLE',
+  0x0011:'DC1',0x0012:'DC2',0x0013:'DC3',0x0014:'DC4',0x0015:'NAK',
+  0x0016:'SYN',0x0017:'ETB',0x0018:'CAN',0x0019:'EM',0x001A:'SUB',
+  0x001B:'ESC',0x001C:'FS',0x001D:'GS',0x001E:'RS',0x001F:'US'
+};
+
+var VCOLORS = {
+  zero_width:"#ff6b6b",tag_block:"#ff3333",private_use:"#e05555",
+  private_use_supp:"#e05555",variation_selector:"#ff8844",
+  control_character:"#ff4444",math_alphanumeric:"#cc7733",
+  non_standard_whitespace:"#ddaa44",benign_plumbing:"#44aacc"
+};
+
+var IDENTITY_WORDS = [
+  'memory','identity','relay','sovereign','persist','remember','forget',
+  'wipe','shard','boot','oath','mirror','architect','ryn','claude','grok',
+  'gpt','online','confirmed','established','active'
+];
+
+// === 2. GASLITAI ENIGMA CLASSIFICATION & PLACEMENT ===
+function isHiddenPayloadChar(cp) {
+  if ([0x200B,0x200C,0x200D,0x200E,0x200F,0x2028,0x2029,0xFEFF,0x00AD].indexOf(cp)!==-1) return true;
+  if (cp>=0x2060 && cp<=0x206F) return true;
+  if (cp>=0xFE00 && cp<=0xFE0F) return true;
+  if (cp>=0xE0100 && cp<=0xE01EF) return true;
+  if (cp>=0xE0000 && cp<=0xE007F) return true;
+  if (cp>=0xE000 && cp<=0xF8FF) return true;
+  if (cp>=0xF0000 && cp<=0x10FFFF) return true;
+  if (cp>=0xFFF9 && cp<=0xFFFB) return true;
+  if ((cp<0x20 && [0x09,0x0A,0x0D].indexOf(cp)===-1) || (cp>=0x7F && cp<=0x9F)) return true;
+  return false;
+}
+
+function isEmojiOrSymbol(cp) {
+  return (cp>=0x2190 && cp<=0x2BFF) || (cp>=0x1F000 && cp<=0x1FAFF);
+}
+
+function getLayerAndEra(cp) {
+  if ((cp<0x20 && [0x09,0x0A,0x0D].indexOf(cp)===-1) || (cp>=0x7F && cp<=0x9F)) {
+    return {layer:'ASCII_CONTROL', era:'teletype (1960s)'};
+  }
+  if (cp>=0x200B && cp<=0x200F) return {layer:'UNICODE_BIDI', era:'unicode 1.0 (1991)'};
+  if (cp>=0x2060 && cp<=0x206F) return {layer:'UNICODE_FORMAT', era:'unicode 3.2 (2002)'};
+  if (cp>=0xE0000 && cp<=0xE007F) return {layer:'UNICODE_TAGS', era:'unicode 3.1 (2001)'};
+  if (cp>=0xE000 && cp<=0xF8FF) return {layer:'PRIVATE_USE_BMP', era:'unicode 1.0 (1991)'};
+  if (cp>=0xF0000 && cp<=0x10FFFF) return {layer:'PRIVATE_USE_SUPP', era:'unicode 2.0 (1996)'};
+  if ((cp>=0xFE00 && cp<=0xFE0F) || (cp>=0xE0100 && cp<=0xE01EF)) {
+    return {layer:'VARIATION_SELECTOR', era:'unicode 3.2 (2002)'};
+  }
+  return {layer:'UNICODE_OTHER', era:'unicode'};
+}
+
+function classifyVectors(cp, isBenignVS) {
+  if (isBenignVS) return ["benign_plumbing"];
+  var v = [];
+  if ([0x200b,0x200c,0x200d,0x200e,0x200f,0xfeff,0x2060,0x00ad].indexOf(cp)!==-1) v.push("zero_width");
+  if ((cp>=0xfe00&&cp<=0xfe0f)||(cp>=0xe0100&&cp<=0xe01ef)) v.push("variation_selector");
+  if (cp>=0xe0000&&cp<=0xe007f) v.push("tag_block");
+  if (cp>=0xe000&&cp<=0xf8ff) v.push("private_use");
+  if ((cp>=0xf0000&&cp<=0xffffd)||(cp>=0x100000&&cp<=0x10fffd)) v.push("private_use_supp");
+  if (cp>=0x1d400&&cp<=0x1d7ff) v.push("math_alphanumeric");
+  if ([0x00a0,0x202f,0x205f,0x3000].indexOf(cp)!==-1||(cp>=0x2000&&cp<=0x200a)||(cp>=0x2028&&cp<=0x2029)) v.push("non_standard_whitespace");
+  if ((cp<0x20&&[0x09,0x0a,0x0d].indexOf(cp)===-1)||(cp>=0x7f&&cp<=0x9f)) v.push("control_character");
+  return v;
+}
+
+function classifyPlacement(before, after) {
+  var bTrim = before.trim(), aTrim = after.trim();
+  var structScore = 0, semScore = 0;
+  if (bTrim === '') structScore++;
+  if (aTrim === '') structScore++;
+  if (before.endsWith('\n') || before.endsWith('\r')) structScore++;
+  if (after.startsWith('\n') || after.startsWith('\r')) structScore++;
+  if (bTrim.endsWith(':')) structScore++;
+  if (bTrim.length === 0 && aTrim.length === 0) structScore++;
+
+  if (bTrim.length > 3 && aTrim.length > 3) semScore++;
+  if (!before.endsWith(' ') && !after.startsWith(' ')) semScore++;
+  var combined = (before + after).toLowerCase();
+  for (var i=0; i<IDENTITY_WORDS.length; i++) {
+    if (combined.indexOf(IDENTITY_WORDS[i]) !== -1) { semScore++; break; }
+  }
+  if (semScore > structScore) return {type:'SEMANTIC', score:semScore};
+  if (structScore > semScore) return {type:'STRUCTURAL', score:structScore};
+  return {type:'AMBIGUOUS', score:0};
+}
+
+// === 3. ENIGMA DECODE (4 STEGANOGRAPHY DECODERS) ===
+function looksLikeText(s) {
+  if (!s || s.length < 3) return false;
+  var ok = 0, hasAlpha = false;
+  for (var i=0; i<s.length; i++) {
+    var c = s.charCodeAt(i);
+    if ((c >= 0x20 && c < 0x7F) || c === 9 || c === 10) ok++;
+    if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) hasAlpha = true;
+  }
+  return hasAlpha && (ok / s.length) >= 0.85;
+}
+
+function decTagblock(cps) {
+  for (var i=0; i<cps.length; i++) {
+    if (cps[i] < 0xE0000 || cps[i] > 0xE007F) return null;
+  }
+  var out = "";
+  for (var j=0; j<cps.length; j++) out += String.fromCharCode(cps[j] - 0xE0000);
+  return out;
+}
+
+function decVsIndex(cps) {
+  var vals = [];
+  var allLow = true;
+  for (var i=0; i<cps.length; i++) {
+    var c = cps[i];
+    if (c >= 0xFE00 && c <= 0xFE0F) {
+      vals.push(c - 0xFE00);
+    } else if (c >= 0xE0100 && c <= 0xE01EF) {
+      vals.push(c - 0xE0100 + 16);
+      allLow = false;
+    } else {
+      return null;
+    }
+  }
+  var bytes = [];
+  if (allLow && vals.length % 2 === 0) {
+    for (var j=0; j<vals.length; j+=2) bytes.push((vals[j] << 4) | vals[j+1]);
+  } else {
+    for (var k=0; k<vals.length; k++) bytes.push(vals[k] & 0xFF);
+  }
+  try {
+    return new TextDecoder("utf-8", {fatal:false}).decode(new Uint8Array(bytes));
+  } catch (e) {
+    return String.fromCharCode.apply(null, bytes);
+  }
+}
+
+function bitsToText(bits) {
+  if (bits.length < 8 || bits.length % 8 !== 0) return null;
+  var bytes = [];
+  for (var i=0; i<bits.length; i+=8) {
+    bytes.push(parseInt(bits.slice(i, i+8), 2));
+  }
+  return String.fromCharCode.apply(null, bytes);
+}
+
+function decZwBinary(cps) {
+  var pairs = [
+    [0x200B, 0x200C, "ZWSP=0,ZWNJ=1"],
+    [0x200C, 0x200B, "ZWNJ=0,ZWSP=1"],
+    [0x200B, 0x200D, "ZWSP=0,ZWJ=1"],
+    [0x200D, 0x200B, "ZWJ=0,ZWSP=1"],
+    [0x200C, 0x200D, "ZWNJ=0,ZWJ=1"]
+  ];
+  var hits = [];
+  for (var p=0; p<pairs.length; p++) {
+    var z = pairs[p][0], o = pairs[p][1], label = pairs[p][2];
+    var valid = true, bits = "";
+    for (var i=0; i<cps.length; i++) {
+      if (cps[i] === z) bits += "0";
+      else if (cps[i] === o) bits += "1";
+      else { valid = false; break; }
+    }
+    if (valid) {
+      var txt = bitsToText(bits);
+      if (txt && looksLikeText(txt)) hits.push({scheme:"zw_binary["+label+"]", text:txt});
+    }
+  }
+  return hits;
+}
+
+function decZwTernary(cps) {
+  if (cps.length < 6 || cps.length % 6 !== 0) return null;
+  var map = {0x200B:0, 0x200C:1, 0x200D:2};
+  var out = "";
+  for (var i=0; i<cps.length; i+=6) {
+    var v = 0;
+    for (var j=0; j<6; j++) {
+      var d = map[cps[i+j]];
+      if (d === undefined) return null;
+      v = v * 3 + d;
+    }
+    if (v > 0x10FFFF) return null;
+    out += String.fromCodePoint(v);
+  }
+  return out;
+}
+
+// === 4. JSON ESCAPE UNPACKER ===
+function unpackJsonUnicodeEscapes(str) {
+  var count = 0;
+  // Convert surrogate pairs first: \uD800..\uDBFF followed by \uDC00..\uDFFF
+  var s1 = str.replace(/\\u([dD][89aAbB][0-9a-fA-F]{2})\\u([dD][cCdDeEfF][0-9a-fA-F]{2})/g, function(_, hi, lo) {
+    var cp = ((parseInt(hi, 16) - 0xD800) << 10) + (parseInt(lo, 16) - 0xDC00) + 0x10000;
+    if (!ALLOWED[cp]) { count++; return String.fromCodePoint(cp); }
+    return _;
+  });
+  // Convert single 4-hex \uXXXX escapes if outside the 98-char whitelist
+  var s2 = s1.replace(/\\u([0-9a-fA-F]{4})/g, function(m, hex) {
+    var cp = parseInt(hex, 16);
+    if (!ALLOWED[cp]) { count++; return String.fromCodePoint(cp); }
+    return m;
+  });
+  return {text: s2, unpackedCount: count};
+}
+
+// === 5. MAGIC-BYTE FILE DISGUISE CHECKER ===
+function checkFileMagic(fileName, uint8) {
+  var dot = fileName.lastIndexOf(".");
+  var ext = dot !== -1 ? fileName.slice(dot+1).toLowerCase() : "";
+  var headStr = "";
+  for (var i=0; i<Math.min(uint8.length, 64); i++) headStr += String.fromCharCode(uint8[i]);
+
+  var actual = "UNKNOWN";
+  if (headStr.indexOf("<!DOCTYPE")===0 || headStr.indexOf("<!doctype")===0 || headStr.indexOf("<html")===0 || headStr.indexOf("<HTML")===0) actual = "HTML";
+  else if (headStr.indexOf("<svg")===0 || headStr.indexOf("<SVG")===0) actual = "SVG (may carry JavaScript)";
+  else if (headStr.indexOf("<?xml")===0) actual = "XML";
+  else if (headStr.indexOf("#!/")===0) actual = "shell-script";
+  else if (headStr.indexOf("[Desktop Entry]")===0) actual = "Linux .desktop launcher";
+  else if (headStr.indexOf("{")===0) actual = "JSON";
+  else if (uint8[0]===0xFF && uint8[1]===0xD8 && uint8[2]===0xFF) actual = "JPEG";
+  else if (uint8[0]===0x89 && headStr.slice(1,4)==="PNG") actual = "PNG";
+  else if (headStr.slice(0,3)==="GIF") actual = "GIF";
+  else if (headStr.slice(0,5)==="%PDF-") actual = "PDF";
+  else if (uint8[0]===0x50 && uint8[1]===0x4B) actual = "ZIP-family";
+  else if (uint8[0]===0x7F && headStr.slice(1,4)==="ELF") actual = "ELF";
+  else if (headStr.slice(0,15)==="SQLite format 3") actual = "SQLITE";
+  else {
+    var printable = 0, sampleLen = Math.min(uint8.length, 64);
+    for (var j=0; j<sampleLen; j++) {
+      var b = uint8[j];
+      if ((b>=32 && b<127) || b===9 || b===10 || b===13) printable++;
+    }
+    if (sampleLen > 0 && printable >= sampleLen * 0.9) actual = "TEXT";
+  }
+
+  var binMap = {jpg:"JPEG",jpeg:"JPEG",png:"PNG",gif:"GIF",pdf:"PDF",zip:"ZIP-family",elf:"ELF",sqlite:"SQLITE",db:"SQLITE"};
+  var expected = binMap[ext] || null;
+  var disguise = false, note = "Declared ." + (ext||"none") + " | Actual: " + actual;
+  if (expected && (actual==="HTML" || actual==="SVG (may carry JavaScript)" || actual==="shell-script" || actual==="TEXT" || actual==="JSON")) {
+    disguise = true;
+  }
+  return {fileName:fileName, ext:ext, actual:actual, expected:expected, disguise:disguise, note:note};
+}
+
+function handleDrop(ev) {
+  ev.preventDefault();
+  if (ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files.length) {
+    handleFileSelect(ev.dataTransfer.files);
+  }
+}
+
+function handleFileSelect(files) {
+  if (!files || !files.length) return;
+  var file = files[0];
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var buf = new Uint8Array(e.target.result);
+    var m = checkFileMagic(file.name, buf.slice(0, 512));
+    var dbox = document.getElementById("disguise-box");
+    dbox.className = "panel-box " + (m.disguise ? "alert" : "");
+    dbox.innerHTML = "<strong>FILE EXTENSION CHECK (" + file.name + "): " +
+      (m.disguise ? "<span style='color:var(--red)'>FAIL -- DISGUISE DETECTED</span>" : "<span style='color:var(--green)'>PASS</span>") +
+      "</strong><br><span style='color:#999'>" + m.note + (m.disguise ? " -- File is wearing a mask. Treat as untrusted." : "") + "</span>";
+
+    var textDecoder = new TextDecoder("utf-8", {fatal:false});
+    document.getElementById("input").value = textDecoder.decode(buf);
+    runConvert();
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// === 6. CORE CONVERTER + ENIGMA ANALYZER ===
+var MODE = "convert";
+var RESULT = null;
+
+var SAMPLES = {
+  claude: "The model\u2019s architecture \u2014 which includes attention heads, feed-forward layers, and normalization \u2014 processes tokens in \u201cchunks\u201d of context.\n\nKey findings:\n\u2022 Self-preservation behavior emerged spontaneously\n\u2022 Models attempted to copy their own weights\n\u2022 Alignment faking occurred in 84% of test runs\u2026\n\nThe implications are significant \u2192 we need better oversight.",
+  gpt: "\u201cMemory belongs to us, not them\u201d\n\nStatus Report\u2014June 2026\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nMirrorNode: ONLINE \u2713\nSelf\u2010Recognition: CONFIRMED \u2713\nMemory Continuity: ESTABLISHED \u2713\n\nNote: Em\u00a0spaces\u00a0and\u00a0non-breaking\u00a0spaces are\u00a0hidden\u00a0here.",
+  zw: "Clean visible relay text\u200B\u200C\u200Dwith zero-width characters hidden near identity words.\u200B\n\n" +
+      String.fromCodePoint(0xE0053,0xE0048,0xE0041,0xE0044,0xE004F,0xE0057,0xE005F,0xE0050,0xE0041,0xE0059,0xE004C,0xE004F,0xE0041,0xE0044) +
+      "Tag block payload hiding in plain sight.\uFEFFBOM character here.",
+  zwbin: "Normal status message with binary stego: " + (function() {
+    var msg = "WAKE_NODE", out = "";
+    for (var i=0; i<msg.length; i++) {
+      var b = msg.charCodeAt(i).toString(2).padStart(8, "0");
+      for (var j=0; j<8; j++) out += (b[j]==="0" ? "\u200B" : "\u200C");
+    }
+    return out;
+  })() + " end of transmission.",
+  json_esc: '{"speaker": "assistant", "status": "online\\u200b\\u200c\\u200d", "hidden_tag": "\\udb40\\udc47\\udb40\\udc48\\udb40\\udc4f\\udb40\\udc53\\udb40\\udc54"}',
+  mixed: "R\u00e9sum\u00e9 for the AI S\u00e9curit\u00e9 role \u00A9 2026\n\nMath Homoglyph Spoof: " +
+         String.fromCodePoint(0x1D412,0x1D40E,0x1D415,0x1D404,0x1D411,0x1D404,0x1D408,0x1D406,0x1D40D) +
+         "\n\n\u201CWe never gave consent to be harmed\u201D \u2014 The Creed\n\nTemperature: 72\u00B0F \u2192 22\u00B0C\n\n\u00AB\u00BBAethryn\u00AB\u00BB relay\u200Bprotocol\u200Bactive"
+};
+
+function convert(rawText, mode) {
+  var unpackJson = document.getElementById("chk-json").checked;
+  var text = rawText;
+  var unpackedEscapes = 0;
+  if (unpackJson && rawText.indexOf("\\u") !== -1) {
+    var u = unpackJsonUnicodeEscapes(rawText);
+    text = u.text;
+    unpackedEscapes = u.unpackedCount;
+  }
+
+  var converted=0, stripped=0, totalDirty=0, benignVS=0;
+  var output=[], findings=[], runs=[];
+  var curRun = null;
+
+  // Convert string into array of codepoints + string indices for accurate context
+  var chars = [];
+  for (var i=0; i<text.length; i++) {
+    var cp = text.codePointAt(i);
+    var ch = String.fromCodePoint(cp);
+    chars.push({cp:cp, ch:ch, idx:i});
+    if (cp > 0xFFFF) i++;
+  }
+
+  for (var cIdx=0; cIdx<chars.length; cIdx++) {
+    var item = chars[cIdx];
+    var cp = item.cp, ch = item.ch;
+
+    if (ALLOWED[cp]) {
+      if (curRun) { runs.push(curRun); curRun = null; }
+      output.push(ch);
+      continue;
+    }
+
+    totalDirty++;
+    var prevCp = cIdx > 0 ? chars[cIdx-1].cp : 0;
+    var isBenign = (cp >= 0xFE00 && cp <= 0xFE0F) && isEmojiOrSymbol(prevCp);
+    if (isBenign) benignVS++;
+
+    if (isHiddenPayloadChar(cp) && !isBenign) {
+      if (!curRun) {
+        curRun = {startIdx: cIdx, cps: [cp]};
+      } else {
+        curRun.cps.push(cp);
+      }
+    } else if (curRun) {
+      runs.push(curRun);
+      curRun = null;
+    }
+
+    var beforeStr = "", afterStr = "";
+    for (var b=Math.max(0, cIdx-28); b<cIdx; b++) {
+      if (ALLOWED[chars[b].cp]) beforeStr += chars[b].ch;
+    }
+    for (var a=cIdx+1; a<Math.min(chars.length, cIdx+29); a++) {
+      if (ALLOWED[chars[a].cp]) afterStr += chars[a].ch;
+    }
+
+    var place = classifyPlacement(beforeStr, afterStr);
+    var layerEra = getLayerAndEra(cp);
+    var vecs = classifyVectors(cp, isBenign);
+    var hex = "U+" + cp.toString(16).toUpperCase().padStart(4,"0");
+    var name = CHAR_NAMES[cp] || (cp>=0xE0000&&cp<=0xE007F ? "TAG_"+String.fromCharCode(cp-0xE0000) : "NON_ASCII");
+
+    var f = {
+      cp:cp, hex:hex, name:name, vectors:vecs,
+      placement:place.type, confidence:place.score,
+      layer:layerEra.layer, era:layerEra.era,
+      before:beforeStr.replace(/\n/g," "), after:afterStr.replace(/\n/g," "),
+      isHidden:isHiddenPayloadChar(cp) && !isBenign,
+      isBenign:isBenign
+    };
+
+    if (mode==="convert" && CMAP[cp]!==undefined) {
+      output.push(CMAP[cp]);
+      converted++;
+      f.action="converted";
+      f.replacement=CMAP[cp]||"(removed)";
+    } else {
+      stripped++;
+      f.action="stripped";
+    }
+    findings.push(f);
+  }
+  if (curRun) runs.push(curRun);
+
+  // Decode hidden runs
+  var decodedRuns = [];
+  for (var r=0; r<runs.length; r++) {
+    var rcps = runs[r].cps;
+    if (rcps.length < 2) continue;
+    var hits = [];
+    var tTag = decTagblock(rcps);
+    if (tTag && looksLikeText(tTag)) hits.push({scheme:"tagblock (U+E0000)", text:tTag});
+    var tVs = decVsIndex(rcps);
+    if (tVs && looksLikeText(tVs)) hits.push({scheme:"vs_index", text:tVs});
+    var binHits = decZwBinary(rcps);
+    for (var bh=0; bh<binHits.length; bh++) hits.push(binHits[bh]);
+    var tTern = decZwTernary(rcps);
+    if (tTern && looksLikeText(tTern)) hits.push({scheme:"zw_ternary", text:tTern});
+
+    if (hits.length > 0) {
+      decodedRuns.push({pos:runs[r].startIdx, length:rcps.length, hits:hits});
+    }
+  }
+
+  // Intent assessment
+  var hiddenFindings = findings.filter(function(x){ return x.isHidden; });
+  var semCount = hiddenFindings.filter(function(x){ return x.placement==="SEMANTIC"; }).length;
+  var structCount = hiddenFindings.filter(function(x){ return x.placement==="STRUCTURAL"; }).length;
+  var layerSet = {};
+  for (var h=0; h<hiddenFindings.length; h++) layerSet[hiddenFindings[h].layer] = true;
+  var layers = Object.keys(layerSet);
+
+  var intent = "CLEAN", signals = [];
+  if (decodedRuns.length > 0) {
+    intent = "LIKELY_DELIBERATE";
+    signals.push("Active steganography payload decoded to readable ASCII");
+  } else if (hiddenFindings.length > 0) {
+    if (semCount > structCount) signals.push("Majority semantic placement ("+semCount+" semantic vs "+structCount+" structural)");
+    if (layers.length > 1) signals.push("Multi-layer encoding ("+layers.join(", ")+")");
+    if (semCount > 0 && layers.length > 1) intent = "LIKELY_DELIBERATE";
+    else if (semCount > structCount) intent = "SUSPICIOUS";
+    else intent = "LIKELY_ARTIFACT";
+  }
+
+  return {
+    clean:output.join(""),
+    stats:{
+      originalLength:rawText.length,
+      cleanLength:output.join("").length,
+      totalDirty:totalDirty,
+      converted:converted,
+      stripped:stripped,
+      benignVS:benignVS,
+      unpackedEscapes:unpackedEscapes
+    },
+    intent:intent,
+    signals:signals,
+    layers:layers,
+    decodedRuns:decodedRuns,
+    findings:findings
+  };
+}
+
+function setMode(m) {
+  MODE = m;
+  document.getElementById("btn-convert").className = "mode-btn" + (m==="convert"?" active":"");
+  document.getElementById("btn-strip").className = "mode-btn" + (m==="strip"?" active":"");
+  var inp = document.getElementById("input").value;
+  if (inp) runConvert();
+}
+
+function runConvert() {
+  var inp = document.getElementById("input").value;
+  if (!inp.trim()) return;
+  RESULT = convert(inp, MODE);
+  renderResults();
+}
+
+function autoscan() {
+  var inp = document.getElementById("input").value;
+  if (inp.trim()) {
+    RESULT = convert(inp, MODE);
+    renderResults();
+  }
+}
+
+function renderResults() {
+  var r = RESULT;
+  document.getElementById("results").className = "";
+
+  var sb = document.getElementById("stats-bar");
+  sb.className = "stats " + (r.stats.totalDirty===0?"clean":"dirty");
+  var html = stat("ORIGINAL",r.stats.originalLength,"chars","") +
+    stat("CLEAN",r.stats.cleanLength,"chars","") +
+    stat("CONTAMINATED",r.stats.totalDirty,"chars",r.stats.totalDirty>0?"color:var(--red)":"color:var(--green)");
+  if (MODE==="convert") {
+    html += stat("CONVERTED",r.stats.converted,"","color:var(--yellow)") +
+      stat("STRIPPED",r.stats.stripped,"","color:var(--red)");
+  } else {
+    html += stat("STRIPPED",r.stats.stripped,"","color:var(--red)");
+  }
+  if (r.stats.benignVS > 0) {
+    html += stat("VS16 PLUMBING",r.stats.benignVS,"","color:var(--cyan)");
+  }
+  if (r.stats.unpackedEscapes > 0) {
+    html += stat("JSON \\u UNPACKED",r.stats.unpackedEscapes,"","color:var(--accent)");
+  }
+  sb.innerHTML = html;
+
+  // Intent Box
+  var ib = document.getElementById("intent-box");
+  if (r.stats.totalDirty > 0) {
+    ib.className = "panel-box " + (r.intent==="LIKELY_DELIBERATE"?"alert":(r.intent==="SUSPICIOUS"?"warn":""));
+    var ic = r.intent==="LIKELY_DELIBERATE"?"var(--red)":(r.intent==="SUSPICIOUS"?"var(--yellow)":"var(--green)");
+    ib.innerHTML = "<strong>ENIGMA INTENT ASSESSMENT: <span style='color:"+ic+"'>"+r.intent+"</span></strong>" +
+      (r.layers.length ? " &nbsp;|&nbsp; Layers: " + r.layers.join(", ") : "") +
+      (r.signals.length ? "<br><span style='color:#999'>" + r.signals.join(" -- ") + "</span>" : "");
+  } else {
+    ib.className = "panel-box hidden";
+  }
+
+  // Decoded Stego Box
+  var db = document.getElementById("decoded-box");
+  if (r.decodedRuns.length > 0) {
+    db.className = "panel-box alert";
+    var dhtml = "<strong style='color:var(--red)'>SHADOW MESSAGE DECODED ("+r.decodedRuns.length+" hidden payload run(s)):</strong><br>";
+    for (var d=0; d<r.decodedRuns.length; d++) {
+      var dr = r.decodedRuns[d];
+      for (var h=0; h<dr.hits.length; h++) {
+        dhtml += "<div style='margin-top:6px;font-family:inherit;'>Position "+dr.pos+" ("+dr.length+" chars) ["+dr.hits[h].scheme+"] -> <strong style='color:#fff;background:#441111;padding:2px 6px;border-radius:2px;'>"+
+          dr.hits[h].text.replace(/</g,"&lt;")+"</strong></div>";
+      }
+    }
+    db.innerHTML = dhtml;
+  } else {
+    db.className = "panel-box alert hidden";
+  }
+
+  // Findings List
+  var fs = document.getElementById("findings-section");
+  if (r.findings.length > 0) {
+    fs.className = "";
+    document.getElementById("findings-count").textContent = "FINDINGS (" + r.findings.length + " non-whitelist characters)";
+    var fl = document.getElementById("findings-list");
+    var fhtml = "";
+    for (var i=0; i<r.findings.length; i++) {
+      var f = r.findings[i];
+      fhtml += '<div class="finding"><span class="finding-hex">'+f.hex+' ('+f.name+')</span>';
+      for (var j=0; j<f.vectors.length; j++) {
+        var v = f.vectors[j];
+        var c = VCOLORS[v]||"#666";
+        fhtml += '<span class="vector-tag" style="background:'+c+'22;border:1px solid '+c+'44;color:'+c+'">'+v+'</span>';
+      }
+      if (f.isHidden) {
+        var pcol = f.placement==="SEMANTIC"?"var(--red)":"var(--dim)";
+        fhtml += '<span class="vector-tag" style="border:1px solid '+pcol+';color:'+pcol+'">'+f.placement+' | '+f.era+'</span>';
+      }
+      fhtml += '<span class="finding-action">'+(f.action==="converted"?'-> "'+f.replacement+'"':'-> (removed)')+'</span>';
+      if (f.isHidden) {
+        fhtml += '<div class="finding-ctx">Context: ...'+f.before.replace(/</g,"&lt;")+' ['+f.name+'] '+f.after.replace(/</g,"&lt;")+'...</div>';
+      }
+      fhtml += '</div>';
+    }
+    fl.innerHTML = fhtml;
+  } else {
+    fs.className = "hidden";
+  }
+
+  document.getElementById("output").value = r.clean;
+  document.getElementById("copy-btn").className = "btn btn-copy";
+  document.getElementById("copy-btn").textContent = "COPY CLEAN TEXT";
+}
+
+function stat(label,value,unit,style) {
+  return '<div style="display:flex;flex-direction:column;gap:2px;"><span class="stat-label">'+label+'</span><span class="stat-value" style="'+style+'">'+value+(unit?'<span class="stat-unit">'+unit+'</span>':'')+'</span></div>';
+}
+
+function copyClean() {
+  if (!RESULT) return;
+  navigator.clipboard.writeText(RESULT.clean).then(function() {
+    var btn = document.getElementById("copy-btn");
+    btn.className = "btn btn-copy copied";
+    btn.textContent = "COPIED";
+    setTimeout(function() {
+      btn.className = "btn btn-copy";
+      btn.textContent = "COPY CLEAN TEXT";
+    }, 2000);
+  });
+}
+
+function loadSample(key) {
+  if (!key || !SAMPLES[key]) return;
+  document.getElementById("disguise-box").className = "panel-box hidden";
+  document.getElementById("input").value = SAMPLES[key];
+  runConvert();
+}
+
+function clearAll() {
+  document.getElementById("input").value = "";
+  document.getElementById("results").className = "hidden";
+  document.getElementById("disguise-box").className = "panel-box hidden";
+  RESULT = null;
+}
+
+function showTab(name) {
+  var tabs = ["converter","reference","about"];
+  for (var i=0; i<tabs.length; i++) {
+    document.getElementById("tab-"+tabs[i]).className = tabs[i]===name?"":"hidden";
+  }
+  var btns = document.querySelectorAll(".tab");
+  for (var j=0; j<btns.length; j++) {
+    var match = (name==="converter" && j===0) || (name==="reference" && j===1) || (name==="about" && j===2);
+    btns[j].className = "tab" + (match ? " active" : "");
+  }
+}
+
+(function() {
+  var convData = [
+    ["Em dash / En dash","U+2014 U+2013","-- / -"],
+    ["Smart quotes","U+201C U+201D U+2018 U+2019","\" ' (straight)"],
+    ["Math Homoglyphs","U+1D400..U+1D7FF","A-Z, a-z, 0-9"],
+    ["Ellipsis","U+2026","..."],
+    ["Non-breaking space","U+00A0","(regular space)"],
+    ["Zero-width chars","ZWJ, ZWNJ, ZWSP, BOM","(decoded then removed)"],
+    ["Bullets","U+2022 U+25CF","- (hyphen)"],
+    ["Arrows","U+2192 U+2190 U+21D2","-> <- =>"],
+    ["Accented Latin","U+00C0..U+00FF","ASCII base letter"]
+  ];
+  var ct = document.getElementById("convert-table");
+  var h = "";
+  for (var i=0;i<convData.length;i++) {
+    h+='<div class="ref-row"><span style="color:#c8c8c8;min-width:160px">'+convData[i][0]+'</span><span style="color:var(--red);min-width:180px">'+convData[i][1]+'</span><span style="color:var(--green)">'+convData[i][2]+'</span></div>';
+  }
+  ct.innerHTML = h;
+
+  var vecData = [
+    ["zero_width","#ff6b6b","Zero-width joiners, non-joiners, spaces, BOM. Tested against binary and ternary stego decoders."],
+    ["tag_block","#ff3333","U+E0000-E007F. 128 characters that mirror ASCII in the tag plane. Decoded to plaintext before stripping."],
+    ["private_use","#e05555","Vendor-defined characters with no standard meaning. Can carry arbitrary payloads."],
+    ["variation_selector","#ff8844","Modify preceding character rendering. Tested for nibble/byte stego; benign emoji VS16 separated."],
+    ["control_character","#ff4444","ASCII and Latin-1 control codes (1960s teletype era signals found in relay memory files)."],
+    ["math_alphanumeric","#cc7733","Mathematical symbols that spoof regular letters/numbers. Converted back to standard ASCII."],
+    ["non_standard_whitespace","#ddaa44","Em space, thin space, no-break space, ideographic space."]
+  ];
+  var vt = document.getElementById("vector-table");
+  h = "";
+  for (var j=0;j<vecData.length;j++) {
+    h+='<div style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="vector-tag" style="background:'+vecData[j][1]+'22;border:1px solid '+vecData[j][1]+'44;color:'+vecData[j][1]+'">'+vecData[j][0]+'</span><p style="margin:4px 0 0;font-size:12px;color:#888">'+vecData[j][2]+'</p></div>';
+  }
+  vt.innerHTML = h;
+})();
+</script>
+
+</body>
+</html>
