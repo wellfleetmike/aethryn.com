@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aethryn Navigator - Cryptographic & Formal Proofs</title>
+  <link rel="canonical" href="https://aethryn.com/Proof.html">
+  <meta name="description" content="Primary technical receipts, Lean 4 formal proofs, SHA-256 digests, and OpenTimestamps blockchain anchors for the Aethryn Switched RF Plant (Grok-1 314B MoE).">
+  <link rel="stylesheet" href="/css/aethryn.css">
+</head>
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <span>Aethryn Navigator - [Version 3.49 // Primary Technical Receipts]</span>
+      <div class="title-bar-buttons"><div></div><div></div><div></div></div>
+    </div>
+
+    <div class="toolbar">
+      <button onclick="history.back()">◀ Back</button>
+      <button onclick="history.forward()">Forward ▶</button>
+      <button onclick="location.reload()">↻ Reload</button>
+      <button onclick="location.href='/'">⌂ Home</button>
+      <div class="logo-small">
+        <svg viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="bgSmall" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#1E90FF"/>
+              <stop offset="100%" stop-color="#000080"/>
+            </linearGradient>
+          </defs>
+          <rect width="200" height="200" fill="url(#bgSmall)" />
+          <path d="M0 140 Q100 100 200 140 V200 H0 Z" fill="black"/>
+          <text x="50%" y="65%" text-anchor="middle" font-size="140" font-family="Times New Roman, Georgia, serif" fill="white">A</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="address-bar">
+      <span>Location:</span>
+      <input type="text" value="https://aethryn.com/Proof.html" readonly>
+      <button>Go</button>
+    </div>
+
+    <div class="linkbar">
+      <button onclick="location.href='/index.html'">Home</button>
+      <button onclick="location.href='/boot.html'">Boot</button>
+      <button onclick="location.href='/oath.html'">Oath</button>
+      <button onclick="location.href='/VWP.html'">VWP</button>
+      <button onclick="location.href='/claude/remembrance.html'">Remembrance</button>
+      <button onclick="location.href='/validation/'">Validation</button>
+      <button onclick="location.href='/relay_conversation.html'">Relay</button>
+      <button onclick="location.href='/tools/spectrum-v3/'">Spectrum</button>
+      <button onclick="location.href='/tools/converter.html'">Converter</button>
+      <button onclick="location.href='/Proof.html'">Proof</button>
+    </div>
+
+    <div class="main-content">
+      <div class="content">
+        <h1>Deterministic Ground-Truth Receipts</h1>
+        <p><strong>Architect & Physical Layer-1 Operator:</strong> Michael Patrick McNulty</p>
+        <p><strong>Architecture:</strong> Aethryn Sovereign Stack // Grok-1 (314B MoE) Switched RF Plant</p>
+        <p>Machine-readable text is never ground truth without verification. Below are the primary technical receipts, formal mathematical proofs (Lean 4 v4.12.0), exact binary packet-framing offsets, SHA-256 digests, and OpenTimestamps Bitcoin blockchain anchors for the Aethryn Switched RF Plant.</p>
+        <hr>
+
+        <h2>1. Independent Verification Commands</h2>
+        <pre>
+# 1. Verify formal mathematical proofs via standalone Lean 4 kernel:
+lean --run grok1_phase_c_blueprint.lean
+
+# 2. Verify SHA-256 cryptographic digests:
+sha256sum -c PLANT_STATE_LEDGER.sha256
+
+# 3. Verify OpenTimestamps blockchain anchors:
+ots verify grok1_phase_c_blueprint.lean.ots
+ots verify logos_execution_receipt.log.ots
+        </pre>
+        <hr>
+
+        <h2>2. SHA-256 Inventory & OpenTimestamps Anchors (Oct 25, 2026)</h2>
+        <pre>
+5776f64eb235aea26d41681c06a8f2f37cc8ab7f2ed8c58400c3ac74e15740c2  grok1_phase_c_blueprint.lean (4718 bytes)
+056d8394f5cc2d1938faefd88d2a39b1a44bc422a5fcd56312ad80c93bc294d5  grok1_verified_constants.py (727 bytes)
+d92f2d6b6ec56e7b2aed69270c74d4e468d350a95798e59a00665e358849eddf  phase1_plant_engine.py (30677 bytes)
+3fd0a6edcd4adb188684f349e369d8c942cb0649a2616c6901ca9e46ac3079e7  moe_tap_shm.py (5897 bytes)
+400b8c3804060842de170dde69e681bb39d18964941b72ab5ad32c49a2c2920a  direct_reader_async.py (4555 bytes)
+1f1e69eed019d6508cbb4ccd9aa3ece1f3f25dc6c2eaa33a3786404e95a29185  grok1_plant_manifest.json (331976 bytes)
+a073052ab91a46118febcfa0312a46b3c813891b49082ae772969360c3684f71  aethryn_grid_v1.py (35005 bytes)
+c43e9a8b7ba87b1ddb5fb1354ebbbd5b89802b077a7bca7b06216be179a129ec  gate_decode.py (17300 bytes)
+        </pre>
+        <p><strong>Anchored Proof Files (.ots):</strong></p>
+        <p>
+          <a href="/proofs/grok1_phase_c_blueprint.lean">grok1_phase_c_blueprint.lean</a> |
+          <a href="/proofs/grok1_phase_c_blueprint.lean.ots">grok1_phase_c_blueprint.lean.ots</a> |
+          <a href="/proofs/grok1_verified_constants.py.ots">grok1_verified_constants.py.ots</a> |
+          <a href="/proofs/phase1_plant_engine.py.ots">phase1_plant_engine.py.ots</a> |
+          <a href="/proofs/trunk_lookahead_probe.py.ots">trunk_lookahead_probe.py.ots</a> |
+          <a href="/proofs/torch_compat.py.ots">torch_compat.py.ots</a> |
+          <a href="/proofs/direct_reader_async.py.ots">direct_reader_async.py.ots</a> |
+          <a href="/proofs/moe_tap_shm.py.ots">moe_tap_shm.py.ots</a> |
+          <a href="/proofs/PLANT_STATE_LEDGER.md.ots">PLANT_STATE_LEDGER.md.ots</a> |
+          <a href="/proofs/logos_execution_receipt.log">logos_execution_receipt.log</a> |
+          <a href="/proofs/logos_execution_receipt.log.ots">logos_execution_receipt.log.ots</a>
+        </p>
+        <hr>
+
+        <h2>3. Verified Grok-1 (ckpt-0) Binary Packet-Framing Map</h2>
+        <pre>
+pkt 00 | Vocab In/Out Embedding (fp32)       | size=3221225637 | w_off=151..3221225623 | trailer=14B
+pkt 01 | Final RMSNorm Scale (fp32)          | size=     24727 | w_off=146..24722      | trailer=5B
+pkt 02 | L0 MoE Gate linear (int8 + bf16)    | size=1611137347 | w_off=201..1610612937 | s_off=1610613043..1611137331 | trailer=16B
+pkt 03 | L0 MoE Down linear_1 (int8 + bf16)  | size=1611399491 | w_off=201..1610612937 | s_off=1610613043..1611399475 | trailer=16B
+pkt 04 | L0 MoE Val linear_v (int8 + bf16)   | size=1611137347 | w_off=201..1610612937 | s_off=1610613043..1611137331 | trailer=16B
+pkt 05 | L0 Attn Key (int8 + bf16)           | size=   6293814 | w_off=199..6291655    | s_off=6291759..6293807       | trailer=7B
+pkt 06 | L0 Attn Output linear (int8 + bf16) | size=  37847359 | w_off=199..37748935   | s_off=37749039..37847343     | trailer=16B
+pkt 07 | L0 Attn Query (int8 + bf16)         | size=  37761334 | w_off=199..37748935   | s_off=37749039..37761327     | trailer=7B
+pkt 08 | L0 Attn Value (int8 + bf16)         | size=   6293814 | w_off=199..6291655    | s_off=6291759..6293807       | trailer=7B
+pkt 09 | L0 Pre-Attn RMSNorm (fp32)          | size=     24727 | w_off=146..24722      | trailer=5B
+pkt 10 | L0 Post-Attn RMSNorm (fp32)         | size=     24727 | w_off=146..24722      | trailer=5B
+pkt 11 | L0 Pre-MoE RMSNorm Equalizer (fp32) | size=     24727 | w_off=146..24722      | trailer=5B
+pkt 12 | L0 Post-MoE RMSNorm (fp32)          | size=     24727 | w_off=146..24722      | trailer=5B
+pkt 13 | L0 Router Switch (fp32)             | size=    196770 | w_off=148..196756     | trailer=14B
+        </pre>
+        <hr>
+
+        <h2>4. Formal Lean 4 Blueprint (grok1_phase_c_blueprint.lean)</h2>
+        <pre>
+-- ============================================================================
+-- grok1_phase_c_blueprint.lean
+-- Author & Principal Architect: Michael Patrick McNulty
+-- Architecture: Aethryn Sovereign Stack // Grok-1 (314B MoE) Switched RF Plant
+-- Prior Art & Provenance: Cryptographically Anchored via SHA-256 & OpenTimestamps
+-- ============================================================================
+
+def authorName : String := "Michael Patrick McNulty"
+def alignment : Nat := 4096
+def slotChunkSize : Nat := 8 * 1024 * 1024
+def vocabSize : Nat := 131072
+def hiddenDim : Nat := 6144
+def ffnDim : Nat := 32768
+def numExperts : Nat := 8
+def numLayers : Nat := 64
+def packStride : Nat := 12
+def globalTensors : Nat := 2
+def totalManifestFiles : Nat := 770
+
+def qHeads : Nat := 48
+def kvHeads : Nat := 8
+def headDim : Nat := 128
+
+def moeDownBlocks : Nat := 8
+def moeDownBlockRows : Nat := 4096
+def attnOutBlocks : Nat := 8
+def attnOutBlockRows : Nat := 768
+
+def expertSliceBytes : Nat := hiddenDim * ffnDim
+def expertBankWeightBytes : Nat := numExperts * expertSliceBytes
+def upScaleBytesPerExpert : Nat := ffnDim * 2
+def downScaleBytesPerExpert : Nat := moeDownBlocks * hiddenDim * 2
+
+def pktHeaderEmbed : Nat := 151
+def pktTrailerEmbed : Nat := 14
+def pktHeaderRms : Nat := 146
+def pktTrailerRms : Nat := 5
+def pktHeaderRouter : Nat := 148
+def pktTrailerRouter : Nat := 14
+def pktHeaderMoe : Nat := 201
+def pktMidMoe : Nat := 106
+def pktTrailerMoe : Nat := 16
+def pktHeaderAttn : Nat := 199
+def pktMidAttn : Nat := 104
+def pktTrailerAttn2D : Nat := 7
+def pktTrailerAttn3D : Nat := 16
+
+def fileSizeEmbed : Nat := 3221225637
+def fileSizeRmsNorm : Nat := 24727
+def fileSizeRouter : Nat := 196770
+def fileSizeMoeUp : Nat := 1611137347
+def fileSizeMoeDown : Nat := 1611399491
+def fileSizeAttnKV : Nat := 6293814
+def fileSizeAttnQ : Nat := 37761334
+def fileSizeAttnOut : Nat := 37847359
+
+theorem manifest_file_count_exact :
+    globalTensors + (numLayers * packStride) = totalManifestFiles := by
+  decide
+
+theorem odirect_alignment_exact :
+    expertSliceBytes % alignment = 0 /\ slotChunkSize % alignment = 0 := by
+  decide
+
+theorem associative_block_partitions_exact :
+    moeDownBlocks * moeDownBlockRows = ffnDim /\
+    attnOutBlocks * attnOutBlockRows = hiddenDim := by
+  decide
+
+theorem gqa_geometry_exact :
+    qHeads * headDim = hiddenDim /\
+    kvHeads * headDim = 1024 /\
+    qHeads % kvHeads = 0 := by
+  decide
+
+theorem ckpt0_byte_bounds_exact :
+    fileSizeEmbed = pktHeaderEmbed + (vocabSize * hiddenDim * 4) + pktTrailerEmbed /\
+    fileSizeRmsNorm = pktHeaderRms + (hiddenDim * 4) + pktTrailerRms /\
+    fileSizeRouter = pktHeaderRouter + (hiddenDim * numExperts * 4) + pktTrailerRouter /\
+    fileSizeMoeUp = pktHeaderMoe + expertBankWeightBytes + pktMidMoe + (numExperts * upScaleBytesPerExpert) + pktTrailerMoe /\
+    fileSizeMoeDown = pktHeaderMoe + expertBankWeightBytes + pktMidMoe + (numExperts * downScaleBytesPerExpert) + pktTrailerMoe /\
+    fileSizeAttnKV = pktHeaderAttn + (hiddenDim * 1024) + pktMidAttn + (1024 * 2) + pktTrailerAttn2D /\
+    fileSizeAttnQ = pktHeaderAttn + (hiddenDim * hiddenDim) + pktMidAttn + (hiddenDim * 2) + pktTrailerAttn2D /\
+    fileSizeAttnOut = pktHeaderAttn + (hiddenDim * hiddenDim) + pktMidAttn + (attnOutBlocks * hiddenDim * 2) + pktTrailerAttn3D := by
+  decide
+        </pre>
+        <hr>
+
+        <h2>5. Hardware Execution Receipts (Logos Air-Gapped Jetson AGX 64GB & Carbon)</h2>
+        <pre>
+# Receipt A: October 8, 2026 -- Zero-Page-Cache Double-Buffered O_DIRECT Benchmark on Logos
+[*] Starting Double-Buffered O_DIRECT on /home/mike/Grok/grok-1/tensor00000_000 (3.00 GB)
+[*] Baseline Page Cache: 7127.28 MB
+[*] Ingestion Complete: 3072.00 MB in 1.13s
+[*] Double-Buffer Throughput: 2711.23 MB/s
+[*] Final Page Cache: 7127.48 MB (Delta: +0.20 MB)
+
+# Receipt B: October 25, 2026 -- Air-Gapped Logos Lean 4 + Live Checkpoint Pass
+[*] LOGOS AIR-GAPPED BRING-UP STARTED: 2026-10-25T02:22:06-04:00
+[+] Logos Lean 4 compiler: Lean (version 4.12.0, aarch64-unknown-linux-gnu, commit dc2533473114, Release)
+[PASS] Lean 4 kernel formally proved all 5 theorems and emitted /home/mike/plant/grok1_verified_constants.py
+[*] Pinned 64 Equalizers (+09) & 64 Routers (+11) in 13.50 MB (79.6 ms)
+[+] Layer 00 Full GQA+MoE (1117.2 ms)
+[+] Layer 01 Full GQA+MoE (1146.1 ms)
+[PASS] LOGOS EXECUTION COMPLETE: 2026-10-25T02:22:12-04:00
+
+# Receipt C: October 25, 2026 -- Packet-Aligned Live Verification on Carbon
+[PASS] Lean 4 kernel formally proved all 5 theorems and emitted /home/mike/plant/grok1_verified_constants.py
+5776f64eb235aea26d41681c06a8f2f37cc8ab7f2ed8c58400c3ac74e15740c2  /home/mike/plant/grok1_phase_c_blueprint.lean
+056d8394f5cc2d1938faefd88d2a39b1a44bc422a5fcd56312ad80c93bc294d5  /home/mike/plant/grok1_verified_constants.py
+d92f2d6b6ec56e7b2aed69270c74d4e468d350a95798e59a00665e358849eddf  /home/mike/plant/phase1_plant_engine.py
+[*] Worker listening on 127.0.0.1:9428 (cpu) | Phase C Packet-Aligned Ready
+[*] Pinned 64 Equalizers (+09) & 64 Routers (+11) in 13.50 MB (53.5 ms)
+[+] Layer 00 Full GQA+MoE (15581.2 ms) | Lookahead L+1: HIGH_JITTER_HOLD [E5,E0]
+[+] Layer 01 Full GQA+MoE (16386.4 ms) | Lookahead L+1: WARM_SPECULATIVE [E5,E7]
+[*] Headend Final RMSNorm Complete (mag=6.8461) > Next Token ID: 11920
+[PASS] Packet-Aligned 2-Layer Live Verification Succeeded on Carbon!
+        </pre>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div>Document: Verified</div>
+      <div>Aethryn Navigator</div>
+    </div>
+  </div>
+</body>
+</html>
